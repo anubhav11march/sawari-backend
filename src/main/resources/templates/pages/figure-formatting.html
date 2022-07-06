@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<!--[if lt IE 10]>
+<html lang="en" class="iex"> <![endif]-->
+<!--[if (gt IE 10)|!(IE)]><!-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]-->
+<div id="head" th:insert="hnf/head :: frhead"></div>
+<body>
+<div id="preloader"></div>
+<div id="header" th:insert="hnf/header :: frheader"></div>
+<div id="figureFormattingPage">
+    <figure-formatting></figure-formatting>
+</div>
+<script th:src="@{/HTWF/scripts/vue/figure-formatting.js}"></script>
+<i class="scroll-top scroll-top-mobile show fa fa-sort-asc"></i>
+<div id="footer" th:insert="hnf/footer :: frfooter"></div>
+</body>
+</html>

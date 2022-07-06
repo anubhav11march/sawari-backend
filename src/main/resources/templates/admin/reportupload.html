@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--[if lt IE 10]>
+<html lang="en" class="iex"> <![endif]-->
+<!--[if (gt IE 10)|!(IE)]><!-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]-->
+<div id="head" th:insert="hnf/admin/head :: frhead"></div>
+<body>
+<div id="preloader"></div>
+<div id="header" th:insert="hnf/admin/header :: frheader"></div>
+<div class="header-base">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="title-base text-left">
+                    <h1>Upload Report</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-empty">
+    <div class="container content">
+        <div class="container">
+            <div class="row gutters">
+                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                    <div class="card ">
+                        <div class="card-body">
+                            <form action="/admin/content/upload" enctype="multipart/form-data" method="post">
+                                <div class="row gutters">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div>
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="topic">Topic</label>
+                                            <input type="text" class="form-control" id="topic" name="topic"
+                                                   placeholder="Manuscript, Figure only, Poster, Thesis, Grant">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="category">Category</label>
+                                            <select id="category" name="category" class="form-control">
+                                                <option value="" selected disabled>Select One</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="language">Language</label>
+                                            <select id="language" name="language" class="form-control">
+                                                <option value="" selected disabled>Select One</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="reportType">Report Type</label>
+                                            <select name="reportType" class="form-control" id="reporttype">
+                                                <option value="preliminaryReport">Preliminary Report</option>
+                                                <option value="finalReport">Final Report</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="requestServeDate">Request Serve Date</label>
+                                            <input type="date" class="form-control" id="requestServeDate"
+                                                   name="requestServeDate">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="file">File (word, pdf, excel, ppt, zip, rar, tiff, svg,
+                                                eps)</label>
+                                            <input type="file" class="form-control" id="file" name="file"
+                                                   accept=".docx,.doc,.pdf,.xlsx,.pptx,.zip,.rar,.eps,image/tiff, image/svg">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea name="description" id="description"
+                                                      class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="services">Suggested Services</label>
+                                            <select class="form-control" id="services" name="requestedServices[]"
+                                                    multiple="multiple">
+                                                <option value="">Select One</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" id="numberfig">
+                                        <div class="form-group">
+                                            <label for="figure-number">Number of Figures</label>
+                                            <select class="form-control" id="figure-number" name="numberOfFigures">
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                                <option value="">5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row gutters">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <div class="text-right">
+                                            <button type="submit" id="submit" name="submit" class="btn btn-primary">
+                                                Upload
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer" th:insert="hnf/admin/footer :: frfooter"></div>
+</body>
+</html>

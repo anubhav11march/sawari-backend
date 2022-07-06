@@ -1,0 +1,101 @@
+<header class="fixed-top scroll-change" data-menu-anima="fade-in" th:fragment="frheader">
+    <div class="navbar navbar-default mega-menu-fullwidth navbar-fixed-top" role="navigation">
+        <div class="navbar-mini scroll-hide">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 hidden-sm hidden-xs">
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="nav navbar-nav "
+                             style="font-size: 14px; font-weight: bold; color:#755C9B; margin-top: 5px;">
+                            <a th:href="@{/index.html(locale=en)}">English</a>&emsp;&emsp;
+                            <a th:href="@{/index.html(locale=ar)}">عربى</a>&emsp;&emsp;
+                            <a th:href="@{/index.html(locale=cn)}">中国人</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 hidden-sm hidden-xs">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="navbar navbar-main">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <a class="navbar-brand" th:href="@{/}">
+                            <img class="logo-default" th:src="@{/images/logo.png}" alt="logo" width="168px" src="#"/>
+                            <img class="logo-retina" th:src="@{/images/logo-retina.png}" alt="logo" src="#"/>
+                        </a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown">
+                                <a th:href="@{/index.html}" class="dropdown-toggle" data-toggle="dropdown"
+                                   role="button" id="home">Home</a>
+                            </li>
+                            <li class="dropdown mega-dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="services">Services <span
+                                        class="caret"></span></a>
+                                <div class="mega-menu dropdown-menu multi-level row bg-menu">
+                                    <div class="col">
+                                        <ul class="fa-ul no-icons text-s">
+                                            <li><a th:href="@{/init/english-language-editing}" id="englishLanguageEditing">English Language Editing</a></li>
+                                            <li><a th:href="@{/init/scientific-editing}" id="scientificEditing">Scientific Editing</a></li>
+                                            <li><a th:href="@{/init/academic-illustration}" id="academicIllustration">Academic Illustration</a></li>
+                                            <li><a th:href="@{/init/figure-formatting}" id="figureFormatting">Figure Formatting</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col">
+                                        <ul class="fa-ul no-icons text-s">
+                                            <li><a th:href="@{/init/graphical-abstract-service}" id="graphicalAbstractDesign">Graphical Abstract Service</a></li>
+                                            <li><a th:href="@{/init/journal-recommendation}" id="journalRecommendation">Journal Recommendation</a></li>
+                                            <li><a th:href="@{/init/conference-poster-creation}" id="conferencePosterCreation">Conference Poster Creation</a></li>
+                                            <li><a th:href="@{/init/research-news-stories}" id="researchNewsStories">Research News Stories</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dropdown">
+                                <a th:href="@{/init/about-us}" class="dropdown-toggle" data-toggle="dropdown"
+                                   role="button" id="aboutUs">About Us</a>
+                            </li>
+                            <li class="dropdown">
+                                <a th:href="@{/init/contact-us}" class="dropdown-toggle" data-toggle="dropdown"
+                                   role="button" id="contactUs">Contact Us</a>
+                            </li>
+                            <li class="dropdown">
+                                <a th:href="@{/init/faq}" id="faq" class="dropdown-toggle" data-toggle="dropdown" role="button">FAQs</a>
+                            </li>
+                        </ul>
+                        <div class="nav navbar-nav navbar-right">
+                            <div class="search-box-menu">
+                                <br>
+                                <a th:href="@{/login}" style=" background-color: #755C9B; color: #fff" class="btn"
+                                   role="button" id="loginSignup">Login/Signup</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <script>
+        document.getElementById('home').innerText = `${i18next.t('home')}`;
+        document.getElementById('services').innerText = `${i18next.t('services')}`;
+        document.getElementById('englishLanguageEditing').innerText = `${i18next.t('englishLanguageEditing')}`;
+        document.getElementById('scientificEditing').innerText = `${i18next.t('scientificEditing')}`;
+        document.getElementById('academicIllustration').innerText = `${i18next.t('academicIllustration')}`;
+        document.getElementById('figureFormatting').innerText = `${i18next.t('figureFormatting')}`;
+        document.getElementById('graphicalAbstractDesign').innerText = `${i18next.t('graphicalAbstract')}`;
+        document.getElementById('journalRecommendation').innerText = `${i18next.t('journalRecommendation')}`;
+        document.getElementById('conferencePosterCreation').innerText = `${i18next.t('conferencePosterCreation')}`;
+        document.getElementById('researchNewsStories').innerText = `${i18next.t('researchNewsStories')}`;
+        document.getElementById('aboutUs').innerText = `${i18next.t('aboutUs')}`;
+        document.getElementById('contactUs').innerText = `${i18next.t('contactUs')}`;
+        document.getElementById('faq').innerText = `${i18next.t('faqq')}`;
+        document.getElementById('loginSignup').innerText = `${i18next.t('loginSignup')}`;
+    </script>
+</header>
