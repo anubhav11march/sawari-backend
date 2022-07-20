@@ -2,6 +2,7 @@ package com.tzs.marshall.author.config.security;
 
 import com.tzs.marshall.author.config.handler.CustomAccessDeniedHandler;
 import com.tzs.marshall.author.config.handler.CustomAuthenticationFailureHandler;
+import com.tzs.marshall.author.config.handler.CustomAuthenticationSuccessHandler;
 import com.tzs.marshall.author.config.handler.CustomLogoutSuccessHandler;
 import com.tzs.marshall.author.constants.Constants;
 import com.tzs.marshall.author.service.AuthorPreLoginService;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @EnableWebSecurity
@@ -58,7 +60,8 @@ public class AuthorSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/home")
+                .successHandler(authenticationSuccessHandler())
+//                .defaultSuccessUrl("/home")
                 .failureUrl("/login?error=true")
                 .failureHandler(authenticationFailureHandler())
                 .usernameParameter("username")
@@ -84,6 +87,11 @@ public class AuthorSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
     }
 
     @Bean

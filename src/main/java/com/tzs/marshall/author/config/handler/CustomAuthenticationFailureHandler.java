@@ -23,6 +23,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         String jsonPayload = "{\"message\" : \"%s\", \"timestamp\" : \"%s\"}";
         String errorMessage = String.format(jsonPayload, e.getMessage(), Calendar.getInstance().getTime());
         httpServletResponse.getWriter().append(errorMessage);
-        httpServletResponse.sendRedirect("/login?error=true");
+//        httpServletResponse.sendRedirect("/login?error=true");
     }
 }
