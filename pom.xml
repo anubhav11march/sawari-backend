@@ -8,12 +8,12 @@
         <version>2.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.ether</groupId>
-    <artifactId>project-ether</artifactId>
+    <groupId>com.tzs.marshall</groupId>
+    <artifactId>project-marshall</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>project-ether</name>
-    <description>project-ether</description>
+    <name>project-marshall</name>
+    <description>project-marshall</description>
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>3.8.0</maven.compiler.source>
