@@ -1,7 +1,7 @@
 package com.tzs.marshall;
 
-import com.tzs.marshall.author.bean.AESHProperties;
-import com.tzs.marshall.author.constants.Constants;
+import com.tzs.marshall.bean.DBProperties;
+import com.tzs.marshall.constants.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,8 @@ public class InitProperties {
     public InitProperties(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         log.info("Fetching Properties from DB");
-        new AESHProperties(getAESHProperties());
+        Properties dbProperties = getDBProperties();
+        new DBProperties(dbProperties);
         Constants.ORDER_STATUS.put(Constants.INITIATED, 1);
         Constants.ORDER_STATUS.put(Constants.CREATED, 2);
         Constants.ORDER_STATUS.put(Constants.PENDING, 3);
@@ -34,8 +35,8 @@ public class InitProperties {
         Constants.ORDER_STATUS.put(Constants.EXPIRED, 9);
     }
 
-    private Properties getAESHProperties() {
-        String query = "Select name, value from ether_service.properties";
+    public Properties getDBProperties() {
+        String query = "Select name, value from marshall_service.properties";
         jdbcTemplate.query(query, (rs, rowNum) -> properties.put(rs.getString("name"), rs.getString("value")));
         log.info("Properties Fetched: "+properties);
         return properties;

@@ -6,7 +6,7 @@
       http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 
-	<display-name>Project Ether</display-name>
+	<display-name>Project Marshall</display-name>
 
 	<!-- Spring root -->
 	<context-param>
@@ -17,7 +17,7 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>com.ether</param-value>
+		<param-value>com.tzs.marshall</param-value>
 	</context-param>
 
 	<listener>
@@ -26,7 +26,7 @@
 
 	<!-- Spring child -->
 	<servlet>
-		<servlet-name>ether</servlet-name>
+		<servlet-name>marshall</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>throwExceptionIfNoHandlerFound</param-name>
@@ -35,7 +35,7 @@
 		<async-supported>true</async-supported>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ether</servlet-name>
+		<servlet-name>marshall</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
