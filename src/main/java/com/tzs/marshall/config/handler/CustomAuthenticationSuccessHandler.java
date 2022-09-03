@@ -19,8 +19,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         log.warn("Authentication Success: " + authentication.isAuthenticated());
         httpServletResponse.setStatus(HttpStatus.OK.value());
-        String jsonPayload = "{\"isAuthenticated\" : \"%s\", \"timestamp\" : \"%s\"}";
-        String successMessage = String.format(jsonPayload, authentication.isAuthenticated(), Calendar.getInstance().getTime());
+        String jsonPayload = "{\"isAuthenticated\" : \"%s\", \"timestamp\" : \"%s\", \"role\" : \"%s\", \"userName\" : \"%s\"}";
+        String successMessage = String.format(jsonPayload, authentication.isAuthenticated(), Calendar.getInstance().getTime(),
+                authentication.getAuthorities(), authentication.getName());
         httpServletResponse.getWriter().append(successMessage);
 //        httpServletResponse.sendRedirect("/home");
     }

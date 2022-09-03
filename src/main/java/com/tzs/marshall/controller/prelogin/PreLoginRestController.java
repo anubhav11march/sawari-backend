@@ -27,15 +27,6 @@ import java.util.Map;
 import static com.tzs.marshall.constants.Constants.*;
 
 
-/*
-PreLoginRestController APIs
-1. Login
-2. Registration
-3. Forgot Password
-4. Reset Password
-5. OTP-Verification
-*/
-
 @RestController
 @RequestMapping("/init")
 public class PreLoginRestController {
@@ -52,12 +43,12 @@ public class PreLoginRestController {
     private static final Logger log = LoggerFactory.getLogger(PreLoginRestController.class);
 
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public PersistentUserDetails userRegistration(@RequestBody PersistentUserDetails authorDetails, HttpServletRequest request) {
+    @RequestMapping(value = "/{role}/register", method = RequestMethod.POST)
+    public PersistentUserDetails userRegistration(@PathVariable("role") String role,@RequestBody PersistentUserDetails authorDetails, HttpServletRequest request) {
         log.info("Registering new user with details as: " + authorDetails);
         String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 //        String url = String.valueOf(request.getRequestURL().replace(request.getRequestURL().toString().indexOf(String.valueOf(request.getServerPort())) + (String.valueOf(request.getServerPort()).length()), request.getRequestURL().toString().length(), ""));
-        authorDetails.setRoleName(Constants.ROLE_USER);
+        authorDetails.setRoleName("DRIVER".equalsIgnoreCase(role) ? ROLE_DRIVER : ROLE_USER);
         authorDetails.setTypeName(Constants.TYPE_REGISTERED);
         return authorRegistrationService.registerNewUser(authorDetails, url);
     }
