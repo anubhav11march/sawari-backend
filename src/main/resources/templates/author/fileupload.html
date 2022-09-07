@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!--[if lt IE 10]> <html  lang="en" class="iex"> <![endif]-->
+<!--[if (gt IE 10)|!(IE)]><!-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]-->
+<div id="head" th:insert="hnf/author/head :: frhead"></div>
+<body>
+<div id="preloader"></div>
+<div id="header" th:insert="hnf/author/header :: frheader"></div>
+<div class="header-base">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="title-base text-left">
+                    <h1 id="uploadFile">Upload File</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-empty">
+    <div class="container content">
+        <div class="container">
+            <div class="row gutters">
+                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                    <div class="card ">
+                        <div class="card-body">
+                            <form action="/author/content/upload" enctype="multipart/form-data" method="post">
+                            <div class="row gutters">
+                                <div>
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="topic" id="iNeedHelp">I need help with my </label>
+                                        <input type="text" class="form-control" id="topic" name="topic" >
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="category" id="categoryy">Category</label>
+                                    <!--   <input type="text" class="form-control" id="category" name="category" placeholder="Category"> -->
+                                        <select id="category" name="category" class="form-control">
+                                            <option value="" selected disabled>Select One</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="language" id="languagee">Language</label>
+                                        <select id="language" name="language" class="form-control">
+                                            <option value="" selected disabled>Select One</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="wordcount" id="wordCountt">Word Count</label>
+                                        <input type="text" class="form-control" id="wordcount" name="wordsCount" >
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="requestServeDate" id="requestServeDatee">Request Serve Date</label>
+                                        <input type="date" class="form-control" id="requestServeDate" name="requestServeDate">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="file" id="filee">File </label>(word, pdf, excel, ppt, zip, rar, tiff, svg, eps)
+                                        <input type="file" class="form-control" id="file" name="file" accept=".docx,.doc,.pdf,.xlsx,.pptx,.zip,.rar,.eps,image/tiff, image/svg">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="description" id="descriptionn">Description</label>
+                                        <textarea name="description" id="description" class="form-control" ></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="services" id="servicesIWant">Services I Want</label>
+                                        <select class="form-control" id="services"  name="requestedServices[]" multiple="multiple">
+                                            <option value="" >Select One</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" id="numberfig">
+                                    <div class="form-group">
+                                        <label for="figure-number" id="noOfFigure">Number of Figures</label>
+                                        <select class="form-control" id="figure-number" name="numberOfFigures" >
+                                            <option value="" >1</option>
+                                            <option value="" >2</option>
+                                            <option value="" >3</option>
+                                            <option value="" >4</option>
+                                            <option value="" >5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row gutters">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="text-right">
+                                        <button type="submit" id="submit" name="submit" class="btn btn-primary">Upload</button>
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $.getJSON("/init/properties?property=category", null, function (data) {
+        $.each(data, function (i, item) {
+            $("#category").append("<option value='" + item + "'>" + item + "</option>");
+        });
+    });
+    $.getJSON("/init/properties?property=language", null, function (data) {
+        $.each(data, function (i, item) {
+            $("#language").append("<option value='" + item + "'>" + item + "</option>");
+        });
+    });
+    $.getJSON("/author/plans", null, function (data) {
+        $.each(data, function (i, item) {
+            $("#services").append("<option value='" + item.name + "'>" + item.name + " (" + item.price +" "+ item.currency + ")</option>");
+        });
+    });
+    $(document).ready(function () {
+        $('#services').select2();
+        $("#numberfig").hide();
+    });
+    $('#services').on('change', function () {
+        var services = $("#services option:selected").map(function () {
+            return $(this).text();
+        }).get();
+        var fig = services.filter(service => service.includes('Figure Formatting'));
+
+        if (fig.length > 0) {
+            $("#numberfig").show();
+        } else {
+            $("#numberfig").hide();
+        }
+        console.log(fig);
+
+    });
+</script>
+<div id="footer" th:insert="hnf/author/footer :: frfooter"></div>
+<script>
+    document.getElementById('uploadFile').innerText = `${i18next.t('uploadFile')}`;
+    document.getElementById('iNeedHelp').innerText = `${i18next.t('iNeedHelp')}`;
+    document.getElementById('categoryy').innerText = `${i18next.t('category')}`;
+    document.getElementById('languagee').innerText = `${i18next.t('language')}`;
+    document.getElementById('wordCountt').innerText = `${i18next.t('wordsCount')}`;
+    document.getElementById('requestServeDatee').innerText = `${i18next.t('requestServeDate')}`;
+    document.getElementById('filee').innerText = `${i18next.t('file')}`;
+    document.getElementById('descriptionn').innerText = `${i18next.t('description')}`;
+    document.getElementById('servicesIWant').innerText = `${i18next.t('servicesIWant')}`;
+    document.getElementById('noOfFigure').innerText = `${i18next.t('noOfFigure')}`;
+    document.getElementById('submit').innerText = `${i18next.t('uploadFile')}`;
+
+</script>
+</body>
+</html>

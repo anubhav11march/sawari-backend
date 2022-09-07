@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--[if lt IE 10]>
+<html lang="en" class="iex"> <![endif]-->
+<!--[if (gt IE 10)|!(IE)]><!-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]-->
+<div id="head" th:insert="hnf/admin/head :: frhead"></div>
+<body class="side-menu-container">
+<div id="preloader"></div>
+<div id="header" th:insert="hnf/admin/header :: frheader"></div>
+<div class="header-base">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="title-base text-left">
+                    <h1>Menu side lateral</h1>
+                    <p>This template come with lot of innovative features and an awesome and extensive
+                        documentation.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <ol class="breadcrumb b white">
+                    <li><a th:href="@{/admin/home}">Home</a></li>
+                    <li class="active">Features</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-empty section-item">
+    <div class="container content">
+        <div class="row proporzional-row">
+            <div class="col-md-6">
+                <p>
+                    Proin augue neque, vestibulum vitae urna quis, ornare lobortis sem. Maecenas sit amet gravida neque,
+                    in mollis nulla. Aenean vel nulla at
+                    enim maximus varius vitae in tortor. Class aptent taciti sociosqu ad litora torquent per conubia
+                    nostra, per inceptos himenaeos.
+                </p>
+                <p class="block-quote quote-1">
+                    It is better to lead from behind and to put others in front,
+                    especially when you celebrate victory when nice things occur.
+                </p>
+                <p>
+                    Vulputate nobis impedit aute unde exercitation quod quidem! Hymenaeos placerat, temporibus quas
+                    incidunt, dicta proin ea quas morbi. Cursus eos, quidem. Soluta?
+                    Iste repellendus. Tenetur, natoque saepe facere odio sed. Fuga provident, exercitation dolorum minus
+                    tempor.
+                </p>
+            </div>
+            <div class="col-md-3 boxed-inverse middle-content text-center">
+                <h4>FOR CREATE AWESOME WEBSITES</h4>
+            </div>
+            <div class="col-md-3 middle-content boxed white text-center">
+                <h4>MAGNIFIC AND UNIQUE DESIGN</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer" th:insert="hnf/admin/footer :: frfooter"></div>
+</body>
+</html>

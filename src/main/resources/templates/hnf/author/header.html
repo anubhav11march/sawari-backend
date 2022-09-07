@@ -1,0 +1,46 @@
+<header class="fixed-top scroll-change" data-menu-anima="fade-in" th:fragment="frheader">
+    <div class="navbar navbar-default mega-menu-fullwidth navbar-fixed-top" role="navigation">
+        <div class="navbar-mini scroll-hide">
+            <div class="container">
+                <div class="nav navbar-nav navbar-left">
+                    <br>
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                </div>
+            </div>
+        </div>
+        <div class="navbar navbar-main">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" th:href="@{/home}">
+                        <img class="logo-default" th:src="@{/images/logo.png}" alt="logo" width="168px" src="#"/>
+                        <img class="logo-retina" th:src="@{/images/logo-retina.png}" src="#" alt="logo"/>
+                    </a>
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav lan-menu">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><i
+                                    class="fa fa fa-address-book text-l"></i><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a th:href="@{/home}" id="dashboardd">Dashboard</a></li>
+                                <li><a th:href="@{/author/get-profile}" id="profiles">Profile</a></li>
+                                <li><a th:href="@{/logout}" id="logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('dashboardd').innerText = `${i18next.t('dashboard')}`;
+        document.getElementById('profiles').innerText = `${i18next.t('profile')}`;
+        document.getElementById('logout').innerText = `${i18next.t('logout')}`;
+        //document.getElementById('orderDetails').innerText = `${i18next.t('orderDetails')}`;
+
+    </script>
+</header>

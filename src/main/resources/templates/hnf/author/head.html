@@ -1,0 +1,83 @@
+<head th:fragment="frhead">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AESH</title>
+    <meta name="description" content="Alpha Editorial Science Hub">
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" th:href="@{/HTWF/scripts/bootstrap/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/HTWF/style.css}">
+    <link rel="stylesheet" th:href="@{/HTWF/css/content-box.css}">
+    <link rel="stylesheet" th:href="@{/HTWF/scripts/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/HTWF/css/animations.css}">
+    <link rel="stylesheet" th:href="@{/HTWF/scripts/jquery.bootgrid.css}">
+    <link rel="stylesheet" th:href="@{/HTWF/css/components.css}">
+    <link rel="stylesheet" th:href="@{/skin.css}">
+    <link rel="stylesheet" th:href="@{'https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css'}"/>
+    <link rel="stylesheet" th:href="@{'https://unpkg.com/bootstrap-vue@2.4.1/dist/bootstrap-vue.css'}"/>
+    <link rel="stylesheet" th:href="@{'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'}"/>
+    <link rel="icon" th:href="@{/images/favicon.png}">
+    <script th:src="@{/HTWF/scripts/jquery.min.js}"></script>
+    <script th:src="@{/HTWF/scripts/script.js}"></script>
+    <script th:src="@{'https://unpkg.com/vue@2.6.11/dist/vue.min.js'}"></script>
+    <script th:src="@{'https://cdn.jsdelivr.net/npm/vue@2.6.0'}"></script>
+    <script th:src="@{'https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js'}"></script>
+    <script th:src="@{'https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js'}"></script>
+    <script th:src="@{'https://unpkg.com/bootstrap-vue@2.4.1/dist/bootstrap-vue.js'}"></script>
+    <script th:src="@{'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js'}"></script>
+    <script th:src="@{'https://unpkg.com/i18next@20.3.1/dist/umd/i18next.js'}"></script>
+    <script th:src="@{'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js'}"></script>
+    <script th:src="@{'https://unpkg.com/sweetalert/dist/sweetalert.min.js'}"></script>
+    <script th:src="@{/HTWF/scripts/vue/localization.js}"></script>
+    <script>
+         setLocale(`[[${session.locale}]]`);
+    </script>
+    <script>
+        $(document).ready(function () {
+            var successMessage = `[[${session.successMessage}]]`;
+            var errorMessage = `[[${session.errorMessage}]]`;
+            console.log(`[[${session.successMessage}]]`)
+            console.log(`[[${session.errorMessage}]]`)
+            if (errorMessage)
+                swal("Error!", errorMessage, "error");
+            else if (successMessage)
+                swal("Success!", successMessage, "success");
+        });
+    </script>
+    <th:block th:text="${#session.removeAttribute('successMessage')}"></th:block>
+    <th:block th:text="${#session.removeAttribute('errorMessage')}"></th:block>
+    <style>
+        .form-control {
+            border: 1px solid #cfd1d8;
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-radius: 2px;
+            background: #ffffff;
+            color: #2e323c;
+        }
+        .card {
+            background: #ffffff;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            border: 0;
+            margin-bottom: 1rem;
+        }
+        .pricing-table h3 {
+            font-weight: 600;
+            font-size: 20px; !important;
+        }
+        .pricing-table{
+            transition: all .3s;
+            border: 1px solid rgb(220, 220, 220);
+            border-radius: 2px;
+            background: #FFF;
+        }
+        .pricing-table .list-group-item {
+            text-align: center;
+            color: #717171;
+        }
+
+    </style>
+</head>
