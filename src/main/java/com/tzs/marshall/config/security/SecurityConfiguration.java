@@ -1,9 +1,6 @@
 package com.tzs.marshall.config.security;
 
-import com.tzs.marshall.config.handler.CustomAccessDeniedHandler;
-import com.tzs.marshall.config.handler.CustomAuthenticationFailureHandler;
-import com.tzs.marshall.config.handler.CustomAuthenticationSuccessHandler;
-import com.tzs.marshall.config.handler.CustomLogoutSuccessHandler;
+import com.tzs.marshall.config.handler.*;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.service.AuthorPreLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @EnableWebSecurity
@@ -52,6 +50,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Uncomment this to enable config
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .and()
                 .exceptionHandling()
@@ -66,6 +65,7 @@ public class SecurityConfiguration {
                 .and()
                 .httpBasic()
                 .and()
+                .addFilterAt(customAuthenticationFilter(http), UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 .loginPage("/login")
                 .successHandler(authenticationSuccessHandler())
@@ -77,7 +77,9 @@ public class SecurityConfiguration {
                 .logout()
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler(logoutSuccessHandler())
-                .logoutSuccessUrl("/login?logout=true");
+                .logoutSuccessUrl("/login?logout=true")
+                .and()
+                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true");
 
         //Comment this block to bypass config
        /* http
@@ -115,5 +117,14 @@ public class SecurityConfiguration {
         provider.setPasswordEncoder(bCryptPasswordEncoder);
         provider.setUserDetailsService(authorPreLoginService);
         return provider;
+    }
+
+    @Bean
+    public CustomUsernamePasswordAuthenticationFilter customAuthenticationFilter(HttpSecurity httpSecurity) throws Exception {
+        CustomUsernamePasswordAuthenticationFilter filter = new CustomUsernamePasswordAuthenticationFilter();
+        filter.setAuthenticationManager(authManager(httpSecurity));
+        filter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+        filter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        return filter;
     }
 }
