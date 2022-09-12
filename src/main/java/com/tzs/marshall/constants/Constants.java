@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.*;
 
 public interface Constants {
-    String ROLE_USER = "ROLE_AUTHOR";
+    String ROLE_USER = "ROLE_USER";
     String ROLE_ADMIN = "ROLE_ADMIN";
-    String ROLE_DRIVER = "ROLE_EDITOR";
+    String ROLE_DRIVER = "ROLE_DRIVER";
     String ROLE_PRE_EDITOR = "PRE-EDITOR";
     String TYPE_REGISTERED = "REGISTERED";
     List<String> ADMINS = Arrays.asList(ROLE_ADMIN, ROLE_DRIVER, ROLE_PRE_EDITOR);

@@ -62,7 +62,7 @@ public class PreLoginRestController {
         return userRegistrationService.registerUser(userDetails, url);
     }
 
-    @RequestMapping(value = "driver/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/driver/register", method = RequestMethod.POST)
     public ProfileDetails driverRegistration(@RequestParam Map<String, MultipartFile> allRequestParams, @RequestBody ProfileDetails profileDetails){
         profileDetails.setProfilePhoto(allRequestParams.get("driverPhoto"));
         profileDetails.setAadharBackPhoto(allRequestParams.get("aadharBackPhoto"));
