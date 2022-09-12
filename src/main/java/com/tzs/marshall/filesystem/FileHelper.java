@@ -30,7 +30,7 @@ public class FileHelper {
         fileBean.setStatus(Boolean.FALSE);
         String contentType = Objects.requireNonNull(file.getContentType());
         log.info("Validating File Format, [File Type]: {}", contentType);
-        if (DBProperties.getAESHProperty(FILE_FORMATS).contains(contentType)) {
+        if (DBProperties.properties.getProperty(FILE_FORMATS).contains(contentType)) {
             log.info("File Format accepted.");
             try {
                 int randomPin = (int) (Math.random() * 9000) + 1000;

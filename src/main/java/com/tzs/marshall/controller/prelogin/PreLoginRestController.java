@@ -168,7 +168,7 @@ public class PreLoginRestController {
 
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
     public Object getProperties(@RequestParam("property") String property) {
-        return DBProperties.properties.getProperty(property.toUpperCase());
+        return DBProperties.splitString(DBProperties.properties.getProperty(property.toUpperCase()));
     }
 
     @RequestMapping(value = "/contact-us", method = RequestMethod.POST)
