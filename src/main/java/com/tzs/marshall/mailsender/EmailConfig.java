@@ -23,8 +23,8 @@ public class EmailConfig {
     public JavaMailSender getJavaMailSender() {
         log.info("initializing JavaMailSender Bean...");
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-//        mailSender.setHost("smtp.gmail.com");
-        mailSender.setHost("smtp.hostinger.com");
+        mailSender.setHost("smtp.gmail.com");
+//        mailSender.setHost("smtp.hostinger.com");
         mailSender.setPort(465);
 
         mailSender.setUsername(DBProperties.properties.getProperty(ADMIN_EMAIL));
