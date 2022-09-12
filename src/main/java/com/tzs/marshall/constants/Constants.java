@@ -11,6 +11,7 @@ public interface Constants {
     String TYPE_REGISTERED = "REGISTERED";
     List<String> ADMINS = Arrays.asList(ROLE_ADMIN, ROLE_DRIVER, ROLE_PRE_EDITOR);
     List<String> ALLOWED_ROLES = Arrays.asList(ROLE_USER, ROLE_DRIVER, ROLE_PRE_EDITOR);
+    String SCHEMA = "marshall_service";
     Boolean isDeleted = Boolean.FALSE;
     Boolean isEnable = Boolean.TRUE;
     Map<String, Integer> ORDER_STATUS = new HashMap<>();
@@ -53,4 +54,7 @@ public interface Constants {
     String QRCODE_UPLOADER = "QRCODE_UPLOADER";
     String UPLOAD_DIR = "UPLOAD_DIRECTORY";
     String FILE_FORMATS = "ALLOWED_FILE_FORMATS";
+    String ACCOUNT_SID = "AC79a60feb6f43005ee7105255e50de90d";
+    String AUTH_TOKEN = "d0a99cda610153ac52f359029ffc1f9c";
+    String SUPPORT_MOBILE_NUMBER = "SUPPORT_MOBILE_NUMBER";
 }

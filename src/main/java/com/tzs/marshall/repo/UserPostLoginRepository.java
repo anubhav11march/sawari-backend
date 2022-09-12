@@ -5,7 +5,7 @@ import com.tzs.marshall.bean.PersistentUserDetails;
 import java.util.List;
 import java.util.Map;
 
-public interface AuthorPostLoginRepository {
+public interface UserPostLoginRepository {
 
     List<PersistentUserDetails> getUserDetailsById(Long userId);
 

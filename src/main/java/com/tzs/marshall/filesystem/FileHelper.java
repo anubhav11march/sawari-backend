@@ -25,21 +25,20 @@ import static com.tzs.marshall.constants.Constants.*;
 public class FileHelper {
     private final static Logger log = LoggerFactory.getLogger(FileHelper.class);
 
-    public FileBean uploadFileHelper(FileBean fileBean) {
+    public FileBean uploadFileHelper(MultipartFile file,  Long userId) {
+        FileBean fileBean = new FileBean();
         fileBean.setStatus(Boolean.FALSE);
-        String contentType = Objects.requireNonNull(fileBean.getFile().getContentType());
+        String contentType = Objects.requireNonNull(file.getContentType());
         log.info("Validating File Format, [File Type]: {}", contentType);
         if (DBProperties.getAESHProperty(FILE_FORMATS).contains(contentType)) {
             log.info("File Format accepted.");
-            MultipartFile file = fileBean.getFile();
             try {
                 int randomPin = (int) (Math.random() * 9000) + 1000;
                 String uuid = String.valueOf(randomPin);
-                String fileName = fileBean.getFileUserId() + uuid
-                        + fileBean.getRequestServeDate().toString().replaceAll("-", "") + "-"
+                String fileName = userId + "-" + uuid + "-"
                         + Objects.requireNonNull(file.getOriginalFilename()).trim();
                 log.info("File Name Created: {}", fileName);
-                Path path = Paths.get(DBProperties.properties.getProperty(UPLOAD_DIR) + fileBean.getFileUserId() + File.separator
+                Path path = Paths.get(DBProperties.properties.getProperty(UPLOAD_DIR) + userId + File.separator
                         + fileName.substring(fileName.indexOf(".")) + File.separator + fileName);
                 log.info("Path: {}", path.toString());
                 File contentSaveDir = new File(String.valueOf(path));
@@ -56,7 +55,6 @@ public class FileHelper {
                 log.info("File Saved to directory.");
                 fileBean.setFileName(fileName);
                 fileBean.setFileFormat(file.getContentType());
-                if (fileBean.getLanguage() == null) fileBean.setLanguage("English");
                 fileBean.setSize(file.getSize());
                 fileBean.setPath(path.toString());
                 fileBean.setStatus(Boolean.TRUE);

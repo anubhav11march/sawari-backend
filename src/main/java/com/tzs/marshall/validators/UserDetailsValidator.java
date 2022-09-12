@@ -6,7 +6,7 @@ import com.tzs.marshall.error.ApiException;
 
 import static com.tzs.marshall.constants.Constants.*;
 
-public class AuthorDetailsValidator {
+public class UserDetailsValidator {
 
     public static void validateEmail(String email) {
         if (!email.equalsIgnoreCase("") && email.matches(DBProperties.properties.getProperty(EMAIL_REGEX))) {

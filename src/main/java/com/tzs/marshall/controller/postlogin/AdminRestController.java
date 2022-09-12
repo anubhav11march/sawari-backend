@@ -7,7 +7,7 @@ import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.filesystem.FileBean;
 import com.tzs.marshall.filesystem.FileService;
-import com.tzs.marshall.service.AuthorPostLoginService;
+import com.tzs.marshall.service.UserPostLoginService;
 import com.tzs.marshall.service.admin.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class AdminRestController {
     @Autowired
     private AdminService adminService;
     @Autowired
-    private AuthorPostLoginService authorPostLoginService;
+    private UserPostLoginService userPostLoginService;
     @Autowired
     private FileService fileService;
 

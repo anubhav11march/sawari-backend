@@ -3,13 +3,11 @@ package com.tzs.marshall.service.impl;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.mailsender.EmailBean;
-import com.tzs.marshall.mailsender.EmailService;
-import com.tzs.marshall.repo.AuthorPreLoginRepository;
-import com.tzs.marshall.service.AuthorPreLoginService;
+import com.tzs.marshall.repo.UserPreLoginRepository;
+import com.tzs.marshall.service.UserPreLoginService;
 import com.tzs.marshall.token.ConfirmationToken;
 import com.tzs.marshall.token.ConfirmationTokenService;
-import com.tzs.marshall.validators.AuthorDetailsValidator;
+import com.tzs.marshall.validators.UserDetailsValidator;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.slf4j.Logger;
@@ -24,18 +22,16 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class AuthorPreLoginServiceImpl implements AuthorPreLoginService {
+public class UserPreLoginServiceImpl implements UserPreLoginService {
 
     @Autowired
-    private AuthorPreLoginRepository authorPreLoginRepository;
-    @Autowired
-    private EmailService emailService;
+    private UserPreLoginRepository userPreLoginRepository;
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoders;
 
-    private static final Logger log = LoggerFactory.getLogger(AuthorPreLoginServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserPreLoginServiceImpl.class);
 
 
     @Override
@@ -51,7 +47,7 @@ public class AuthorPreLoginServiceImpl implements AuthorPreLoginService {
         PersistentUserDetails userDetails;
         try {
             log.info("Fetching User Details from DB...");
-            Map<String, Object> validUser = authorPreLoginRepository.getValidUser(userName);
+            Map<String, Object> validUser = userPreLoginRepository.getValidUser(userName);
             List<?> userDetailsOut = (List<?>) validUser.get("validUser");
             if(userDetailsOut.size()==0){
                 throw new UsernameNotFoundException(MessageConstants.NO_USER + userName);
@@ -79,19 +75,18 @@ public class AuthorPreLoginServiceImpl implements AuthorPreLoginService {
     }
 
     @Override
-    public String handleOtpGeneration(String email) {
+    public String generateAndSaveOTP(String mobileNumber) {
         int randomPin = (int) (Math.random() * 900000) + 100000;
         String otp = String.valueOf(randomPin);
         log.info("Sending otp email...");
-        emailService.send(new EmailBean(email, "OTP Verfication", "Your 6 digits OTP to reset password: " + otp));
-        authorPreLoginRepository.saveOtp(email, otp);
-        log.info("OTP: " + otp + " sent and saved to db with mailId: " + email);
+        userPreLoginRepository.saveOtp(mobileNumber, otp);
+        log.info("OTP: " + otp + " saved to db for mobile number: " + mobileNumber);
         return otp;
     }
 
     @Override
     public String handleOtpVerification(String otp) {
-        Map<String, String> validOtpAndEmail = authorPreLoginRepository.getValidOtpAndEmail(otp);
+        Map<String, String> validOtpAndEmail = userPreLoginRepository.getValidOtpAndEmail(otp);
         log.info(validOtpAndEmail.toString());
         return null;
     }
@@ -100,9 +95,9 @@ public class AuthorPreLoginServiceImpl implements AuthorPreLoginService {
     public String resetPasswordHandler(String token, String reqType, String password) {
         ConfirmationToken confirmationToken = confirmationTokenService.getConfirmationToken(token, reqType);
         if (confirmationToken != null) {
-            AuthorDetailsValidator.validatePassword(password);
+            UserDetailsValidator.validatePassword(password);
             password = bCryptPasswordEncoders.encode(password);
-            int i = authorPreLoginRepository.updatePassword(confirmationToken.getEmail(), password);
+            int i = userPreLoginRepository.updatePassword(confirmationToken.getEmail(), password);
             if (i > 0) return "success";
         }
         return "fail";

@@ -10,4 +10,6 @@ public interface EmailService {
 
     void sendConfirmationEmail(String email, String token, String url, RequestTypeDictionary requestTypeDictionary);
 
+    void sendOTP(String mobileNumber, String otp);
+
 }

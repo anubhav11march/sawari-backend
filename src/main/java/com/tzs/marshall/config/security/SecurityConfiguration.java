@@ -2,7 +2,7 @@ package com.tzs.marshall.config.security;
 
 import com.tzs.marshall.config.handler.*;
 import com.tzs.marshall.constants.Constants;
-import com.tzs.marshall.service.AuthorPreLoginService;
+import com.tzs.marshall.service.UserPreLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 public class SecurityConfiguration {
 
     @Autowired
-    private AuthorPreLoginService authorPreLoginService;
+    private UserPreLoginService userPreLoginService;
 
     @Autowired
     private CustomAccessDeniedHandler accessDeniedHandler;
@@ -50,7 +50,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Uncomment this to enable config
         http
-                .csrf().disable()
+//                .csrf().disable()
                 .authorizeRequests()
                 .and()
                 .exceptionHandling()
@@ -115,7 +115,7 @@ public class SecurityConfiguration {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(authorPreLoginService);
+        provider.setUserDetailsService(userPreLoginService);
         return provider;
     }
 

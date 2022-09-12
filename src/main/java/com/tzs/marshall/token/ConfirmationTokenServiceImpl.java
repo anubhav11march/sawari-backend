@@ -77,10 +77,16 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
     public String tokenHandler(String email, String reqType, String url) {
         String token = generateAndSaveToken(email, reqType);
         log.info("Token generated: " + token);
-        RequestTypeDictionary requestTypeDictionary = RequestTypeDictionary.getRequestTypeDictionary(reqType);
-        log.info("Sending confirmation link to the user...");
-        emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
-        log.info(String.format("%s Request Email Send successfully.", requestTypeDictionary.getReqType()));
+        if ("OTP".equalsIgnoreCase(reqType)) {
+            log.info("Sending 6 digit OTP to the user...");
+            emailService.sendOTP(email,token);
+            log.info("6 digit OTP Send successfully.");
+        } else {
+            RequestTypeDictionary requestTypeDictionary = RequestTypeDictionary.getRequestTypeDictionary(reqType);
+            log.info("Sending confirmation link to the user...");
+            emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
+            log.info(String.format("%s Request Email Send successfully.", requestTypeDictionary.getReqType()));
+        }
         return token;
     }
 
@@ -98,7 +104,13 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     private String generateAndSaveToken(String email, String reqType) {
         log.info("Generating Random Token String...");
-        String token = UUID.randomUUID().toString();
+        String token = "";
+        if ("OTP".equalsIgnoreCase(reqType)) {
+            int randomPin = (int) (Math.random() * 900000) + 100000;
+            token = String.valueOf(randomPin);
+        } else {
+            token = UUID.randomUUID().toString();
+        }
 
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,

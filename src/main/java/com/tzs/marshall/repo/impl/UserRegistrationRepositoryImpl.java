@@ -1,11 +1,12 @@
 package com.tzs.marshall.repo.impl;
 
+import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.bean.NewsLetterEmailSubs;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.repo.AuthorRegistrationRepository;
+import com.tzs.marshall.repo.UserRegistrationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,16 +16,18 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class AuthorRegistrationRepositoryImpl implements AuthorRegistrationRepository {
+public class UserRegistrationRepositoryImpl implements UserRegistrationRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private static final Logger log = LoggerFactory.getLogger(AuthorRegistrationRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserRegistrationRepositoryImpl.class);
 
-    public AuthorRegistrationRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    public UserRegistrationRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -89,6 +92,7 @@ public class AuthorRegistrationRepositoryImpl implements AuthorRegistrationRepos
             return new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                     .withTableName("user_registration")
                     .usingColumns("first_name", "middle_name", "last_name", "user_name", "mobile", "password", "subs_id", "is_enable")
+                    .usingGeneratedKeyColumns("user_id")
                     .execute(mapSqlParameterSource);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -112,9 +116,13 @@ public class AuthorRegistrationRepositoryImpl implements AuthorRegistrationRepos
     }
 
     @Override
-    public int enableUser(String email) {
+    public int enableUser(String email, String reqType) {
         String query = "UPDATE marshall_service.user_registration SET is_enable=:is_enable " +
                 "WHERE subs_id=(SELECT subs_id FROM marshall_service.subscribe_by_email WHERE email = :email)";
+        if ("OTP".equalsIgnoreCase(reqType)) {
+            query = "UPDATE marshall_service.user_registration SET is_enable=:is_enable " +
+                    "WHERE mobile= :email";
+        }
         try {
             return jdbcTemplate.update(query, new MapSqlParameterSource().addValue("is_enable", Constants.isEnable).addValue("email", email));
         } catch (Exception e) {
@@ -124,14 +132,54 @@ public class AuthorRegistrationRepositoryImpl implements AuthorRegistrationRepos
     }
 
     @Override
-    public void rollbackRegistration(PersistentUserDetails authorDetails) {
+    public void rollbackRegistration(PersistentUserDetails userDetails) {
         String userBridge = "DELETE FROM marshall_service.user_role_type_bridge WHERE user_id=:userId";
         String userRegistration = "DELETE FROM marshall_service.user_registration WHERE user_id=:userId";
+        String profileDetails = "DELETE FROM marshall_service.profile_contents WHERE content_user_id=:userId";
         try {
-            authorDetails = findExistingUsers(authorDetails).stream().findAny().get();
-            log.info("UserId found: " + authorDetails.getUserId());
-            jdbcTemplate.update(userBridge, new MapSqlParameterSource("userId", authorDetails.getUserId()));
-            jdbcTemplate.update(userRegistration, new MapSqlParameterSource("userId", authorDetails.getUserId()));
+            userDetails = findExistingUsers(userDetails).stream().findAny().get();
+            log.info("UserId found: " + userDetails.getUserId());
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("userId", userDetails.getUserId());
+            jdbcTemplate.update(userBridge, mapSqlParameterSource);
+            jdbcTemplate.update(userRegistration, mapSqlParameterSource);
+            jdbcTemplate.update(profileDetails, mapSqlParameterSource);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public int saveDriverImagesDetails(ProfileDetails profileDetails, String roleName) {
+        try {
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource
+                    .addValue("contentUserId", profileDetails.getUserId())
+                    .addValue("profilePhotoName", profileDetails.getProfilePhotoName())
+                    .addValue("profilePhotoPath", profileDetails.getProfilePhotoPath())
+                    .addValue("profilePhotoSize", profileDetails.getProfilePhotoSize())
+                    .addValue("aadharBackPhotoName", profileDetails.getAadharBackPhotoName())
+                    .addValue("aadharBackPhotoPath", profileDetails.getAadharBackPhotoPath())
+                    .addValue("aadharBackPhotoSize", profileDetails.getAadharBackPhotoSize())
+                    .addValue("aadharFrontPhotoName", profileDetails.getAadharFrontPhotoName())
+                    .addValue("aadharFrontPhotoPath", profileDetails.getAadharFrontPhotoPath())
+                    .addValue("aadharFrontPhotoSize", profileDetails.getAadharFrontPhotoSize())
+                    .addValue("rickshawPhotoName", profileDetails.getRickshawPhotoName())
+                    .addValue("rickshawPhotoPath", profileDetails.getRickshawPhotoPath())
+                    .addValue("rickshawPhotoSize", profileDetails.getRickshawPhotoSize())
+                    .addValue("uploadDate", Timestamp.valueOf(LocalDateTime.now()))
+                    .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
+                    .addValue("isDeleted", Constants.isDeleted);
+
+            return new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
+                    .withCatalogName(Constants.SCHEMA)
+                    .withTableName("profile_contents")
+                    .usingColumns("content_user_id", "profilePhotoName", "profilePhotoPath", "profilePhotoSize",
+                            "aadharBackPhotoName", "aadharBackPhotoPath", "aadharBackPhotoSize",
+                            "aadharFrontPhotoName", "aadharFrontPhotoPath", "aadharFrontPhotoSize",
+                            "rickshawPhotoName", "rickshawPhotoPath", "rickshawPhotoSize",
+                            "upload_date", "modify_date", "is_deleted")
+                    .execute(mapSqlParameterSource);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);

@@ -4,7 +4,7 @@ import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.repo.AuthorPreLoginRepository;
+import com.tzs.marshall.repo.UserPreLoginRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -22,12 +22,12 @@ import java.util.Map;
 import java.util.Objects;
 
 @Repository
-public class AuthorPreLoginRepositoryImpl implements AuthorPreLoginRepository {
+public class UserPreLoginRepositoryImpl implements UserPreLoginRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private static final Logger log = LoggerFactory.getLogger(AuthorPreLoginRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserPreLoginRepositoryImpl.class);
 
-    public AuthorPreLoginRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    public UserPreLoginRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

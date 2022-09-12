@@ -1,5 +1,7 @@
 package com.tzs.marshall.mailsender;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
@@ -66,6 +68,19 @@ public class EmailServiceImpl implements EmailService {
         EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
         emailBean.setFrom(DBProperties.properties.getProperty(SUPPORT_EMAIL));
         send(emailBean);
+    }
+
+    @Override
+    public void sendOTP(String mobileNumber, String otp) {
+            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+            Message message = Message.creator(
+                            new com.twilio.type.PhoneNumber(mobileNumber), //TO
+                            new com.twilio.type.PhoneNumber(DBProperties.properties.getProperty(SUPPORT_MOBILE_NUMBER, "+19706609717")),//FROM
+                            otp)
+                    .create();
+
+            log.info("OTP sent to mobile: " + message.getStatus());
+
     }
 
     @Override

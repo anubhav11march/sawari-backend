@@ -5,7 +5,7 @@ import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.filesystem.FileHelper;
 import com.tzs.marshall.service.AESHSubscriptionService;
-import com.tzs.marshall.service.AuthorPostLoginService;
+import com.tzs.marshall.service.UserPostLoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.List;
 public class PostLoginRestController {
 
     @Autowired
-    private AuthorPostLoginService authorPostLoginService;
+    private UserPostLoginService userPostLoginService;
     @Autowired
     private AESHSubscriptionService aeshSubscriptionService;
     @Autowired
@@ -38,7 +38,7 @@ public class PostLoginRestController {
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     PersistentUserDetails getProfile(@AuthenticationPrincipal PersistentUserDetails authorDetails) {
-        authorDetails = authorPostLoginService.handleFetchedFullAuthorDetails(authorDetails);
+        authorDetails = userPostLoginService.handleFetchedFullAuthorDetails(authorDetails);
         log.info("Updating complete profile details in Security context...{}", authorDetails);
         Authentication authentication = new PreAuthenticatedAuthenticationToken(authorDetails, authorDetails.getPassword(), authorDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -47,7 +47,7 @@ public class PostLoginRestController {
 
     @RequestMapping(value = "/profile/update", method = RequestMethod.PUT)
     List<PersistentUserDetails> userRegistration(@RequestBody PersistentUserDetails authorDetails) {
-        return authorPostLoginService.updateAuthorDetails(authorDetails);
+        return userPostLoginService.updateAuthorDetails(authorDetails);
     }
 
     @RequestMapping(value = "/plans", method = RequestMethod.GET)
