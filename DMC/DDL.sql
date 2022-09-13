@@ -31,3 +31,28 @@ CHANGE COLUMN `content_id` `content_id` BIGINT NOT NULL AUTO_INCREMENT ;
 
 ALTER TABLE `marshall_service`.`confirmation_token`
 ADD COLUMN `user_type` VARCHAR(45) NULL AFTER `req_type`;
+
+
+USE `marshall_service`;
+DROP procedure IF EXISTS `spUserLogin`;
+
+USE `marshall_service`;
+DROP procedure IF EXISTS `marshall_service`.`spUserLogin`;
+;
+
+DELIMITER $$
+USE `marshall_service`$$
+CREATE DEFINER=`admin`@`localhost` PROCEDURE `spUserLogin`(
+IN userName varchar(255)
+)
+BEGIN
+Select u.user_id,u.user_name, u.first_name, u.middle_name, u.last_name, s.email, u.phone, u.mobile, u.password, u.is_deleted, u.is_enable, r.role_name, t.type_name
+from ((user_role_type_bridge b inner join role r on b.user_role_id=r.role_id) inner join user_type t on b.user_type_id=t.type_id) inner join
+(user_registration u inner join subscribe_by_email s on u.subs_id=s.subs_id)
+on b.user_id=u.user_id
+where (u.user_name=userName or s.email=userName or u.mobile=userName) and u.is_deleted=false and u.is_enable=true;
+END$$
+
+DELIMITER ;
+;
+
