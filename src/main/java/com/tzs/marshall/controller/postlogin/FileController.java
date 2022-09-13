@@ -44,7 +44,7 @@ public class FileController {
             fileBean.setFile(file);
             fileBean.setFileStatus("Uploaded");
             fileBean.setFileUserId(authorDetails.getUserId());
-            if (Constants.ROLE_USER.equalsIgnoreCase(authorDetails.getRoleName())) {
+            if (Constants.USER.equalsIgnoreCase(authorDetails.getRoleName())) {
                 if (fileBean.getRequestServeDate().before(Timestamp.valueOf(LocalDateTime.now().plusDays(5L))))
                     throw new ApiException(MessageConstants.REQUEST_SERVE_DATE_ERR);
             }
@@ -71,7 +71,7 @@ public class FileController {
                                @AuthenticationPrincipal PersistentUserDetails authorDetails) {
         if (file != null)
             fileBean.setFile(file);
-        if (Constants.ROLE_USER.equalsIgnoreCase(authorDetails.getRoleName())) {
+        if (Constants.USER.equalsIgnoreCase(authorDetails.getRoleName())) {
             if (fileBean.getRequestServeDate().before(Timestamp.valueOf(LocalDateTime.now().plusDays(5l))))
                 throw new ApiException(MessageConstants.REQUEST_SERVE_DATE_ERR);
         }
@@ -115,7 +115,7 @@ public class FileController {
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public ResponseEntity<Resource> downloadFile(@RequestParam Map<String, String> allRequestParams,
                                                  @AuthenticationPrincipal PersistentUserDetails authorDetails) {
-        String uploadBy = Constants.ROLE_USER;
+        String uploadBy = Constants.USER;
         if (Constants.ADMINS.contains(authorDetails.getRoleName()) && allRequestParams.get("uploadBy") != null)
             uploadBy = allRequestParams.get("uploadBy");
         String isReport = "N";

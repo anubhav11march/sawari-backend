@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.*;
 
 public interface Constants {
-    String ROLE_USER = "ROLE_USER";
-    String ROLE_ADMIN = "ROLE_ADMIN";
-    String ROLE_DRIVER = "ROLE_DRIVER";
+    String USER = "USER";
+    String ADMIN = "ADMIN";
+    String DRIVER = "DRIVER";
     String ROLE_PRE_EDITOR = "PRE-EDITOR";
     String TYPE_REGISTERED = "REGISTERED";
-    List<String> ADMINS = Arrays.asList(ROLE_ADMIN, ROLE_DRIVER, ROLE_PRE_EDITOR);
-    List<String> ALLOWED_ROLES = Arrays.asList(ROLE_USER, ROLE_DRIVER, ROLE_PRE_EDITOR);
+    List<String> ADMINS = Arrays.asList(ADMIN, DRIVER, ROLE_PRE_EDITOR);
+    List<String> ALLOWED_ROLES = Arrays.asList(USER, DRIVER, ROLE_PRE_EDITOR);
     String SCHEMA = "marshall_service";
     Boolean isDeleted = Boolean.FALSE;
     Boolean isEnable = Boolean.TRUE;

@@ -29,3 +29,5 @@ ALTER TABLE `marshall_service`.`profile_contents`
 ALTER TABLE `marshall_service`.`profile_contents`
 CHANGE COLUMN `content_id` `content_id` BIGINT NOT NULL AUTO_INCREMENT ;
 
+ALTER TABLE `marshall_service`.`confirmation_token`
+ADD COLUMN `user_type` VARCHAR(45) NULL AFTER `req_type`;

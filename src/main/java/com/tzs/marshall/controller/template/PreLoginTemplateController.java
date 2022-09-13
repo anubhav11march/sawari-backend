@@ -41,9 +41,9 @@ public class PreLoginTemplateController {
     private String getHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
-            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(Constants.ROLE_ADMIN)))
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(Constants.ADMIN)))
                 return "redirect:/admin/home";
-            else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(Constants.ROLE_DRIVER))
+            else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(Constants.DRIVER))
                     || authentication.getAuthorities().contains(new SimpleGrantedAuthority(Constants.ROLE_PRE_EDITOR)))
                 return "redirect:/editor/home";
             else
@@ -83,6 +83,11 @@ public class PreLoginTemplateController {
     @RequestMapping(value = "/init/resend-token", method = RequestMethod.GET)
     public String resetToken() {
         return "pages/resendToken";
+    }
+
+    @RequestMapping(value = "/init/otp-verify", method = RequestMethod.GET)
+    public String verifyOTP() {
+        return "pages/otpVerify";
     }
 
     @RequestMapping(value = "/init/forgot-password", method = RequestMethod.GET)

@@ -8,7 +8,8 @@
 <body>
 <div id="preloader"></div>
 <header></header>
-<form th:action="@{/init/resend-token(token=${#request.getParameter('token')},reqType=${#request.getParameter('reqType')})}" method="post">
+<!--<form th:action="@{/init/resend-token(token=${#request.getParameter('token')},reqType=${#request.getParameter('reqType')})}" method="post">-->
+<form th:action="@{/init/resend-token(token='160135',reqType='enableAccount')}" method="post">
     <div class="section-empty">
         <div class="container content box-middle-container full-screen-size" data-sub-height="80">
             <div class="row">

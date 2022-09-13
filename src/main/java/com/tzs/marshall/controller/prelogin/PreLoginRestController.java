@@ -1,9 +1,9 @@
 package com.tzs.marshall.controller.prelogin;
 
 import com.tzs.marshall.bean.DBProperties;
-import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.bean.NewsLetterEmailSubs;
 import com.tzs.marshall.bean.PersistentUserDetails;
+import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
@@ -12,25 +12,20 @@ import com.tzs.marshall.mailsender.EmailBean;
 import com.tzs.marshall.mailsender.EmailService;
 import com.tzs.marshall.service.UserPreLoginService;
 import com.tzs.marshall.service.UserRegistrationService;
-import com.tzs.marshall.token.ConfirmationToken;
 import com.tzs.marshall.token.ConfirmationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.net.http.HttpResponse;
 import java.util.Map;
 
 import static com.tzs.marshall.constants.Constants.*;
@@ -57,7 +52,7 @@ public class PreLoginRestController {
         log.info("Registering new user with details as: " + userDetails);
         String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 //        String url = String.valueOf(request.getRequestURL().replace(request.getRequestURL().toString().indexOf(String.valueOf(request.getServerPort())) + (String.valueOf(request.getServerPort()).length()), request.getRequestURL().toString().length(), ""));
-        userDetails.setRoleName(ROLE_USER);
+        userDetails.setRoleName(USER);
         userDetails.setTypeName(Constants.TYPE_REGISTERED);
         return userRegistrationService.registerUser(userDetails, url);
     }
@@ -74,15 +69,10 @@ public class PreLoginRestController {
 
     @RequestMapping(value = "/enable-account", method = { RequestMethod.GET, RequestMethod.POST })
     public ResponseEntity<String> enableAccount(@RequestParam Map<String, String> allRequestParams,
-                                                @RequestBody(required = false) String otp, HttpSession session) {
+                                                HttpSession session) {
         log.info("Confirming Token...");
         String reqType = allRequestParams.get("reqType");
-        String token;
-        if ("OTP".equalsIgnoreCase(reqType)) {
-            token = otp;
-        } else {
-            token = allRequestParams.get("token");
-        }
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
 
         log.info("Token: " + token + " & reqType: " + reqType);
         ResponseEntity<String> body = new ResponseEntity<String>("redirect:/login", HttpStatus.OK);
@@ -92,13 +82,13 @@ public class PreLoginRestController {
                 session.setAttribute("successMessage", MessageConstants.ACCOUNT_VERIFIED);
                 body = ResponseEntity
                         .status(HttpStatus.OK)
-                        .body("redirect:/login");
+                        .body("Account Enabled");
             }
         } catch (Exception e) {
             session.setAttribute("errorMessage", e.getMessage());
             body = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("redirect:/init/resend-token?token=" + token + "&reqType=" + reqType);
+                    .body(e.getMessage());
         }
         return body;
     }
@@ -117,13 +107,13 @@ public class PreLoginRestController {
             session.setAttribute("successMessage", MessageConstants.TOKEN_SENT);
             body = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("redirect:/login");
+                    .body("Token Sent");
         } catch (Exception e) {
             log.error(e.getMessage());
             session.setAttribute("errorMessage", e.getMessage());
             body = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("redirect:/init/resend-token?token=" + token + "&reqType=" + reqType);
+                    .body(e.getMessage());
         }
         return body;
     }
@@ -134,11 +124,11 @@ public class PreLoginRestController {
         log.info("fetching user email...");
         String token;
         try {
-            PersistentUserDetails PersistentUserDetails = userPreLoginService.handleFetchedValidUser(newsLetterEmailSubs.getEmail());
+            PersistentUserDetails userDetails = userPreLoginService.handleFetchedValidUser(newsLetterEmailSubs.getEmail());
             log.info("user found!");
-            log.info("Email: " + PersistentUserDetails.getEmail());
+            log.info("Email: " + userDetails.getEmail());
             String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            token = confirmationTokenService.tokenHandler(newsLetterEmailSubs.getEmail(), RequestTypeDictionary.PASSWORD.getReqType(), url);
+            token = confirmationTokenService.tokenHandler(newsLetterEmailSubs.getEmail(), RequestTypeDictionary.PASSWORD.getReqType(), userDetails.getRoleName(), url);
         } catch (Exception e) {
             throw new ApiException(e.getMessage());
         }

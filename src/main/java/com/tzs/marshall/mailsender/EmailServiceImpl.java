@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public void sendConfirmationEmail(String email, String token, String url, RequestTypeDictionary requestTypeDictionary) {
-        log.info(String.format("Preparing email to send..."));
+        log.info("Preparing email to send...");
         log.info(String.format("URL: %s, Dictionary: %s", url, requestTypeDictionary));
         String msgBody = buildEmail(requestTypeDictionary, token, url);
         EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
@@ -71,7 +71,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendOTP(String mobileNumber, String otp) {
+    public void sendOTPToMobile(String mobileNumber, String otp) {
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
             Message message = Message.creator(
                             new com.twilio.type.PhoneNumber(mobileNumber), //TO
@@ -81,6 +81,15 @@ public class EmailServiceImpl implements EmailService {
 
             log.info("OTP sent to mobile: " + message.getStatus());
 
+    }
+
+    @Override
+    public void sendOTPToEmail(String email, String otp, RequestTypeDictionary requestTypeDictionary) {
+        log.info("Preparing email to send...");
+        String msgBody = "Your 6 digit OTP is: " + otp;
+        EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
+        emailBean.setFrom(DBProperties.properties.getProperty(SUPPORT_EMAIL));
+        send(emailBean);
     }
 
     @Override

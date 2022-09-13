@@ -103,7 +103,7 @@ public class PaymentRestController {
     @RequestMapping(value = "/payment/update", method = RequestMethod.POST)
     public ModelAndView updateOrderPayment(@ModelAttribute TransactionDetail transactionDetail, @AuthenticationPrincipal PersistentUserDetails authorDetails,
                                            HttpSession session) {
-        if (Constants.ROLE_USER.equals(authorDetails.getRoleName()))
+        if (Constants.USER.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.AUTHOR_STATUS_ERR);
         log.info("Updating Payment Status...");
         try {
@@ -158,7 +158,7 @@ public class PaymentRestController {
     @RequestMapping(value = "/qrcode/upload", method = RequestMethod.POST)
     public ModelAndView uploadQRCode(@RequestParam("name") String qrCodeName, @RequestParam("qrCode") MultipartFile qrCode,
                                      @AuthenticationPrincipal PersistentUserDetails authorDetails, HttpSession session) {
-        if (Constants.ROLE_USER.equals(authorDetails.getRoleName()))
+        if (Constants.USER.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         adminService.checkAuthorizedAdmin(authorDetails.getUserId());
         try {
@@ -181,7 +181,7 @@ public class PaymentRestController {
     @RequestMapping(value = "/qrcode/update", method = RequestMethod.POST)
     public ModelAndView updateQRCode(@RequestParam("name") String qrCodeName, @RequestParam("qrCode") MultipartFile qrCode,
                                      @AuthenticationPrincipal PersistentUserDetails authorDetails, HttpSession session) {
-        if (Constants.ROLE_USER.equals(authorDetails.getRoleName()))
+        if (Constants.USER.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         adminService.checkAuthorizedAdmin(authorDetails.getUserId());
         try {

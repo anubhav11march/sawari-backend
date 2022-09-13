@@ -69,7 +69,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         log.info("Generating unique token...");
         try {
-            confirmationTokenService.tokenHandler(userDetails.getEmail(), RequestTypeDictionary.ACCOUNT.getReqType(), url);
+            confirmationTokenService.tokenHandler(userDetails.getEmail(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), url);
         } catch (Exception e) {
             log.warn(String.format("Unable to send mail, Rolling back the user details from db for [%s]", userDetails));
             userRegistrationRepository.rollbackRegistration(userDetails);
@@ -97,7 +97,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             userRegistrationRepository.insertIntoUserBridgeTable(userDetails.getUsername(), userDetails.getRoleName(), userDetails.getTypeName());
             log.info("User Record Inserted.\n" + userDetails);
             log.info("Generating unique token...");
-            confirmationTokenService.tokenHandler(userDetails.getMobile(), "OTP", null);
+            confirmationTokenService.tokenHandler(userDetails.getMobile(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), null);
         } catch (Exception e) {
             log.warn(String.format("Unable to save user details, Rolling back the user details from db for [%s]", userDetails));
             userRegistrationRepository.rollbackRegistration(userDetails);
