@@ -154,7 +154,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             String email = confirmationToken.getEmail();
             userRegistrationRepository.enableUser(email, reqType);
             log.info("User: " + email + " is now enable.");
-            return "success";
+            return confirmationToken.getToken();
         }
         return "fail";
     }

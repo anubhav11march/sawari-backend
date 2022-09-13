@@ -87,7 +87,7 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
             mapSqlParameterSource.addValue("mobile", authorDetails.getMobile());
             mapSqlParameterSource.addValue("password", authorDetails.getPassword());
             mapSqlParameterSource.addValue("subsId", subsId);
-            mapSqlParameterSource.addValue("is_enable", Constants.isEnable);
+            mapSqlParameterSource.addValue("is_enable", !Constants.isEnable);
 
             return new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                     .withTableName("user_registration")
@@ -118,11 +118,8 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
     @Override
     public int enableUser(String email, String reqType) {
         String query = "UPDATE marshall_service.user_registration SET is_enable=:is_enable " +
-                "WHERE subs_id=(SELECT subs_id FROM marshall_service.subscribe_by_email WHERE email = :email)";
-        if ("OTP".equalsIgnoreCase(reqType)) {
-            query = "UPDATE marshall_service.user_registration SET is_enable=:is_enable " +
-                    "WHERE mobile= :email";
-        }
+                "WHERE subs_id=(SELECT subs_id FROM marshall_service.subscribe_by_email WHERE email = :email)" +
+                    " OR mobile= :email";
         try {
             return jdbcTemplate.update(query, new MapSqlParameterSource().addValue("is_enable", Constants.isEnable).addValue("email", email));
         } catch (Exception e) {

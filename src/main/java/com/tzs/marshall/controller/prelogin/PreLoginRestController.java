@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 import static com.tzs.marshall.constants.Constants.*;
+import static com.tzs.marshall.constants.MessageConstants.*;
 
 
 @RestController
@@ -67,27 +68,35 @@ public class PreLoginRestController {
 
     }
 
-    @RequestMapping(value = "/enable-account", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/otp-verify", method = { RequestMethod.GET, RequestMethod.POST })
     public ResponseEntity<String> enableAccount(@RequestParam Map<String, String> allRequestParams,
                                                 HttpSession session) {
         log.info("Confirming Token...");
         String reqType = allRequestParams.get("reqType");
         String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
-
+        String password = allRequestParams.get("password");
         log.info("Token: " + token + " & reqType: " + reqType);
-        ResponseEntity<String> body = new ResponseEntity<String>("redirect:/login", HttpStatus.OK);
+        ResponseEntity<String> body = new ResponseEntity<>("redirect:/login", HttpStatus.OK);
+        String message;
         try {
-            String flag = userRegistrationService.enableAccountTokenHandler(token, reqType);
-            if (flag.equalsIgnoreCase("success")) {
-                session.setAttribute("successMessage", MessageConstants.ACCOUNT_VERIFIED);
+            String confirmedToken;
+            if ("enableAccount".equalsIgnoreCase(reqType)) {
+                confirmedToken = userRegistrationService.enableAccountTokenHandler(token, reqType);
+                message = ACCOUNT_VERIFIED;
+            } else {
+                confirmedToken =confirmationTokenService.confirmToken(token, reqType).getToken();
+                message = TOKEN_VERIFIED;
+            }
+            if (confirmedToken.equalsIgnoreCase("success")) {
+                session.setAttribute("successMessage", message);
                 body = ResponseEntity
                         .status(HttpStatus.OK)
-                        .body("Account Enabled");
+                        .body(confirmedToken);
             }
         } catch (Exception e) {
             session.setAttribute("errorMessage", e.getMessage());
             body = ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
         return body;
@@ -96,7 +105,7 @@ public class PreLoginRestController {
     @RequestMapping(value = "/resend-token", method = RequestMethod.POST)
     public ResponseEntity<String> resendValidationToken(@RequestParam Map<String, String> allRequestParams, HttpServletRequest request, HttpSession session) {
         log.info("Resending Token...");
-        String token = allRequestParams.get("token");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
         String reqType = allRequestParams.get("reqType");
         log.info("Token: " + token + " & reqType: " + reqType);
         ResponseEntity<String> body = new ResponseEntity<String>("redirect:/login", HttpStatus.OK);
@@ -107,7 +116,7 @@ public class PreLoginRestController {
             session.setAttribute("successMessage", MessageConstants.TOKEN_SENT);
             body = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("Token Sent");
+                    .body(token);
         } catch (Exception e) {
             log.error(e.getMessage());
             session.setAttribute("errorMessage", e.getMessage());
@@ -139,7 +148,7 @@ public class PreLoginRestController {
     String resetPassword(@RequestParam Map<String, String> allRequestParams,
                          @RequestBody PersistentUserDetails PersistentUserDetails, HttpSession session) {
         log.info("Confirming Token...");
-        String token = allRequestParams.get("token");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
         String reqType = allRequestParams.get("reqType");
         String password = PersistentUserDetails.getPassword();
         log.info("Token: " + token + " & reqType: " + reqType);
