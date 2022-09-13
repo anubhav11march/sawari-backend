@@ -136,8 +136,9 @@ public class PreLoginRestController {
             PersistentUserDetails userDetails = userPreLoginService.handleFetchedValidUser(newsLetterEmailSubs.getEmail());
             log.info("user found!");
             log.info("Email: " + userDetails.getEmail());
+            String contact = userDetails.getEmail() != null ? userDetails.getEmail() : newsLetterEmailSubs.getEmail();
             String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            token = confirmationTokenService.tokenHandler(newsLetterEmailSubs.getEmail(), RequestTypeDictionary.PASSWORD.getReqType(), userDetails.getRoleName(), url);
+            token = confirmationTokenService.tokenHandler(contact, RequestTypeDictionary.PASSWORD.getReqType(), userDetails.getRoleName(), url);
         } catch (Exception e) {
             throw new ApiException(e.getMessage());
         }
