@@ -62,9 +62,14 @@ public class PreLoginRestController {
     public ProfileDetails driverRegistration(@RequestParam Map<String, String> allRequestParams, @ModelAttribute ProfileDetails profileDetails){
         String name = allRequestParams.get("name");
         profileDetails.setFirstName(name.substring(0, name.indexOf(" ")));
-        profileDetails.setLastName(name.substring(name.indexOf(" ")+1));
+        try {
+            profileDetails.setLastName(name.substring(name.indexOf(" ")+1));
+        } catch (IndexOutOfBoundsException e) {
+            log.warn("No last name present.");
+        }
         profileDetails.setPassword(allRequestParams.get("password"));
         profileDetails.setMobile(allRequestParams.get("mobile"));
+        profileDetails.setUserName(allRequestParams.get("username"));
         return userRegistrationService.registerDriver(profileDetails);
 
     }
