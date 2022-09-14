@@ -59,7 +59,7 @@ public class PreLoginRestController {
     }
 
     @RequestMapping(value = "/driver/register", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public PersistentUserDetails driverRegistration(@RequestParam Map<String, String> allRequestParams, @ModelAttribute ProfileDetails profileDetails){
+    public ResponseEntity<Boolean> driverRegistration(@RequestParam Map<String, String> allRequestParams, @ModelAttribute ProfileDetails profileDetails){
         String name = allRequestParams.get("name");
         profileDetails.setFirstName(name.substring(0, name.indexOf(" ")));
         try {
@@ -72,9 +72,11 @@ public class PreLoginRestController {
         profileDetails.setUserName(allRequestParams.get("username"));
         profileDetails.setRoleName(DRIVER);
         profileDetails.setTypeName(Constants.TYPE_REGISTERED);
-        PersistentUserDetails driverDetails = userRegistrationService.registerDriver(profileDetails);
-        log.info("Registered Driver's Details: " + driverDetails);
-        return driverDetails;
+        profileDetails = userRegistrationService.registerDriver(profileDetails);
+        log.info("Registered Driver's Details: " + profileDetails);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(profileDetails.isEnabled());
     }
 
     @RequestMapping(value = "/otp-verify", method = RequestMethod.POST)
