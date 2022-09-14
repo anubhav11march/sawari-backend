@@ -74,7 +74,8 @@ public class EmailServiceImpl implements EmailService {
     public void sendOTPToMobile(String mobileNumber, String otp) {
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
             Message message = Message.creator(
-                            new com.twilio.type.PhoneNumber(mobileNumber), //TO
+//                            new com.twilio.type.PhoneNumber(mobileNumber), //TO
+                            new com.twilio.type.PhoneNumber("+918826424940"), //TO
                             new com.twilio.type.PhoneNumber(DBProperties.properties.getProperty(SUPPORT_MOBILE_NUMBER, "+19706609717")),//FROM
                             otp)
                     .create();
