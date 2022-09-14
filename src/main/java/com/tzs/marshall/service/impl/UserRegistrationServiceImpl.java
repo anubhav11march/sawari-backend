@@ -47,13 +47,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
 
-        //find id of email to put in registration table subs_id then Insert into subscribe_by_email(email) values(?)
-        log.info("Check if user has subscribed by email only.");
-        List<NewsLetterEmailSubs> newsLetterEmailSubs = userRegistrationRepository.findSubsIdByEmail(userDetails.getEmail());
-        if (newsLetterEmailSubs.size() == 0) {
-            log.info("Saving User's Email to db.");
-            newsLetterEmailSubs = userRegistrationRepository.saveNewsLetterSubsEmail(userDetails.getEmail());
-        }
+        List<NewsLetterEmailSubs> newsLetterEmailSubs = checkAndSaveEmail(userDetails);
 
         //pass the user data to repo for saving
         try {
@@ -79,6 +73,17 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         return userDetails;
     }
 
+    private List<NewsLetterEmailSubs> checkAndSaveEmail(PersistentUserDetails userDetails) {
+        //find id of email to put in registration table subs_id then Insert into subscribe_by_email(email) values(?)
+        log.info("Check if user has subscribed by email only.");
+        List<NewsLetterEmailSubs> newsLetterEmailSubs = userRegistrationRepository.findSubsIdByEmail(userDetails.getEmail());
+        if (newsLetterEmailSubs.size() == 0) {
+            log.info("Saving User's Email to db.");
+            newsLetterEmailSubs = userRegistrationRepository.saveNewsLetterSubsEmail(userDetails.getEmail());
+        }
+        return newsLetterEmailSubs;
+    }
+
     @Override
     public ProfileDetails registerDriver(ProfileDetails userDetails) {
         UserDetailsValidator.validatePassword(userDetails.getPassword());
@@ -86,11 +91,17 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         checkExistingUsers(userDetails);
 
         userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
+        //temp sol
+        userDetails.setEmail(userDetails.getMobile());
+        List<NewsLetterEmailSubs> newsLetterEmailSubs = checkAndSaveEmail(userDetails);
+
         PersistentUserDetails tempUserDetails = new PersistentUserDetails(null, userDetails.getEmail(), userDetails.getUserName(), userDetails.getMobile());
         //pass the user data to repo for saving
         try {
             log.info("Saving User's details to db.");
-            userRegistrationRepository.saveUserEssentialDetails(userDetails, null);
+            //temp solution
+            userRegistrationRepository.saveUserEssentialDetails(userDetails, newsLetterEmailSubs.stream().findFirst().get().getSubsId());
+
             Long userId = userRegistrationRepository.findExistingUsers(tempUserDetails).stream().findFirst().get().getUserId();
             userDetails.setUserId(userId);
             fetchFilesInfo(userDetails);
