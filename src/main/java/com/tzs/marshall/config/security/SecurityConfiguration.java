@@ -50,7 +50,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Uncomment this to enable config
         http
-//                .csrf().disable()
+                .csrf().disable()
                 .authorizeRequests()
                 .and()
                 .exceptionHandling()
@@ -78,8 +78,8 @@ public class SecurityConfiguration {
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler(logoutSuccessHandler())
                 .logoutSuccessUrl("/login?logout=true")
-                .and()
-                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true");
+                /*.and()
+                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true")*/;
 
         //Comment this block to bypass config
        /* http

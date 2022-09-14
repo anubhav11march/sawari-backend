@@ -70,3 +70,34 @@ DROP FOREIGN KEY `content_user_id`;
 ALTER TABLE `marshall_service`.`profile_contents`
 DROP INDEX `content_user_id_idx` ;
 
+
+USE `marshall_service`;
+DROP procedure IF EXISTS `spUserRoleTypeBridge`;
+
+USE `marshall_service`;
+DROP procedure IF EXISTS `marshall_service`.`spUserRoleTypeBridge`;
+
+DELIMITER $$
+USE `marshall_service`$$
+CREATE DEFINER=`admin`@`localhost` PROCEDURE `spUserRoleTypeBridge`(
+IN userName varchar(50),
+IN userRoleName varchar(25),
+IN userTypeName varchar(25)
+)
+BEGIN
+Declare userRoleId int;
+Declare userTypeId int;
+Declare userId int;
+
+Select role_id into userRoleId from role where role_name=userRoleName;
+Select type_id into userTypeId from user_type where type_name=userTypeName;
+
+insert into user_role_type_bridge(user_id,user_role_id,user_type_id)
+Select distinct user_id, role_id,type_id from (user_registration inner join (role inner join user_type))
+ where ((role_id=userRoleId and type_id=userTypeId) and user_id=(Select user_id from user_registration where user_name=userName or mobile=userName));
+END$$
+
+DELIMITER ;
+
+
+

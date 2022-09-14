@@ -38,8 +38,7 @@ public class FileHelper {
                 String fileName = userId + "-" + uuid + "-"
                         + Objects.requireNonNull(file.getOriginalFilename()).trim();
                 log.info("File Name Created: {}", fileName);
-                Path path = Paths.get(DBProperties.properties.getProperty(UPLOAD_DIR) + userId + File.separator
-                        + fileName.substring(fileName.indexOf(".")) + File.separator + fileName);
+                Path path = Paths.get(DBProperties.properties.getProperty(UPLOAD_DIR) + userId + File.separator + fileName);
                 log.info("Path: {}", path.toString());
                 File contentSaveDir = new File(String.valueOf(path));
                 if (!contentSaveDir.exists()) {

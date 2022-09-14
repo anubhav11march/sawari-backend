@@ -86,12 +86,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         checkExistingUsers(userDetails);
 
         userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
-
+        PersistentUserDetails tempUserDetails = new PersistentUserDetails(null, userDetails.getEmail(), userDetails.getUserName(), userDetails.getMobile());
         //pass the user data to repo for saving
         try {
             log.info("Saving User's details to db.");
-            int userId = userRegistrationRepository.saveUserEssentialDetails(userDetails, null);
-            userDetails.setUserId((long) userId);
+            userRegistrationRepository.saveUserEssentialDetails(userDetails, null);
+            Long userId = userRegistrationRepository.findExistingUsers(tempUserDetails).stream().findFirst().get().getUserId();
+            userDetails.setUserId(userId);
             fetchFilesInfo(userDetails);
             userRegistrationRepository.saveDriverImagesDetails(userDetails, userDetails.getRoleName());
             userRegistrationRepository.insertIntoUserBridgeTable(userDetails.getUsername(), userDetails.getRoleName(), userDetails.getTypeName());
@@ -100,7 +101,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             confirmationTokenService.tokenHandler(userDetails.getMobile(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), null);
         } catch (Exception e) {
             log.warn(String.format("Unable to save user details, Rolling back the user details from db for [%s]", userDetails));
-            userRegistrationRepository.rollbackRegistration(userDetails);
+            userRegistrationRepository.rollbackRegistration(tempUserDetails);
             throw new ApiException(e.getMessage());
         }
         log.info("User Registered!");
