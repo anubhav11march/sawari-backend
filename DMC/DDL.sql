@@ -64,3 +64,9 @@ CHANGE COLUMN `is_enable` `is_enable` TINYINT NOT NULL DEFAULT 0 ;
 ALTER TABLE `marshall_service`.`profile_contents`
 ADD COLUMN `aadhar_number` VARCHAR(12) NULL AFTER `profile_photo_size`,
 ADD COLUMN `rickshaw_number` VARCHAR(20) NULL AFTER `aadhar_front_photo_size`;
+
+ALTER TABLE `marshall_service`.`profile_contents`
+DROP FOREIGN KEY `content_user_id`;
+ALTER TABLE `marshall_service`.`profile_contents`
+DROP INDEX `content_user_id_idx` ;
+

@@ -70,6 +70,8 @@ public class PreLoginRestController {
         profileDetails.setPassword(allRequestParams.get("password"));
         profileDetails.setMobile(allRequestParams.get("mobile"));
         profileDetails.setUserName(allRequestParams.get("username"));
+        profileDetails.setRoleName(DRIVER);
+        profileDetails.setTypeName(Constants.TYPE_REGISTERED);
         return userRegistrationService.registerDriver(profileDetails);
 
     }
