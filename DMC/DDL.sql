@@ -38,7 +38,6 @@ DROP procedure IF EXISTS `spUserLogin`;
 
 USE `marshall_service`;
 DROP procedure IF EXISTS `marshall_service`.`spUserLogin`;
-;
 
 DELIMITER $$
 USE `marshall_service`$$
@@ -54,5 +53,14 @@ where (u.user_name=userName or s.email=userName or u.mobile=userName) and u.is_d
 END$$
 
 DELIMITER ;
-;
 
+
+ALTER TABLE `marshall_service`.`user_registration`
+CHANGE COLUMN `first_name` `first_name` VARCHAR(45) NOT NULL DEFAULT 'First-Name' ,
+CHANGE COLUMN `last_name` `last_name` VARCHAR(45) NULL ,
+CHANGE COLUMN `is_enable` `is_enable` TINYINT NOT NULL DEFAULT 0 ;
+
+
+ALTER TABLE `marshall_service`.`profile_contents`
+ADD COLUMN `aadhar_number` VARCHAR(12) NULL AFTER `profile_photo_size`,
+ADD COLUMN `rickshaw_number` VARCHAR(20) NULL AFTER `aadhar_front_photo_size`;

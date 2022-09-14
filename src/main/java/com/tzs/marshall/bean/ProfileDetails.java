@@ -25,10 +25,13 @@ public class ProfileDetails extends PersistentUserDetails {
     private String aadharFrontPhotoPath;
     private Long aadharFrontPhotoSize;
 
+    private String aadharNumber;
+
     private MultipartFile rickshawPhoto;
     private String rickshawPhotoName;
     private String rickshawPhotoPath;
     private Long rickshawPhotoSize;
+    private String rickshawNumber;
 
     public ProfileDetails() {
     }
@@ -159,5 +162,21 @@ public class ProfileDetails extends PersistentUserDetails {
 
     public void setRickshawPhotoSize(Long rickshawPhotoSize) {
         this.rickshawPhotoSize = rickshawPhotoSize;
+    }
+
+    public String getAadharNumber() {
+        return aadharNumber;
+    }
+
+    public void setAadharNumber(String aadharNumber) {
+        this.aadharNumber = aadharNumber;
+    }
+
+    public String getRickshawNumber() {
+        return rickshawNumber;
+    }
+
+    public void setRickshawNumber(String rickshawNumber) {
+        this.rickshawNumber = rickshawNumber;
     }
 }

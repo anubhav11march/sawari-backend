@@ -155,12 +155,14 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
                     .addValue("profilePhotoName", profileDetails.getProfilePhotoName())
                     .addValue("profilePhotoPath", profileDetails.getProfilePhotoPath())
                     .addValue("profilePhotoSize", profileDetails.getProfilePhotoSize())
+                    .addValue("aadharNumber", profileDetails.getAadharNumber())
                     .addValue("aadharBackPhotoName", profileDetails.getAadharBackPhotoName())
                     .addValue("aadharBackPhotoPath", profileDetails.getAadharBackPhotoPath())
                     .addValue("aadharBackPhotoSize", profileDetails.getAadharBackPhotoSize())
                     .addValue("aadharFrontPhotoName", profileDetails.getAadharFrontPhotoName())
                     .addValue("aadharFrontPhotoPath", profileDetails.getAadharFrontPhotoPath())
                     .addValue("aadharFrontPhotoSize", profileDetails.getAadharFrontPhotoSize())
+                    .addValue("rickshawNumber", profileDetails.getRickshawNumber())
                     .addValue("rickshawPhotoName", profileDetails.getRickshawPhotoName())
                     .addValue("rickshawPhotoPath", profileDetails.getRickshawPhotoPath())
                     .addValue("rickshawPhotoSize", profileDetails.getRickshawPhotoSize())
@@ -171,10 +173,10 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
             return new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                     .withCatalogName(Constants.SCHEMA)
                     .withTableName("profile_contents")
-                    .usingColumns("content_user_id", "profilePhotoName", "profilePhotoPath", "profilePhotoSize",
-                            "aadharBackPhotoName", "aadharBackPhotoPath", "aadharBackPhotoSize",
-                            "aadharFrontPhotoName", "aadharFrontPhotoPath", "aadharFrontPhotoSize",
-                            "rickshawPhotoName", "rickshawPhotoPath", "rickshawPhotoSize",
+                    .usingColumns("content_user_id", "profile_photo_name", "profile_photo_path", "profile_photo_size",
+                            "aadhar_number", "aadhar_back_photo_name", "aadhar_back_photo_path", "aadhar_back_photo_size",
+                            "aadhar_front_photo_name", "aadhar_front_photo_path", "aadhar_front_photo_size",
+                            "rickshaw_number", "rickshaw_photo_name", "rickshaw_photo_path", "rickshaw_photo_size",
                             "upload_date", "modify_date", "is_deleted")
                     .execute(mapSqlParameterSource);
         } catch (Exception e) {

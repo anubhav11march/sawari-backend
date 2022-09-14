@@ -58,7 +58,7 @@ public class PreLoginRestController {
         return userRegistrationService.registerUser(userDetails, url);
     }
 
-    @RequestMapping(value = "/driver/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/driver/register", method = RequestMethod.POST, consumes = "multipart/form-data")
     public ProfileDetails driverRegistration(@RequestParam Map<String, MultipartFile> allRequestParams, @RequestBody ProfileDetails profileDetails){
         profileDetails.setProfilePhoto(allRequestParams.get("driverPhoto"));
         profileDetails.setAadharBackPhoto(allRequestParams.get("aadharBackPhoto"));
@@ -68,14 +68,27 @@ public class PreLoginRestController {
 
     }
 
-    @RequestMapping(value = "/otp-verify", method = { RequestMethod.GET, RequestMethod.POST })
-    public ResponseEntity<String> enableAccount(@RequestParam Map<String, String> allRequestParams,
+    @RequestMapping(value = "/otp-verify", method = RequestMethod.POST)
+    public ResponseEntity<String> postOTPVerification(@RequestBody Map<String, String> allRequestParams,
                                                 HttpSession session) {
         log.info("Confirming Token...");
         String reqType = allRequestParams.get("reqType");
         String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
-        String password = allRequestParams.get("password");
         log.info("Token: " + token + " & reqType: " + reqType);
+        return verifyOTP(session, reqType, token);
+    }
+
+    @RequestMapping(value = "/otp-verification", method = RequestMethod.GET)
+    public ResponseEntity<String> getOTPVerification(@RequestParam Map<String, String> allRequestParams,
+                                                HttpSession session) {
+        log.info("Confirming Token for admin...");
+        String reqType = allRequestParams.get("reqType");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
+        log.info("Token: " + token + " & reqType: " + reqType);
+        return verifyOTP(session, reqType, token);
+    }
+
+    private ResponseEntity<String> verifyOTP(HttpSession session, String reqType, String token) {
         ResponseEntity<String> body = new ResponseEntity<>("redirect:/login", HttpStatus.OK);
         String message;
         try {
@@ -103,7 +116,7 @@ public class PreLoginRestController {
     }
 
     @RequestMapping(value = "/resend-token", method = RequestMethod.POST)
-    public ResponseEntity<String> resendValidationToken(@RequestParam Map<String, String> allRequestParams, HttpServletRequest request, HttpSession session) {
+    public ResponseEntity<String> resendValidationToken(@RequestBody Map<String, String> allRequestParams, HttpServletRequest request, HttpSession session) {
         log.info("Resending Token...");
         String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
         String reqType = allRequestParams.get("reqType");
@@ -146,12 +159,11 @@ public class PreLoginRestController {
     }
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
-    String resetPassword(@RequestParam Map<String, String> allRequestParams,
-                         @RequestBody PersistentUserDetails PersistentUserDetails, HttpSession session) {
+    String resetPassword(@RequestBody Map<String, String> allRequestParams) {
         log.info("Confirming Token...");
         String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
         String reqType = allRequestParams.get("reqType");
-        String password = PersistentUserDetails.getPassword();
+        String password = allRequestParams.get("password");
         log.info("Token: " + token + " & reqType: " + reqType);
         String flag;
         try {
