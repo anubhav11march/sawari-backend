@@ -59,11 +59,12 @@ public class PreLoginRestController {
     }
 
     @RequestMapping(value = "/driver/register", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public ProfileDetails driverRegistration(@RequestParam Map<String, MultipartFile> allRequestParams, @RequestBody ProfileDetails profileDetails){
-        profileDetails.setProfilePhoto(allRequestParams.get("driverPhoto"));
-        profileDetails.setAadharBackPhoto(allRequestParams.get("aadharBackPhoto"));
-        profileDetails.setAadharFrontPhoto(allRequestParams.get("aadharFrontPhoto"));
-        profileDetails.setRickshawPhoto(allRequestParams.get("rickshawPhoto"));
+    public ProfileDetails driverRegistration(@RequestParam Map<String, String> allRequestParams, @ModelAttribute ProfileDetails profileDetails){
+        String name = allRequestParams.get("name");
+        profileDetails.setFirstName(name.substring(0, name.indexOf(" ")));
+        profileDetails.setLastName(name.substring(name.indexOf(" ")+1));
+        profileDetails.setPassword(allRequestParams.get("password"));
+        profileDetails.setMobile(allRequestParams.get("mobile"));
         return userRegistrationService.registerDriver(profileDetails);
 
     }
