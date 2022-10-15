@@ -16,7 +16,7 @@ public class DBProperties {
     public DBProperties(Properties dbProperties) {
         log.info("Persisting Marshall Properties..." + dbProperties);
         properties = new Properties();
-        dbProperties.keySet().forEach(k -> properties.put(k, splitString(dbProperties.getProperty(k.toString()))));
+        dbProperties.keySet().forEach(k -> properties.setProperty(k.toString().toUpperCase(), dbProperties.getProperty(k.toString())));
         log.info("Persist Successfully. {}", properties.toString());
     }
 
@@ -24,7 +24,7 @@ public class DBProperties {
         return (List<String>) properties.get(property.toUpperCase());
     }
 
-    public List<String> splitString(String str) {
+    public static List<String> splitString(String str) {
         if (str.contains(","))
             return Arrays.stream(str.split(",")).collect(Collectors.toList());
         else

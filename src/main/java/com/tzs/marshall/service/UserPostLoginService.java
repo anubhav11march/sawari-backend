@@ -4,7 +4,7 @@ import com.tzs.marshall.bean.PersistentUserDetails;
 
 import java.util.List;
 
-public interface AuthorPostLoginService {
+public interface UserPostLoginService {
 
     PersistentUserDetails handleFetchedFullAuthorDetails(PersistentUserDetails authorDetails);
 

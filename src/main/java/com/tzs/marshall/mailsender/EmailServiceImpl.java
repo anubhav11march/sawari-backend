@@ -1,5 +1,7 @@
 package com.tzs.marshall.mailsender;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
@@ -60,9 +62,32 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public void sendConfirmationEmail(String email, String token, String url, RequestTypeDictionary requestTypeDictionary) {
-        log.info(String.format("Preparing email to send..."));
+        log.info("Preparing email to send...");
         log.info(String.format("URL: %s, Dictionary: %s", url, requestTypeDictionary));
         String msgBody = buildEmail(requestTypeDictionary, token, url);
+        EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
+        emailBean.setFrom(DBProperties.properties.getProperty(SUPPORT_EMAIL));
+        send(emailBean);
+    }
+
+    @Override
+    public void sendOTPToMobile(String mobileNumber, String otp) {
+            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+            Message message = Message.creator(
+//                            new com.twilio.type.PhoneNumber(mobileNumber), //TO
+                            new com.twilio.type.PhoneNumber("+918826424940"), //TO
+                            new com.twilio.type.PhoneNumber(DBProperties.properties.getProperty(SUPPORT_MOBILE_NUMBER, "+19706609717")),//FROM
+                            otp)
+                    .create();
+
+            log.info("OTP sent to mobile: " + message.getStatus());
+
+    }
+
+    @Override
+    public void sendOTPToEmail(String email, String otp, RequestTypeDictionary requestTypeDictionary) {
+        log.info("Preparing email to send...");
+        String msgBody = "Your 6 digit OTP is: " + otp;
         EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
         emailBean.setFrom(DBProperties.properties.getProperty(SUPPORT_EMAIL));
         send(emailBean);

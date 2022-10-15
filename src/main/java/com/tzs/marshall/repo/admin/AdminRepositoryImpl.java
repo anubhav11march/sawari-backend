@@ -32,7 +32,7 @@ public class AdminRepositoryImpl implements AdminRepository {
         try {
             String query = "SELECT * FROM marshall_service.view_user_rights WHERE role_name=:roleName";
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-            mapSqlParameterSource.addValue("roleName", Constants.ROLE_USER);
+            mapSqlParameterSource.addValue("roleName", Constants.USER);
             return jdbcTemplate.query(query, mapSqlParameterSource, BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
         } catch (Exception e) {
             log.error(e.getMessage());

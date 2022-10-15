@@ -2,7 +2,7 @@ package com.tzs.marshall.config.security;
 
 import com.tzs.marshall.config.handler.*;
 import com.tzs.marshall.constants.Constants;
-import com.tzs.marshall.service.AuthorPreLoginService;
+import com.tzs.marshall.service.UserPreLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 public class SecurityConfiguration {
 
     @Autowired
-    private AuthorPreLoginService authorPreLoginService;
+    private UserPreLoginService userPreLoginService;
 
     @Autowired
     private CustomAccessDeniedHandler accessDeniedHandler;
@@ -57,9 +57,9 @@ public class SecurityConfiguration {
                 .accessDeniedHandler(accessDeniedHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/admin/**").hasAnyRole(Constants.ROLE_ADMIN)
-                .antMatchers("/driver/**").hasAnyRole(Constants.ROLE_DRIVER)
-                .antMatchers("/user/**").hasAnyAuthority(Constants.ROLE_USER)
+                .antMatchers("/admin/**").hasAnyAuthority(Constants.ADMIN)
+                .antMatchers("/driver/**").hasAnyAuthority(Constants.DRIVER)
+                .antMatchers("/user/**").hasAnyAuthority(Constants.USER)
                 .antMatchers("/", "/hnf/**", "/index.html", "/login", "/HTWF/**", "/images/**", "/pages/**", "/scripts/**", "/**/fevicon.ico", "/skin.css", "/signup", "/init/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -78,8 +78,8 @@ public class SecurityConfiguration {
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler(logoutSuccessHandler())
                 .logoutSuccessUrl("/login?logout=true")
-                .and()
-                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true");
+                /*.and()
+                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true")*/;
 
         //Comment this block to bypass config
        /* http
@@ -115,7 +115,7 @@ public class SecurityConfiguration {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(authorPreLoginService);
+        provider.setUserDetailsService(userPreLoginService);
         return provider;
     }
 

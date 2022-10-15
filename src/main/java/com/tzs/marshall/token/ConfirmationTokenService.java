@@ -9,7 +9,7 @@ public interface ConfirmationTokenService {
 
     ConfirmationToken confirmToken(String token, String reqType);
 
-    String tokenHandler(String email, String reqType, String url);
+    String tokenHandler(String email, String reqType, String userType, String url);
 
     String resendTokenHandler(String token, String reqType, String url);
 }

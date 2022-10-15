@@ -32,7 +32,7 @@ public class FileRepositoryImpl implements FileRepository {
     public int saveFile(FileBean fileBean) {
         try {
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-            if (Constants.ROLE_USER.equalsIgnoreCase(fileBean.getUploadBy())) {
+            if (Constants.USER.equalsIgnoreCase(fileBean.getUploadBy())) {
                 mapSqlParameterSource.addValue("fileUserId", fileBean.getFileUserId())
                         .addValue("fileName", fileBean.getFileName())
                         .addValue("fileFormat", fileBean.getFileFormat())
@@ -89,7 +89,7 @@ public class FileRepositoryImpl implements FileRepository {
     @Override
     public List<FileBean> findFiles(Long fileUserId, String uploadBy) {
         String query;
-        if (Constants.ROLE_USER.equalsIgnoreCase(uploadBy)) {
+        if (Constants.USER.equalsIgnoreCase(uploadBy)) {
             query = "SELECT * FROM marshall_service.content WHERE file_user_id=:fileUserId AND is_deleted=:is_deleted ORDER BY modify_date DESC";
         } else {
             query = "SELECT * FROM marshall_service.content_report WHERE file_user_id=:fileUserId AND is_deleted=:is_deleted ORDER BY modify_date DESC";
@@ -106,7 +106,7 @@ public class FileRepositoryImpl implements FileRepository {
     @Override
     public List<FileBean> findFileById(Long fileUserId, Long fileId, String uploadBy) {
         String query;
-        if (Constants.ROLE_USER.equalsIgnoreCase(uploadBy)) {
+        if (Constants.USER.equalsIgnoreCase(uploadBy)) {
             query = "SELECT * FROM marshall_service.content WHERE author_file_id=:fileId AND is_deleted=:is_deleted ORDER BY modify_date DESC";
         } else {
             query = "SELECT * FROM marshall_service.content_report WHERE admin_file_id=:fileId AND file_user_id=:fileUserId AND is_deleted=:is_deleted ORDER BY modify_date DESC";
@@ -125,7 +125,7 @@ public class FileRepositoryImpl implements FileRepository {
     public int updateFile(FileBean fileBean) {
         try {
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-            if (Constants.ROLE_USER.equalsIgnoreCase(fileBean.getUploadBy())) {
+            if (Constants.USER.equalsIgnoreCase(fileBean.getUploadBy())) {
                 String authorQuery = "UPDATE marshall_service.content SET " +
                         "file_name=:fileName, file_format=:fileFormat, topic=:topic, category=:category, description=:description," +
                         " language=:language, words_count=:wordsCount, number_of_figures=:numberOfFigures, requested_services=:requestedServices," +
@@ -187,7 +187,7 @@ public class FileRepositoryImpl implements FileRepository {
     public int deleteFile(Long fileUserId, Long fileId, String uploadBy) {
         try {
             String query;
-            if (Constants.ROLE_USER.equalsIgnoreCase(uploadBy)) {
+            if (Constants.USER.equalsIgnoreCase(uploadBy)) {
                 query = "UPDATE marshall_service.content SET " +
                         "is_deleted=:is_deleted, modify_date=:modifyDate " +
                         "WHERE author_file_id=:fileId AND file_user_id=:fileUserId";
@@ -263,7 +263,7 @@ public class FileRepositoryImpl implements FileRepository {
     public List<FileBean> getAllFilesByUser(String role) {
         String query;
         try {
-            if (Constants.ROLE_USER.equalsIgnoreCase(role)) {
+            if (Constants.USER.equalsIgnoreCase(role)) {
                 query = "SELECT * FROM marshall_service.content WHERE is_deleted=:isDeleted ORDER BY modify_date DESC";
             } else {
                 query = "SELECT * FROM marshall_service.content_report cr, marshall_service.view_user_rights ur where cr.file_user_id=ur.user_id and ur.role_name=:role AND cr.is_deleted=:isDeleted ORDER BY cr.modify_date DESC";
@@ -283,7 +283,7 @@ public class FileRepositoryImpl implements FileRepository {
     public List<FileBean> fetchFileInfoByIdAndRole(long authorId, long fileId, String role) {
         String query;
         try {
-            if (Constants.ROLE_USER.equalsIgnoreCase(role) || role == null || role.equalsIgnoreCase("null")) {
+            if (Constants.USER.equalsIgnoreCase(role) || role == null || role.equalsIgnoreCase("null")) {
                 query = "SELECT * FROM marshall_service.content WHERE author_file_id=:fileId AND file_user_id=:authorId AND is_deleted=:isDeleted " +
                         "ORDER BY modify_date DESC";
             } else {

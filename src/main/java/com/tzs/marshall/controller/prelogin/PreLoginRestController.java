@@ -3,18 +3,22 @@ package com.tzs.marshall.controller.prelogin;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.NewsLetterEmailSubs;
 import com.tzs.marshall.bean.PersistentUserDetails;
+import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.mailsender.EmailBean;
 import com.tzs.marshall.mailsender.EmailService;
-import com.tzs.marshall.service.AuthorPreLoginService;
-import com.tzs.marshall.service.AuthorRegistrationService;
+import com.tzs.marshall.service.UserPreLoginService;
+import com.tzs.marshall.service.UserRegistrationService;
 import com.tzs.marshall.token.ConfirmationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 import static com.tzs.marshall.constants.Constants.*;
+import static com.tzs.marshall.constants.MessageConstants.*;
 
 
 @RestController
@@ -32,9 +37,9 @@ import static com.tzs.marshall.constants.Constants.*;
 public class PreLoginRestController {
 
     @Autowired
-    private AuthorPreLoginService authorPreLoginService;
+    private UserPreLoginService userPreLoginService;
     @Autowired
-    private AuthorRegistrationService authorRegistrationService;
+    private UserRegistrationService userRegistrationService;
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
     @Autowired
@@ -43,55 +48,107 @@ public class PreLoginRestController {
     private static final Logger log = LoggerFactory.getLogger(PreLoginRestController.class);
 
 
-    @RequestMapping(value = "/{role}/register", method = RequestMethod.POST)
-    public PersistentUserDetails userRegistration(@PathVariable("role") String role,@RequestBody PersistentUserDetails authorDetails, HttpServletRequest request) {
-        log.info("Registering new user with details as: " + authorDetails);
+    @RequestMapping(value = "/user/register", method = RequestMethod.POST)
+    public PersistentUserDetails userRegistration(@RequestBody PersistentUserDetails userDetails, HttpServletRequest request) {
+        log.info("Registering new user with details as: " + userDetails);
         String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 //        String url = String.valueOf(request.getRequestURL().replace(request.getRequestURL().toString().indexOf(String.valueOf(request.getServerPort())) + (String.valueOf(request.getServerPort()).length()), request.getRequestURL().toString().length(), ""));
-        authorDetails.setRoleName("DRIVER".equalsIgnoreCase(role) ? ROLE_DRIVER : ROLE_USER);
-        authorDetails.setTypeName(Constants.TYPE_REGISTERED);
-        return authorRegistrationService.registerNewUser(authorDetails, url);
+        userDetails.setRoleName(USER);
+        userDetails.setTypeName(Constants.TYPE_REGISTERED);
+        return userRegistrationService.registerUser(userDetails, url);
     }
 
-    @RequestMapping(value = "/enable-account")
-    public ModelAndView enableAccount(@RequestParam Map<String, String> allRequestParams, HttpSession session) {
-        log.info("Confirming Token...");
-        String token = allRequestParams.get("token");
-        String reqType = allRequestParams.get("reqType");
-        log.info("Token: " + token + " & reqType: " + reqType);
-        ModelAndView modelAndView = new ModelAndView();
+    @RequestMapping(value = "/driver/register", method = RequestMethod.POST, consumes = "multipart/form-data")
+    public ResponseEntity<Boolean> driverRegistration(@RequestParam Map<String, String> allRequestParams, @ModelAttribute ProfileDetails profileDetails){
+        String name = allRequestParams.get("name");
+        profileDetails.setFirstName(name.substring(0, name.indexOf(" ")));
         try {
-            String flag = authorRegistrationService.enableAccountTokenHandler(token, reqType);
-            if (flag.equalsIgnoreCase("success")) {
-                session.setAttribute("successMessage", MessageConstants.ACCOUNT_VERIFIED);
-                modelAndView.setViewName("redirect:/login");
+            profileDetails.setLastName(name.substring(name.indexOf(" ")+1));
+        } catch (IndexOutOfBoundsException e) {
+            log.warn("No last name present.");
+        }
+        profileDetails.setPassword(allRequestParams.get("password"));
+        profileDetails.setMobile(allRequestParams.get("mobile"));
+        profileDetails.setUserName(allRequestParams.get("username"));
+        profileDetails.setRoleName(DRIVER);
+        profileDetails.setTypeName(Constants.TYPE_REGISTERED);
+        profileDetails = userRegistrationService.registerDriver(profileDetails);
+        log.info("Registered Driver's Details: " + profileDetails);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(profileDetails.isEnabled());
+    }
+
+    @RequestMapping(value = "/otp-verify", method = RequestMethod.POST)
+    public ResponseEntity<String> postOTPVerification(@RequestBody Map<String, String> allRequestParams,
+                                                HttpSession session) {
+        log.info("Confirming Token...");
+        String reqType = allRequestParams.get("reqType");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
+        log.info("Token: " + token + " & reqType: " + reqType);
+        return verifyOTP(session, reqType, token);
+    }
+
+    @RequestMapping(value = "/otp-verification", method = RequestMethod.GET)
+    public ResponseEntity<String> getOTPVerification(@RequestParam Map<String, String> allRequestParams,
+                                                HttpSession session) {
+        log.info("Confirming Token for admin...");
+        String reqType = allRequestParams.get("reqType");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
+        log.info("Token: " + token + " & reqType: " + reqType);
+        return verifyOTP(session, reqType, token);
+    }
+
+    private ResponseEntity<String> verifyOTP(HttpSession session, String reqType, String token) {
+        ResponseEntity<String> body = new ResponseEntity<>("redirect:/login", HttpStatus.OK);
+        String message;
+        try {
+            String confirmedToken;
+            if ("enableAccount".equalsIgnoreCase(reqType)) {
+                confirmedToken = userRegistrationService.enableAccountTokenHandler(token, reqType);
+                message = ACCOUNT_VERIFIED;
+            } else {
+                confirmedToken =confirmationTokenService.confirmToken(token, reqType).getToken();
+                message = TOKEN_VERIFIED;
+            }
+            if (confirmedToken.equalsIgnoreCase("success")) {
+                session.setAttribute("successMessage", message);
+                body = ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(confirmedToken);
             }
         } catch (Exception e) {
             session.setAttribute("errorMessage", e.getMessage());
-            modelAndView.setViewName("redirect:/init/resend-token?token=" + token + "&reqType=" + reqType);
+            body = ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
-        return modelAndView;
+        return body;
     }
 
     @RequestMapping(value = "/resend-token", method = RequestMethod.POST)
-    public ModelAndView resendValidationToken(@RequestParam Map<String, String> allRequestParams, HttpServletRequest request, HttpSession session) {
+    public ResponseEntity<String> resendValidationToken(@RequestBody Map<String, String> allRequestParams, HttpServletRequest request, HttpSession session) {
         log.info("Resending Token...");
-        String token = allRequestParams.get("token");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
         String reqType = allRequestParams.get("reqType");
         log.info("Token: " + token + " & reqType: " + reqType);
-        ModelAndView modelAndView = new ModelAndView();
+        ResponseEntity<String> body = new ResponseEntity<String>("redirect:/login", HttpStatus.OK);
         String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 //        String url = String.valueOf(request.getRequestURL().replace(request.getRequestURL().toString().indexOf(String.valueOf(request.getServerPort())) + (String.valueOf(request.getServerPort()).length()), request.getRequestURL().toString().length(), ""));
         try {
             token = confirmationTokenService.resendTokenHandler(token, reqType, url);
             session.setAttribute("successMessage", MessageConstants.TOKEN_SENT);
-            modelAndView.setViewName("redirect:/login");
+            body = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(token);
         } catch (Exception e) {
             log.error(e.getMessage());
             session.setAttribute("errorMessage", e.getMessage());
-            modelAndView.setViewName("redirect:/init/resend-token?token=" + token + "&reqType=" + reqType);
+            body = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(e.getMessage());
         }
-        return modelAndView;
+        return body;
     }
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
@@ -100,11 +157,12 @@ public class PreLoginRestController {
         log.info("fetching user email...");
         String token;
         try {
-            PersistentUserDetails PersistentUserDetails = authorPreLoginService.handleFetchedValidUser(newsLetterEmailSubs.getEmail());
+            PersistentUserDetails userDetails = userPreLoginService.handleFetchedValidUser(newsLetterEmailSubs.getEmail());
             log.info("user found!");
-            log.info("Email: " + PersistentUserDetails.getEmail());
+            log.info("Email: " + userDetails.getEmail());
+            String contact = userDetails.getEmail() != null ? userDetails.getEmail() : newsLetterEmailSubs.getEmail();
             String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            token = confirmationTokenService.tokenHandler(newsLetterEmailSubs.getEmail(), RequestTypeDictionary.PASSWORD.getReqType(), url);
+            token = confirmationTokenService.tokenHandler(contact, RequestTypeDictionary.PASSWORD.getReqType(), userDetails.getRoleName(), url);
         } catch (Exception e) {
             throw new ApiException(e.getMessage());
         }
@@ -112,16 +170,15 @@ public class PreLoginRestController {
     }
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
-    String resetPassword(@RequestParam Map<String, String> allRequestParams,
-                         @RequestBody PersistentUserDetails PersistentUserDetails, HttpSession session) {
+    String resetPassword(@RequestBody Map<String, String> allRequestParams) {
         log.info("Confirming Token...");
-        String token = allRequestParams.get("token");
+        String token = allRequestParams.get("token") != null ? allRequestParams.get("token") : allRequestParams.get("otp");
         String reqType = allRequestParams.get("reqType");
-        String password = PersistentUserDetails.getPassword();
+        String password = allRequestParams.get("password");
         log.info("Token: " + token + " & reqType: " + reqType);
         String flag;
         try {
-            flag = authorPreLoginService.resetPasswordHandler(token, reqType, password);
+            flag = userPreLoginService.resetPasswordHandler(token, reqType, password);
             if (flag.equalsIgnoreCase("success")) {
                 return flag;
             }
@@ -134,7 +191,7 @@ public class PreLoginRestController {
 
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
     public Object getProperties(@RequestParam("property") String property) {
-        return DBProperties.properties.getProperty(property.toUpperCase());
+        return DBProperties.splitString(DBProperties.properties.getProperty(property.toUpperCase()));
     }
 
     @RequestMapping(value = "/contact-us", method = RequestMethod.POST)
@@ -163,5 +220,11 @@ public class PreLoginRestController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/init/contact-us");
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/csrf", method = RequestMethod.GET)
+    public @ResponseBody String getCsrfToken(HttpServletRequest request) {
+        CsrfToken token = (CsrfToken)request.getAttribute(CsrfToken.class.getName());
+        return token.getToken();
     }
 }

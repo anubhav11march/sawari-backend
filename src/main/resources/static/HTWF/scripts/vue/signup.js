@@ -16,9 +16,10 @@ Vue.component('signUp', {
         }
     },
     mounted(){
-        axios.get('/init/properties?property=prefix')
+        axios.get('/init/properties?property=name_prefix')
             .then(response => {
                 this.prefixList = response.data;
+                console.log("prefix: ", this.prefixList)
             })
             .catch(error => {
                 swal("Error!", error.response.data.message, "error");
@@ -138,7 +139,7 @@ Vue.component('signUp', {
                 method: 'POST',
                 headers: {[JSON.stringify(_csrf_header).replaceAll('"', "")]: _csrf },
                 data: data,
-                url: '/init/register',
+                url: '/init/user/register',
             }
             axios(request)
                 .then((response)=> {

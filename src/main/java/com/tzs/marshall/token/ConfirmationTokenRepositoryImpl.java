@@ -30,18 +30,19 @@ public class ConfirmationTokenRepositoryImpl implements ConfirmationTokenReposit
 
             mapSqlParameterSource.addValue("token", confirmationToken.getToken());
             mapSqlParameterSource.addValue("reqType", confirmationToken.getReqType());
+            mapSqlParameterSource.addValue("userType", confirmationToken.getUserType());
             mapSqlParameterSource.addValue("email", confirmationToken.getEmail());
             mapSqlParameterSource.addValue("created_at", confirmationToken.getCreatedAt());
             mapSqlParameterSource.addValue("expires_at", confirmationToken.getExpiresAt());
             mapSqlParameterSource.addValue("confirms_at", null);
 
             String updateQuery = "UPDATE marshall_service.confirmation_token SET token=:token, created_at=:created_at, expires_at=:expires_at, confirms_at=:confirms_at" +
-                    " WHERE email=:email AND req_type=:reqType";
+                    " WHERE email=:email AND req_type=:reqType AND user_type=:userType";
             int update = jdbcTemplate.update(updateQuery, mapSqlParameterSource);
             if (update == 0) {
                 update = new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                         .withTableName("confirmation_token")
-                        .usingColumns("token", "req_type", "email", "created_at", "expires_at", "confirms_at")
+                        .usingColumns("token", "req_type", "user_type", "email", "created_at", "expires_at", "confirms_at")
                         .execute(mapSqlParameterSource);
             }
             return update;
@@ -52,10 +53,11 @@ public class ConfirmationTokenRepositoryImpl implements ConfirmationTokenReposit
     }
 
     @Override
-    public ConfirmationToken findByToken(String token, String reqType) {
-        String query = "SELECT * FROM marshall_service.confirmation_token WHERE token=:token and req_type=:reqType";
+    public ConfirmationToken findByToken(String token) {
+        String query = "SELECT * FROM marshall_service.confirmation_token WHERE token=:token";
         try {
-            List<ConfirmationToken> tokenList = jdbcTemplate.query(query, new MapSqlParameterSource().addValue("token", token).addValue("reqType", reqType),
+            List<ConfirmationToken> tokenList = jdbcTemplate.query(query, new MapSqlParameterSource()
+                            .addValue("token", token),
                     new BeanPropertyRowMapper<>(ConfirmationToken.class));
             if (tokenList.size() != 0)
                 return tokenList.stream().findFirst().get();
@@ -72,10 +74,9 @@ public class ConfirmationTokenRepositoryImpl implements ConfirmationTokenReposit
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
             mapSqlParameterSource.addValue("token", confirmationToken.getToken());
-            mapSqlParameterSource.addValue("reqType", confirmationToken.getReqType());
             mapSqlParameterSource.addValue("confirmedAt", confirmationToken.getConfirmsAt());
             String query = "UPDATE marshall_service.confirmation_token SET confirms_at=:confirmedAt " +
-                    "WHERE token=:token and req_type=:reqType";
+                    "WHERE token=:token";
             return jdbcTemplate.update(query, mapSqlParameterSource);
         } catch (Exception e) {
             log.error(e.getMessage());

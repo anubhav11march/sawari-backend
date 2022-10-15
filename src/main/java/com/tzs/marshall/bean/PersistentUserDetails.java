@@ -308,7 +308,11 @@ public class PersistentUserDetails implements UserDetails {
     @JsonDeserialize(using = CustomAuthorityDeserializer.class)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Stream.of("ROLE_" + getRoleName())
+/*        return Stream.of("ROLE_" + getRoleName())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());*/
+
+        return Stream.of(getRoleName())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 

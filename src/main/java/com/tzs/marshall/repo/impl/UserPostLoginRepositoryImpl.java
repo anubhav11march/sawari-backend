@@ -4,7 +4,7 @@ import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.repo.AuthorPostLoginRepository;
+import com.tzs.marshall.repo.UserPostLoginRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -18,19 +18,20 @@ import java.util.Map;
 import java.util.Objects;
 
 @Repository
-public class AuthorPostLoginRepositoryImpl implements AuthorPostLoginRepository {
+public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private static final Logger log = LoggerFactory.getLogger(AuthorPostLoginRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserPostLoginRepositoryImpl.class);
 
-    public AuthorPostLoginRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    public UserPostLoginRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public List<PersistentUserDetails> getUserDetailsById(Long userId) {
         try {
-            String query = "SELECT * FROM marshall_service.view_user_details WHERE user_id=:user_id AND is_deleted=:is_deleted AND is_enable=:is_enable";
+            String query = "SELECT * FROM marshall_service.view_user_details vu, marshall_service.profile_contents pc " +
+                    "WHERE vu.user_id=pc.content_user_id AND user_id=:user_id AND is_deleted=:is_deleted AND is_enable=:is_enable";
             return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("user_id", userId)
                             .addValue("is_deleted", Constants.isDeleted)
                             .addValue("is_enable", Constants.isEnable)

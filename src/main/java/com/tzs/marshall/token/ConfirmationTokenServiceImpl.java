@@ -1,5 +1,7 @@
 package com.tzs.marshall.token;
 
+import com.tzs.marshall.bean.DBProperties;
+import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
 import com.tzs.marshall.error.ApiException;
@@ -35,7 +37,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     @Override
     public ConfirmationToken getConfirmationToken(String token, String reqType) {
-        ConfirmationToken tkn = confirmationTokenRepository.findByToken(token, reqType);
+        ConfirmationToken tkn = confirmationTokenRepository.findByToken(token);
         if (tkn == null) {
             log.error("No Token found: " + token + " for ReqType: " + reqType);
             throw new ApiException(MessageConstants.NO_TOKEN);
@@ -74,13 +76,30 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
     }
 
     @Override
-    public String tokenHandler(String email, String reqType, String url) {
-        String token = generateAndSaveToken(email, reqType);
-        log.info("Token generated: " + token);
+    public String tokenHandler(String email, String reqType, String userType, String url) {
+        String flag = DBProperties.properties.getProperty("GENERATE_OTP", "Y");
         RequestTypeDictionary requestTypeDictionary = RequestTypeDictionary.getRequestTypeDictionary(reqType);
-        log.info("Sending confirmation link to the user...");
-        emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
-        log.info(String.format("%s Request Email Send successfully.", requestTypeDictionary.getReqType()));
+        String token = generateAndSaveToken(email, reqType, userType, flag);
+        log.info("Token generated: " + token);
+        if ("Y".equalsIgnoreCase(flag)) {
+            if (Constants.DRIVER.equalsIgnoreCase(userType)) {
+                log.info("Sending 6 digit OTP to the driver...");
+                emailService.sendOTPToMobile(email, token);
+                log.info("6 digit OTP Send successfully.");
+            } else if (Constants.USER.equalsIgnoreCase(userType)) {
+                log.info("Sending 6 digit OTP to the user...");
+                emailService.sendOTPToEmail(email, token, requestTypeDictionary);
+                log.info("6 digit OTP Send successfully.");
+            } else {
+                log.info("Sending confirmation link to the admin...");
+                emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
+                log.info(String.format("%s Request Email Send successfully.", requestTypeDictionary.getReqType()));
+            }
+        } else {
+            log.info("Sending confirmation link to the admin...");
+            emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
+            log.info(String.format("%s Request Email Send successfully.", requestTypeDictionary.getReqType()));
+        }
         return token;
     }
 
@@ -88,21 +107,29 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
     public String resendTokenHandler(String token, String reqType, String url) {
         log.info("Fetching Email from old token...");
         ConfirmationToken confirmationToken = getConfirmationToken(token, reqType);
-        String email = null;
+        String newToken = null;
         if (confirmationToken != null) {
-            email = confirmationToken.getEmail();
+            String contact = confirmationToken.getEmail();
+            log.info("Email Found... {}", contact);
+            newToken = tokenHandler(contact, reqType, confirmationToken.getUserType(), url);
         }
-        log.info("Email Found... {}", email);
-        return tokenHandler(email, reqType, url);
+        return newToken;
     }
 
-    private String generateAndSaveToken(String email, String reqType) {
+    private String generateAndSaveToken(String email, String reqType, String userType, String flag) {
         log.info("Generating Random Token String...");
-        String token = UUID.randomUUID().toString();
+        String token = "";
+        if ("Y".equalsIgnoreCase(flag)) {
+            int randomPin = (int) (Math.random() * 900000) + 100000;
+            token = String.valueOf(randomPin);
+        } else {
+            token = UUID.randomUUID().toString();
+        }
 
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 reqType,
+                userType,
                 email,
                 Timestamp.valueOf(LocalDateTime.now()),
                 Timestamp.valueOf(LocalDateTime.now().plusMinutes(15))

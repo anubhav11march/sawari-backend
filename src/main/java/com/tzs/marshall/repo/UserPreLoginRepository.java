@@ -2,7 +2,7 @@ package com.tzs.marshall.repo;
 
 import java.util.Map;
 
-public interface AuthorPreLoginRepository {
+public interface UserPreLoginRepository {
 
     Map<String, Object> getValidUser(String userName);
 
