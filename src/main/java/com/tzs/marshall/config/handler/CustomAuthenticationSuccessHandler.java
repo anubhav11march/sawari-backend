@@ -21,7 +21,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         httpServletResponse.setStatus(HttpStatus.OK.value());
         String jsonPayload = "{\"isAuthenticated\" : \"%s\", \"timestamp\" : \"%s\", \"role\" : \"%s\", \"userName\" : \"%s\"}";
         String successMessage = String.format(jsonPayload, authentication.isAuthenticated(), Calendar.getInstance().getTime(),
-                authentication.getAuthorities(), authentication.getName());
+                authentication.getAuthorities().stream().findFirst().get(), authentication.getName());
         httpServletResponse.getWriter().append(successMessage);
 //        httpServletResponse.sendRedirect("/home");
     }
