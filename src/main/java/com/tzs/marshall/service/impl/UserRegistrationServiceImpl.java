@@ -1,8 +1,8 @@
 package com.tzs.marshall.service.impl;
 
-import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.bean.NewsLetterEmailSubs;
 import com.tzs.marshall.bean.PersistentUserDetails;
+import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
 import com.tzs.marshall.error.ApiException;
@@ -43,21 +43,17 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         UserDetailsValidator.validatePassword(userDetails.getPassword());
 
         log.info("Checking Existing Users...");
-        PersistentUserDetails existingButDisableUserDetails = checkExistingUsers(userDetails);
-
-        userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
-
-        List<NewsLetterEmailSubs> newsLetterEmailSubs = checkAndSaveEmail(userDetails);
+        boolean existedIfDisabledUser = checkExistedIfDisabledUser(userDetails);
 
         //pass the user data to repo for saving
         try {
-            if (existingButDisableUserDetails == null) {
+            if (!existedIfDisabledUser) {
+                userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
+                List<NewsLetterEmailSubs> newsLetterEmailSubs = checkAndSaveEmail(userDetails);
                 log.info("Saving User's details to db.");
                 userRegistrationRepository.saveUserEssentialDetails(userDetails, newsLetterEmailSubs.stream().findFirst().get().getSubsId());
                 userRegistrationRepository.insertIntoUserBridgeTable(userDetails.getUsername(), userDetails.getRoleName(), userDetails.getTypeName());
                 log.info("User Record Inserted.\n" + userDetails);
-            } else {
-                userDetails = existingButDisableUserDetails;
             }
         } catch (Exception e) {
             log.warn(String.format("Unable to save user details, Rolling back the user details from db for [%s]", userDetails));
@@ -91,7 +87,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public ProfileDetails registerDriver(ProfileDetails userDetails) {
         UserDetailsValidator.validatePassword(userDetails.getPassword());
         log.info("Checking Existing Users...");
-        PersistentUserDetails existingButDisableUserDetails = checkExistingUsers(userDetails);
+        boolean existedIfDisabledUser = checkExistedIfDisabledUser(userDetails);
 
         userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
         //temp sol
@@ -101,7 +97,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         PersistentUserDetails tempUserDetails = new PersistentUserDetails(null, userDetails.getEmail(), userDetails.getUserName(), userDetails.getMobile());
         //pass the user data to repo for saving
         try {
-            if (existingButDisableUserDetails == null) {
+            if (!existedIfDisabledUser) {
                 log.info("Saving User's details to db.");
                 //temp solution
                 userRegistrationRepository.saveUserEssentialDetails(userDetails, newsLetterEmailSubs.stream().findFirst().get().getSubsId());
@@ -112,8 +108,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 userRegistrationRepository.saveDriverImagesDetails(userDetails, userDetails.getRoleName());
                 userRegistrationRepository.insertIntoUserBridgeTable(userDetails.getUsername(), userDetails.getRoleName(), userDetails.getTypeName());
                 log.info("User Record Inserted.\n" + userDetails);
-            } else {
-                userDetails = (ProfileDetails) existingButDisableUserDetails;
             }
             log.info("Generating unique token...");
             confirmationTokenService.tokenHandler(userDetails.getMobile(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), null);
@@ -148,24 +142,29 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         userDetails.setRickshawPhotoSize(fileBean.getSize());
     }
 
-    private PersistentUserDetails checkExistingUsers(PersistentUserDetails authorDetails) {
+    private boolean checkExistedIfDisabledUser(PersistentUserDetails authorDetails) {
+        boolean existedIfDisabledUser = Boolean.FALSE;
         log.info("Verifying for existing user...");
-        PersistentUserDetails existedUserDetails = userRegistrationRepository.findExistingUsers(authorDetails).stream().findFirst().orElseGet(null);
-        if (existedUserDetails != null) {
-            if (existedUserDetails.isEnabled()) {
-                if (existedUserDetails.getEmail().equalsIgnoreCase(authorDetails.getEmail())) {
-                    log.error("Email is already registered: " + authorDetails.getEmail());
-                    throw new ApiException(MessageConstants.EMAIL_ALREADY_REGISTERED + authorDetails.getEmail());
-                } else if (existedUserDetails.getUsername().equalsIgnoreCase(authorDetails.getUsername())) {
-                    log.error("Username is already registered: " + authorDetails.getUsername());
-                    throw new ApiException(MessageConstants.USERNAME_ALREADY_REGISTERED + authorDetails.getUsername());
-                } else {
-                    log.error("Mobile Number is already registered: " + authorDetails.getMobile());
-                    throw new ApiException(MessageConstants.MOBILE_ALREADY_REGISTERED + authorDetails.getMobile());
-                }
+        List<PersistentUserDetails> existingUsers = userRegistrationRepository.findExistingUsers(authorDetails);
+        if (existingUsers.size() > 0) {
+            if (existingUsers.stream().anyMatch(eu -> eu.getEmail().equalsIgnoreCase(authorDetails.getEmail())
+                    && eu.isEnabled())) {
+                log.error("Email is already registered: " + authorDetails.getEmail());
+                throw new ApiException(MessageConstants.EMAIL_ALREADY_REGISTERED + authorDetails.getEmail());
+            } else if (existingUsers.stream().anyMatch(eu -> eu.getUsername().equalsIgnoreCase(authorDetails.getUsername())
+                    && eu.isEnabled())) {
+                log.error("Username is already registered: " + authorDetails.getUsername());
+                throw new ApiException(MessageConstants.USERNAME_ALREADY_REGISTERED + authorDetails.getUsername());
+            } else if (existingUsers.stream().anyMatch(eu -> eu.getMobile().equalsIgnoreCase(authorDetails.getMobile())
+                    && eu.isEnabled())) {
+                log.error("Mobile Number is already registered: " + authorDetails.getMobile());
+                throw new ApiException(MessageConstants.MOBILE_ALREADY_REGISTERED + authorDetails.getMobile());
+            } else {
+                log.warn("Existing but Disabled User Found.");
+                existedIfDisabledUser = Boolean.TRUE;
             }
         }
-        return existedUserDetails;
+        return existedIfDisabledUser;
     }
 
     @Override
