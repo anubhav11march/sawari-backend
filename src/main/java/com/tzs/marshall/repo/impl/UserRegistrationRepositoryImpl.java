@@ -45,7 +45,7 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
 
     @Override
     public List<PersistentUserDetails> findExistingUsers(PersistentUserDetails authorDetails) {
-        String query = "SELECT user_id, user_name, email, mobile FROM marshall_service.subscribe_by_email eml, marshall_service.user_registration reg " +
+        String query = "SELECT user_id, user_name, email, mobile, is_enable FROM marshall_service.subscribe_by_email eml, marshall_service.user_registration reg " +
                 "WHERE eml.subs_id = reg.subs_id AND (eml.email=:email OR reg.user_name=:userName OR reg.mobile = :mobile)";
         try {
             return jdbcTemplate.query(query,

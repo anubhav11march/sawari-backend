@@ -31,7 +31,7 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
     public List<PersistentUserDetails> getUserDetailsById(Long userId) {
         try {
             String query = "SELECT * FROM marshall_service.view_user_details vu, marshall_service.profile_contents pc " +
-                    "WHERE vu.user_id=pc.content_user_id AND user_id=:user_id AND is_deleted=:is_deleted AND is_enable=:is_enable";
+                    "WHERE vu.user_id=pc.content_user_id AND user_id=:user_id AND vu.is_deleted=:is_deleted AND vu.is_enable=:is_enable";
             return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("user_id", userId)
                             .addValue("is_deleted", Constants.isDeleted)
                             .addValue("is_enable", Constants.isEnable)
