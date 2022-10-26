@@ -20,29 +20,29 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
     private static final Logger log = LoggerFactory.getLogger(UserPostLoginServiceImpl.class);
 
     @Override
-    public PersistentUserDetails handleFetchedFullAuthorDetails(PersistentUserDetails authorDetails) {
-        log.info("available user details: " + authorDetails);
-        if (authorDetails.getUmappingId() == null) {
+    public PersistentUserDetails handleFetchedFullUserDetails(PersistentUserDetails userDetails) {
+        log.info("available user details: " + userDetails);
+        if (userDetails.getUmappingId() == null) {
             log.info("fetching complete profile details from db...");
-            List<PersistentUserDetails> userDetailsById = userPostLoginRepository.getUserDetailsById(authorDetails.getUserId());
+            List<PersistentUserDetails> userDetailsById = userPostLoginRepository.getUserDetailsById(userDetails.getUserId());
             if (userDetailsById.size() == 0) {
-                log.info("complete profile details not yet updated, returning essential details...{}", authorDetails);
-                return authorDetails;
+                log.info("complete profile details not yet updated, returning essential details...{}", userDetails);
+                return userDetails;
             }
             log.info("complete profile details found...");
-            authorDetails = userDetailsById.stream().findFirst().get();
+            userDetails = userDetailsById.stream().findFirst().get();
         }
-        return authorDetails;
+        return userDetails;
     }
 
     @Override
-    public List<PersistentUserDetails> updateAuthorDetails(PersistentUserDetails authorDetails) {
-        log.info("validating email...{}", authorDetails.getEmail());
-        UserDetailsValidator.validateEmail(authorDetails.getEmail());
+    public List<PersistentUserDetails> updateUserDetails(PersistentUserDetails userDetails) {
+        log.info("validating email...{}", userDetails.getEmail());
+        UserDetailsValidator.validateEmail(userDetails.getEmail());
         log.info("Updating details in DB...");
-        userPostLoginRepository.saveOrUpdateUserDetails(authorDetails);
-        log.info("Details Updated Successfully...{}", authorDetails);
-        return userPostLoginRepository.getUserDetailsById(authorDetails.getUserId());
+        userPostLoginRepository.saveOrUpdateUserDetails(userDetails);
+        log.info("Details Updated Successfully...{}", userDetails);
+        return userPostLoginRepository.getUserDetailsById(userDetails.getUserId());
     }
 }
 

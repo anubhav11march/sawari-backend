@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
-@RequestMapping({"/author", "/admin", "editor"})
+@RequestMapping({"/user", "/admin", "driver"})
 public class PostLoginRestController {
 
     @Autowired
@@ -37,17 +37,17 @@ public class PostLoginRestController {
     private static final Logger log = LoggerFactory.getLogger(PostLoginRestController.class);
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    PersistentUserDetails getProfile(@AuthenticationPrincipal PersistentUserDetails authorDetails) {
-        authorDetails = userPostLoginService.handleFetchedFullAuthorDetails(authorDetails);
-        log.info("Updating complete profile details in Security context...{}", authorDetails);
-        Authentication authentication = new PreAuthenticatedAuthenticationToken(authorDetails, authorDetails.getPassword(), authorDetails.getAuthorities());
+    PersistentUserDetails getProfile(@AuthenticationPrincipal PersistentUserDetails userDetails) {
+        userDetails = userPostLoginService.handleFetchedFullUserDetails(userDetails);
+        log.info("Updating complete profile details in Security context...{}", userDetails);
+        Authentication authentication = new PreAuthenticatedAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return authorDetails;
+        return userDetails;
     }
 
     @RequestMapping(value = "/profile/update", method = RequestMethod.PUT)
-    List<PersistentUserDetails> userRegistration(@RequestBody PersistentUserDetails authorDetails) {
-        return userPostLoginService.updateAuthorDetails(authorDetails);
+    List<PersistentUserDetails> userRegistration(@RequestBody PersistentUserDetails userDetails) {
+        return userPostLoginService.updateUserDetails(userDetails);
     }
 
     @RequestMapping(value = "/plans", method = RequestMethod.GET)

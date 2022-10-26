@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserPostLoginService {
 
-    PersistentUserDetails handleFetchedFullAuthorDetails(PersistentUserDetails authorDetails);
+    PersistentUserDetails handleFetchedFullUserDetails(PersistentUserDetails authorDetails);
 
-    List<PersistentUserDetails> updateAuthorDetails(PersistentUserDetails authorDetails);
+    List<PersistentUserDetails> updateUserDetails(PersistentUserDetails authorDetails);
 }
