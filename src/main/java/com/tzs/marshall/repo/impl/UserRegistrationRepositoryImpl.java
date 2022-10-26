@@ -132,7 +132,7 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
     public void rollbackRegistration(PersistentUserDetails userDetails) {
         String userBridge = "DELETE FROM marshall_service.user_role_type_bridge WHERE user_id=:userId";
         String userRegistration = "DELETE FROM marshall_service.user_registration WHERE user_id=:userId";
-        String profileDetails = "DELETE FROM marshall_service.profile_contents WHERE content_user_id=:userId";
+        String profileDetails = "DELETE FROM marshall_service.profile_contents WHERE profile_user_id=:userId";
         try {
             userDetails = findExistingUsers(userDetails).stream().findAny().get();
             log.info("UserId found: " + userDetails.getUserId());
@@ -151,7 +151,7 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
         try {
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource
-                    .addValue("contentUserId", profileDetails.getUserId())
+                    .addValue("profileUserId", profileDetails.getUserId())
                     .addValue("profilePhotoName", profileDetails.getProfilePhotoName())
                     .addValue("profilePhotoPath", profileDetails.getProfilePhotoPath())
                     .addValue("profilePhotoSize", profileDetails.getProfilePhotoSize())
@@ -173,7 +173,7 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
             return new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                     .withCatalogName(Constants.SCHEMA)
                     .withTableName("profile_contents")
-                    .usingColumns("content_user_id", "profile_photo_name", "profile_photo_path", "profile_photo_size",
+                    .usingColumns("profile_user_id", "profile_photo_name", "profile_photo_path", "profile_photo_size",
                             "aadhar_number", "aadhar_back_photo_name", "aadhar_back_photo_path", "aadhar_back_photo_size",
                             "aadhar_front_photo_name", "aadhar_front_photo_path", "aadhar_front_photo_size",
                             "rickshaw_number", "rickshaw_photo_name", "rickshaw_photo_path", "rickshaw_photo_size",

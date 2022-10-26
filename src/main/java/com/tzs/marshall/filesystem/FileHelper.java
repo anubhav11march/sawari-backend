@@ -1,6 +1,7 @@
 package com.tzs.marshall.filesystem;
 
 import com.tzs.marshall.bean.DBProperties;
+import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import org.slf4j.Logger;
@@ -24,6 +25,35 @@ import static com.tzs.marshall.constants.Constants.*;
 @Component
 public class FileHelper {
     private final static Logger log = LoggerFactory.getLogger(FileHelper.class);
+
+    public void fetchAndUploadProfileDetails(ProfileDetails userDetails) {
+        FileBean fileBean;
+        if (userDetails.getProfilePhoto() != null) {
+            fileBean = uploadFileHelper(userDetails.getProfilePhoto(), userDetails.getUserId());
+            userDetails.setProfilePhotoName(fileBean.getFileName());
+            userDetails.setProfilePhotoPath(fileBean.getPath());
+            userDetails.setProfilePhotoSize(fileBean.getSize());
+        }
+
+        if (userDetails.getAadharBackPhoto() != null && userDetails.getAadharFrontPhoto() != null) {
+            fileBean = uploadFileHelper(userDetails.getAadharBackPhoto(), userDetails.getUserId());
+            userDetails.setAadharBackPhotoName(fileBean.getFileName());
+            userDetails.setAadharBackPhotoPath(fileBean.getPath());
+            userDetails.setAadharBackPhotoSize(fileBean.getSize());
+
+            fileBean = uploadFileHelper(userDetails.getAadharFrontPhoto(), userDetails.getUserId());
+            userDetails.setAadharFrontPhotoName(fileBean.getFileName());
+            userDetails.setAadharFrontPhotoPath(fileBean.getPath());
+            userDetails.setAadharFrontPhotoSize(fileBean.getSize());
+        }
+
+        if (userDetails.getRickshawPhoto() != null) {
+            fileBean = uploadFileHelper(userDetails.getRickshawPhoto(), userDetails.getUserId());
+            userDetails.setRickshawPhotoName(fileBean.getFileName());
+            userDetails.setRickshawPhotoPath(fileBean.getPath());
+            userDetails.setRickshawPhotoSize(fileBean.getSize());
+        }
+    }
 
     public FileBean uploadFileHelper(MultipartFile file,  Long userId) {
         FileBean fileBean = new FileBean();

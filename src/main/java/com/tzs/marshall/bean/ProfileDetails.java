@@ -3,6 +3,7 @@ package com.tzs.marshall.bean;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -34,6 +35,13 @@ public class ProfileDetails extends PersistentUserDetails {
     private String rickshawNumber;
 
     public ProfileDetails() {
+    }
+
+    public ProfileDetails(PersistentUserDetails userDetails, String rickshawNumber, @Nullable MultipartFile profilePhoto, @Nullable MultipartFile rickshawPhoto) {
+        super(userDetails);
+        this.rickshawNumber = rickshawNumber;
+        this.profilePhoto = profilePhoto;
+        this.rickshawPhoto = rickshawPhoto;
     }
 
     public MultipartFile getProfilePhoto() {

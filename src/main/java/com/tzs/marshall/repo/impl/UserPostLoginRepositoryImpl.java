@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +33,7 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
     public List<PersistentUserDetails> getUserDetailsById(Long userId) {
         try {
             String query = "SELECT * FROM marshall_service.view_user_details vu, marshall_service.profile_contents pc " +
-                    "WHERE vu.user_id=pc.content_user_id AND user_id=:user_id AND vu.is_deleted=:is_deleted AND vu.is_enable=:is_enable";
+                    "WHERE vu.user_id=pc.profile_user_id AND user_id=:user_id AND vu.is_deleted=:is_deleted AND vu.is_enable=:is_enable";
             return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("user_id", userId)
                             .addValue("is_deleted", Constants.isDeleted)
                             .addValue("is_enable", Constants.isEnable)
@@ -69,6 +71,48 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
                     .withCatalogName("marshall_service")
                     .withProcedureName("spInsertOrUpdateUserDetails")
                     .execute(mapSqlParameterSource);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public List<PersistentUserDetails> getUserProfileAndEssentialDetailsById(Long userId) {
+        try {
+            String query = "SELECT * FROM marshall_service.view_incomplete_user_details vu, marshall_service.profile_contents pc " +
+                    "WHERE vu.user_id=pc.profile_user_id AND user_id=:user_id AND vu.is_deleted=:is_deleted AND vu.is_enable=:is_enable";
+            return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("user_id", userId)
+                            .addValue("is_deleted", Constants.isDeleted)
+                            .addValue("is_enable", Constants.isEnable)
+                    , BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public int updateProfileDetails(PersistentUserDetails userDetails) {
+        try {
+            String sql = "UPDATE marshall_service.profile_contents SET " +
+                    "profile_photo_name=:profilePhotoName, profile_photo_path=:profilePhotoPath, profile_photo_size=:profilePhotoSize, " +
+                    "rickshaw_number=:rickshawNumber, rickshaw_photo_name=:rickshawPhotoName, rickshaw_photo_path=:rickshawPhotoPath, rickshaw_photo_size=:rickshawPhotoSize, " +
+                    "modify_date=:modifyDate WHERE profile_user_id=:profileUserId AND is_deleted=:isDeleted";
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource
+                    .addValue("profileUserId", userDetails.getUserId())
+                    .addValue("profilePhotoName", userDetails.getProfilePhotoName())
+                    .addValue("profilePhotoPath", userDetails.getProfilePhotoPath())
+                    .addValue("profilePhotoSize", userDetails.getProfilePhotoSize())
+                    .addValue("rickshawNumber", userDetails.getRickshawNumber())
+                    .addValue("rickshawPhotoName", userDetails.getRickshawPhotoName())
+                    .addValue("rickshawPhotoPath", userDetails.getRickshawPhotoPath())
+                    .addValue("rickshawPhotoSize", userDetails.getRickshawPhotoSize())
+                    .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
+                    .addValue("isDeleted", Constants.isDeleted);
+
+            return jdbcTemplate.update(sql, mapSqlParameterSource);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);

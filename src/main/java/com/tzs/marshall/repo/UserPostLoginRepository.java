@@ -10,6 +10,10 @@ public interface UserPostLoginRepository {
     List<PersistentUserDetails> getUserDetailsById(Long userId);
 
     Map<String, Object> saveOrUpdateUserDetails(PersistentUserDetails authorDetails);
+
+    List<PersistentUserDetails> getUserProfileAndEssentialDetailsById(Long userId);
+
+    int updateProfileDetails(PersistentUserDetails userDetails);
 }
 
 
