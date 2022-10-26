@@ -104,7 +104,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
                 Long userId = userRegistrationRepository.findExistingUsers(tempUserDetails).stream().findFirst().get().getUserId();
                 userDetails.setUserId(userId);
-                fetchFilesInfo(userDetails);
+                fileHelper.fetchAndUploadProfileDetails(userDetails);
                 userRegistrationRepository.saveDriverImagesDetails(userDetails, userDetails.getRoleName());
                 userRegistrationRepository.insertIntoUserBridgeTable(userDetails.getUsername(), userDetails.getRoleName(), userDetails.getTypeName());
                 log.info("User Record Inserted.\n" + userDetails);
@@ -114,32 +114,10 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         } catch (Exception e) {
             log.warn(String.format("Unable to save user details, Rolling back the user details from db for [%s]", userDetails));
             userRegistrationRepository.rollbackRegistration(tempUserDetails);
-            throw new ApiException(e.getMessage());
+            throw new ApiException(e.toString());
         }
         log.info("User Registered!");
         return userDetails;
-    }
-
-    private void fetchFilesInfo(ProfileDetails userDetails) {
-        FileBean fileBean = fileHelper.uploadFileHelper(userDetails.getProfilePhoto(), userDetails.getUserId());
-        userDetails.setProfilePhotoName(fileBean.getFileName());
-        userDetails.setProfilePhotoPath(fileBean.getPath());
-        userDetails.setProfilePhotoSize(fileBean.getSize());
-
-        fileBean = fileHelper.uploadFileHelper(userDetails.getAadharBackPhoto(), userDetails.getUserId());
-        userDetails.setAadharBackPhotoName(fileBean.getFileName());
-        userDetails.setAadharBackPhotoPath(fileBean.getPath());
-        userDetails.setAadharBackPhotoSize(fileBean.getSize());
-
-        fileBean = fileHelper.uploadFileHelper(userDetails.getAadharFrontPhoto(), userDetails.getUserId());
-        userDetails.setAadharFrontPhotoName(fileBean.getFileName());
-        userDetails.setAadharFrontPhotoPath(fileBean.getPath());
-        userDetails.setAadharFrontPhotoSize(fileBean.getSize());
-
-        fileBean = fileHelper.uploadFileHelper(userDetails.getRickshawPhoto(), userDetails.getUserId());
-        userDetails.setRickshawPhotoName(fileBean.getFileName());
-        userDetails.setRickshawPhotoPath(fileBean.getPath());
-        userDetails.setRickshawPhotoSize(fileBean.getSize());
     }
 
     private boolean checkExistedIfDisabledUser(PersistentUserDetails authorDetails) {

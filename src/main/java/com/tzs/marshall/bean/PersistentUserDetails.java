@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.Date;
@@ -51,7 +52,85 @@ public class PersistentUserDetails implements UserDetails {
     private Long umappingId;
     private String permissionName;
 
+    private Long profileId;
+    private MultipartFile profilePhoto;
+    private String profilePhotoName;
+    private String profilePhotoPath;
+    private Long profilePhotoSize;
+
+    private MultipartFile aadharBackPhoto;
+    private String aadharBackPhotoName;
+    private String aadharBackPhotoPath;
+    private Long aadharBackPhotoSize;
+
+    private MultipartFile aadharFrontPhoto;
+    private String aadharFrontPhotoName;
+    private String aadharFrontPhotoPath;
+    private Long aadharFrontPhotoSize;
+
+    private String aadharNumber;
+
+    private MultipartFile rickshawPhoto;
+    private String rickshawPhotoName;
+    private String rickshawPhotoPath;
+    private Long rickshawPhotoSize;
+    private String rickshawNumber;
+
     public PersistentUserDetails() {
+    }
+
+
+    public PersistentUserDetails(PersistentUserDetails userDetails) {
+        this.userId = userDetails.getUserId();
+        this.firstName = userDetails.firstName;
+        this.middleName = userDetails.middleName;
+        this.lastName = userDetails.lastName;
+        this.userName = userDetails.userName;
+        this.phone = userDetails.phone;
+        this.mobile = userDetails.mobile;
+        this.email = userDetails.email;
+        this.alternateEmail = userDetails.alternateEmail;
+        this.password = userDetails.password;
+        this.is_deleted = userDetails.is_deleted;
+        this.is_enable = userDetails.is_enable;
+        this.joinDate = userDetails.joinDate;
+        this.roleId = userDetails.roleId;
+        this.roleName = userDetails.roleName;
+        this.typeId = userDetails.typeId;
+        this.typeName = userDetails.typeName;
+        this.addressEducationId = userDetails.addressEducationId;
+        this.street = userDetails.street;
+        this.city = userDetails.city;
+        this.state = userDetails.state;
+        this.country = userDetails.country;
+        this.zipCode = userDetails.zipCode;
+        this.department = userDetails.department;
+        this.institution = userDetails.institution;
+        this.permissionId = userDetails.permissionId;
+        this.associateId = userDetails.associateId;
+        this.subsId = userDetails.subsId;
+        this.bridgeId = userDetails.bridgeId;
+        this.umappingId = userDetails.umappingId;
+        this.permissionName = userDetails.permissionName;
+        this.profileId = userDetails.profileId;
+        this.profilePhoto = userDetails.profilePhoto;
+        this.profilePhotoName = userDetails.profilePhotoName;
+        this.profilePhotoPath = userDetails.profilePhotoPath;
+        this.profilePhotoSize = userDetails.profilePhotoSize;
+        this.aadharBackPhoto = userDetails.aadharBackPhoto;
+        this.aadharBackPhotoName = userDetails.aadharBackPhotoName;
+        this.aadharBackPhotoPath = userDetails.aadharBackPhotoPath;
+        this.aadharBackPhotoSize = userDetails.aadharBackPhotoSize;
+        this.aadharFrontPhoto = userDetails.aadharFrontPhoto;
+        this.aadharFrontPhotoName = userDetails.aadharFrontPhotoName;
+        this.aadharFrontPhotoPath = userDetails.aadharFrontPhotoPath;
+        this.aadharFrontPhotoSize = userDetails.aadharFrontPhotoSize;
+        this.aadharNumber = userDetails.aadharNumber;
+        this.rickshawPhoto = userDetails.rickshawPhoto;
+        this.rickshawPhotoName = userDetails.rickshawPhotoName;
+        this.rickshawPhotoPath = userDetails.rickshawPhotoPath;
+        this.rickshawPhotoSize = userDetails.rickshawPhotoSize;
+        this.rickshawNumber = userDetails.rickshawNumber;
     }
 
     public PersistentUserDetails(Long userId, String email, String userName, String mobile) {
@@ -303,6 +382,158 @@ public class PersistentUserDetails implements UserDetails {
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
+    }
+
+    public Long getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
+    }
+
+    public MultipartFile getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(MultipartFile profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
+    public String getProfilePhotoName() {
+        return profilePhotoName;
+    }
+
+    public void setProfilePhotoName(String profilePhotoName) {
+        this.profilePhotoName = profilePhotoName;
+    }
+
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
+    }
+
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
+    }
+
+    public Long getProfilePhotoSize() {
+        return profilePhotoSize;
+    }
+
+    public void setProfilePhotoSize(Long profilePhotoSize) {
+        this.profilePhotoSize = profilePhotoSize;
+    }
+
+    public MultipartFile getAadharBackPhoto() {
+        return aadharBackPhoto;
+    }
+
+    public void setAadharBackPhoto(MultipartFile aadharBackPhoto) {
+        this.aadharBackPhoto = aadharBackPhoto;
+    }
+
+    public String getAadharBackPhotoName() {
+        return aadharBackPhotoName;
+    }
+
+    public void setAadharBackPhotoName(String aadharBackPhotoName) {
+        this.aadharBackPhotoName = aadharBackPhotoName;
+    }
+
+    public String getAadharBackPhotoPath() {
+        return aadharBackPhotoPath;
+    }
+
+    public void setAadharBackPhotoPath(String aadharBackPhotoPath) {
+        this.aadharBackPhotoPath = aadharBackPhotoPath;
+    }
+
+    public Long getAadharBackPhotoSize() {
+        return aadharBackPhotoSize;
+    }
+
+    public void setAadharBackPhotoSize(Long aadharBackPhotoSize) {
+        this.aadharBackPhotoSize = aadharBackPhotoSize;
+    }
+
+    public MultipartFile getAadharFrontPhoto() {
+        return aadharFrontPhoto;
+    }
+
+    public void setAadharFrontPhoto(MultipartFile aadharFrontPhoto) {
+        this.aadharFrontPhoto = aadharFrontPhoto;
+    }
+
+    public String getAadharFrontPhotoName() {
+        return aadharFrontPhotoName;
+    }
+
+    public void setAadharFrontPhotoName(String aadharFrontPhotoName) {
+        this.aadharFrontPhotoName = aadharFrontPhotoName;
+    }
+
+    public String getAadharFrontPhotoPath() {
+        return aadharFrontPhotoPath;
+    }
+
+    public void setAadharFrontPhotoPath(String aadharFrontPhotoPath) {
+        this.aadharFrontPhotoPath = aadharFrontPhotoPath;
+    }
+
+    public Long getAadharFrontPhotoSize() {
+        return aadharFrontPhotoSize;
+    }
+
+    public void setAadharFrontPhotoSize(Long aadharFrontPhotoSize) {
+        this.aadharFrontPhotoSize = aadharFrontPhotoSize;
+    }
+
+    public String getAadharNumber() {
+        return aadharNumber;
+    }
+
+    public void setAadharNumber(String aadharNumber) {
+        this.aadharNumber = aadharNumber;
+    }
+
+    public MultipartFile getRickshawPhoto() {
+        return rickshawPhoto;
+    }
+
+    public void setRickshawPhoto(MultipartFile rickshawPhoto) {
+        this.rickshawPhoto = rickshawPhoto;
+    }
+
+    public String getRickshawPhotoName() {
+        return rickshawPhotoName;
+    }
+
+    public void setRickshawPhotoName(String rickshawPhotoName) {
+        this.rickshawPhotoName = rickshawPhotoName;
+    }
+
+    public String getRickshawPhotoPath() {
+        return rickshawPhotoPath;
+    }
+
+    public void setRickshawPhotoPath(String rickshawPhotoPath) {
+        this.rickshawPhotoPath = rickshawPhotoPath;
+    }
+
+    public Long getRickshawPhotoSize() {
+        return rickshawPhotoSize;
+    }
+
+    public void setRickshawPhotoSize(Long rickshawPhotoSize) {
+        this.rickshawPhotoSize = rickshawPhotoSize;
+    }
+
+    public String getRickshawNumber() {
+        return rickshawNumber;
+    }
+
+    public void setRickshawNumber(String rickshawNumber) {
+        this.rickshawNumber = rickshawNumber;
     }
 
     @JsonDeserialize(using = CustomAuthorityDeserializer.class)
