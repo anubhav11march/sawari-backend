@@ -1,3 +1,4 @@
+/*
 package com.tzs.marshall.controller.template;
 
 import com.tzs.marshall.constants.Constants;
@@ -52,7 +53,8 @@ public class PreLoginTemplateController {
         return null;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+*/
+/*    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error, HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
@@ -61,7 +63,8 @@ public class PreLoginTemplateController {
         if (error != null)
             session.setAttribute("errorMessage", MessageConstants.BAD_CREDENTIALS);
         return "pages/login";
-    }
+    }*//*
+
 
     @RequestMapping(value = "/init/reset-password", method = RequestMethod.GET)
     public String resetPassword(@RequestParam(value = "token", required = false) String token,
@@ -153,3 +156,4 @@ public class PreLoginTemplateController {
 
 
 }
+*/
