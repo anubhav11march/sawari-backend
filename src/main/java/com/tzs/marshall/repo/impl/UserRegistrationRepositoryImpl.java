@@ -163,9 +163,9 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
                     .addValue("aadharFrontPhotoPath", profileDetails.getAadharFrontPhotoPath())
                     .addValue("aadharFrontPhotoSize", profileDetails.getAadharFrontPhotoSize())
                     .addValue("rickshawNumber", profileDetails.getRickshawNumber())
-                    .addValue("rickshawPhotoName", profileDetails.getRickshawPhotoName())
-                    .addValue("rickshawPhotoPath", profileDetails.getRickshawPhotoPath())
-                    .addValue("rickshawPhotoSize", profileDetails.getRickshawPhotoSize())
+                    .addValue("rickshawPhotoName", profileDetails.getRickshawFrontPhotoName())
+                    .addValue("rickshawPhotoPath", profileDetails.getRickshawFrontPhotoPath())
+                    .addValue("rickshawPhotoSize", profileDetails.getRickshawFrontPhotoSize())
                     .addValue("uploadDate", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("isDeleted", Constants.isDeleted);

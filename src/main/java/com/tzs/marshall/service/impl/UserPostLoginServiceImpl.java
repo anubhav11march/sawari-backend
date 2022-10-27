@@ -3,6 +3,7 @@ package com.tzs.marshall.service.impl;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.Constants;
+import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.filesystem.FileHelper;
 import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.UserPostLoginService;
@@ -11,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Service
@@ -49,11 +52,37 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
         }
         log.info("Updating details in DB...");
         userPostLoginRepository.saveOrUpdateUserDetails(userDetails);
-        ProfileDetails profileDetails = new ProfileDetails(userDetails, userDetails.getRickshawNumber(), userDetails.getProfilePhoto(), userDetails.getRickshawPhoto());
-        fileHelper.fetchAndUploadProfileDetails(profileDetails);
-        userPostLoginRepository.updateProfileDetails(profileDetails);
+        if (Constants.DRIVER.equalsIgnoreCase(userDetails.getRoleName())) {
+            ProfileDetails profileDetails =
+                    new ProfileDetails(userDetails, userDetails.getPaytmNumber(), userDetails.getRickshawNumber(), userDetails.getRickshawFrontPhoto(),
+                            userDetails.getRickshawBackPhoto(), userDetails.getRickshawSidePhoto());
+            fileHelper.fetchAndUploadProfileDetails(profileDetails);
+            userPostLoginRepository.updateProfileDetails(profileDetails);
+        }
         log.info("Details Updated Successfully...{}", userDetails);
         return List.of(handleFetchedFullUserDetails(userDetails));
+    }
+
+    @Override
+    public void fetchProfileImageById(Long userId, HttpServletResponse response) {
+        List<PersistentUserDetails> userProfile = userPostLoginRepository.getUserProfileAndEssentialDetailsById(userId);
+        PersistentUserDetails profileDetails = userProfile.stream().findFirst().get();
+        String profileName = profileDetails.getProfilePhotoName();
+        String profilePath = profileDetails.getProfilePhotoPath();
+        if (profileName != null && profilePath != null){
+            fileHelper.serveImageInResponse(profileName, response, profilePath);
+        } else {
+            throw new ApiException("No Profile Found");
+        }
+    }
+
+    @Override
+    public void updateProfileImage(Long userId, MultipartFile profilePhoto) {
+        ProfileDetails profileDetails = new ProfileDetails();
+        profileDetails.setUserId(userId);
+        profileDetails.setProfilePhoto(profilePhoto);
+        fileHelper.fetchAndUploadProfileDetails(profileDetails);
+        userPostLoginRepository.updateProfilePhoto(profileDetails);
     }
 }
 

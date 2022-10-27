@@ -1,6 +1,7 @@
 package com.tzs.marshall.repo;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
+import com.tzs.marshall.bean.ProfileDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ public interface UserPostLoginRepository {
     List<PersistentUserDetails> getUserProfileAndEssentialDetailsById(Long userId);
 
     int updateProfileDetails(PersistentUserDetails userDetails);
+
+    int updateProfilePhoto(ProfileDetails profileDetails);
 }
 
 

@@ -1,6 +1,7 @@
 package com.tzs.marshall.repo.impl;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
+import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
@@ -97,7 +98,7 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
         try {
             String sql = "UPDATE marshall_service.profile_contents SET " +
                     "profile_photo_name=:profilePhotoName, profile_photo_path=:profilePhotoPath, profile_photo_size=:profilePhotoSize, " +
-                    "rickshaw_number=:rickshawNumber, rickshaw_photo_name=:rickshawPhotoName, rickshaw_photo_path=:rickshawPhotoPath, rickshaw_photo_size=:rickshawPhotoSize, " +
+                    "paytm_number=:paytmNumber, rickshaw_number=:rickshawNumber, rickshaw_photo_name=:rickshawPhotoName, rickshaw_photo_path=:rickshawPhotoPath, rickshaw_photo_size=:rickshawPhotoSize, " +
                     "modify_date=:modifyDate WHERE profile_user_id=:profileUserId AND is_deleted=:isDeleted";
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource
@@ -105,10 +106,33 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
                     .addValue("profilePhotoName", userDetails.getProfilePhotoName())
                     .addValue("profilePhotoPath", userDetails.getProfilePhotoPath())
                     .addValue("profilePhotoSize", userDetails.getProfilePhotoSize())
+                    .addValue("paytmNumber", userDetails.getPaytmNumber())
                     .addValue("rickshawNumber", userDetails.getRickshawNumber())
-                    .addValue("rickshawPhotoName", userDetails.getRickshawPhotoName())
-                    .addValue("rickshawPhotoPath", userDetails.getRickshawPhotoPath())
-                    .addValue("rickshawPhotoSize", userDetails.getRickshawPhotoSize())
+                    .addValue("rickshawPhotoName", userDetails.getRickshawFrontPhotoName())
+                    .addValue("rickshawPhotoPath", userDetails.getRickshawFrontPhotoPath())
+                    .addValue("rickshawPhotoSize", userDetails.getRickshawFrontPhotoSize())
+                    .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
+                    .addValue("isDeleted", Constants.isDeleted);
+
+            return jdbcTemplate.update(sql, mapSqlParameterSource);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public int updateProfilePhoto(ProfileDetails userDetails) {
+        try {
+            String sql = "UPDATE marshall_service.profile_contents SET " +
+                    "profile_photo_name=:profilePhotoName, profile_photo_path=:profilePhotoPath, profile_photo_size=:profilePhotoSize, " +
+                    "modify_date=:modifyDate WHERE profile_user_id=:profileUserId AND is_deleted=:isDeleted";
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource
+                    .addValue("profileUserId", userDetails.getUserId())
+                    .addValue("profilePhotoName", userDetails.getProfilePhotoName())
+                    .addValue("profilePhotoPath", userDetails.getProfilePhotoPath())
+                    .addValue("profilePhotoSize", userDetails.getProfilePhotoSize())
                     .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("isDeleted", Constants.isDeleted);
 
