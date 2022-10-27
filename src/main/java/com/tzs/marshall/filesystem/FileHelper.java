@@ -11,8 +11,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,11 +47,22 @@ public class FileHelper {
             userDetails.setAadharFrontPhotoSize(fileBean.getSize());
         }
 
-        if (userDetails.getRickshawPhoto() != null) {
-            fileBean = uploadFileHelper(userDetails.getRickshawPhoto(), userDetails.getUserId());
-            userDetails.setRickshawPhotoName(fileBean.getFileName());
-            userDetails.setRickshawPhotoPath(fileBean.getPath());
-            userDetails.setRickshawPhotoSize(fileBean.getSize());
+        if (userDetails.getRickshawFrontPhoto() != null && userDetails.getRickshawBackPhoto() != null
+                && userDetails.getRickshawSidePhoto() != null) {
+            fileBean = uploadFileHelper(userDetails.getRickshawFrontPhoto(), userDetails.getUserId());
+            userDetails.setRickshawFrontPhotoName(fileBean.getFileName());
+            userDetails.setRickshawFrontPhotoPath(fileBean.getPath());
+            userDetails.setRickshawFrontPhotoSize(fileBean.getSize());
+
+            fileBean = uploadFileHelper(userDetails.getRickshawBackPhoto(), userDetails.getUserId());
+            userDetails.setRickshawBackPhotoName(fileBean.getFileName());
+            userDetails.setRickshawBackPhotoPath(fileBean.getPath());
+            userDetails.setRickshawBackPhotoSize(fileBean.getSize());
+
+            fileBean = uploadFileHelper(userDetails.getRickshawSidePhoto(), userDetails.getUserId());
+            userDetails.setRickshawSidePhotoName(fileBean.getFileName());
+            userDetails.setRickshawSidePhotoPath(fileBean.getPath());
+            userDetails.setRickshawSidePhotoSize(fileBean.getSize());
         }
     }
 
@@ -114,6 +125,36 @@ public class FileHelper {
         } catch (MalformedURLException ex) {
             log.error("File does not exist. [ERROR]: "+ex.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    public void serveImageInResponse(String imageName, HttpServletResponse response, String dirPathI) {
+        dirPathI = dirPathI.replaceAll("\\\\", "/");
+        try {
+            File savePath = new File(dirPathI);
+            int imageSize = 0;
+            for (int i = 0; i < 10; i++) {
+                if (!savePath.exists()) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
+                String contentType = "application/octet-stream";
+                imageSize = (int) savePath.length();
+                response.setContentType(contentType);
+                response.setHeader("Content_length", String.valueOf(savePath.length()));
+                response.setHeader("Content-Disposition", "inline: filename=\"" + imageName + "\"");
+                try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(savePath), imageSize);
+                     BufferedOutputStream output = new BufferedOutputStream(response.getOutputStream(), imageSize)) {
+                    byte[] buffer = new byte[imageSize];
+                    int byteReads;
+                    while ((byteReads = input.read(buffer)) > 0) {
+                        output.write(buffer, 0, byteReads);
+                    }
+                }
+            }
+            log.info("image served");
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new ApiException(ex.getMessage());
         }
     }
 }

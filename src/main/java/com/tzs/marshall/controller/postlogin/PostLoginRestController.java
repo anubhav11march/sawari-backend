@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
@@ -45,9 +46,23 @@ public class PostLoginRestController {
         return userDetails;
     }
 
-    @RequestMapping(value = "/profile/update", method = RequestMethod.PUT)
-    List<PersistentUserDetails> userRegistration(@RequestBody PersistentUserDetails userDetails) {
+    @RequestMapping(value = "/profile/image", method = RequestMethod.GET)
+    public void getImagePath(@AuthenticationPrincipal PersistentUserDetails userDetails,
+                             HttpServletResponse response) {
+        userPostLoginService.fetchProfileImageById(userDetails.getUserId(), response);
+    }
+
+    @RequestMapping(value = "/profile", method = RequestMethod.PUT, consumes = "multipart/form-data")
+    List<PersistentUserDetails> userRegistration(@ModelAttribute PersistentUserDetails userDetails) {
         return userPostLoginService.updateUserDetails(userDetails);
+    }
+
+    @RequestMapping(value = "/profile/image", method = RequestMethod.PUT, consumes = "multipart/form-data")
+    public void updateProfileImage(@RequestPart MultipartFile profilePhoto,
+                                   @AuthenticationPrincipal PersistentUserDetails userDetails,
+                                   HttpServletResponse response) {
+        userPostLoginService.updateProfileImage(userDetails.getUserId(), profilePhoto);
+        userPostLoginService.fetchProfileImageById(userDetails.getUserId(), response);
     }
 
     @RequestMapping(value = "/plans", method = RequestMethod.GET)

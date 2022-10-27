@@ -162,10 +162,17 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
                     .addValue("aadharFrontPhotoName", profileDetails.getAadharFrontPhotoName())
                     .addValue("aadharFrontPhotoPath", profileDetails.getAadharFrontPhotoPath())
                     .addValue("aadharFrontPhotoSize", profileDetails.getAadharFrontPhotoSize())
+                    .addValue("paytmNumber", profileDetails.getPaytmNumber())
                     .addValue("rickshawNumber", profileDetails.getRickshawNumber())
-                    .addValue("rickshawPhotoName", profileDetails.getRickshawPhotoName())
-                    .addValue("rickshawPhotoPath", profileDetails.getRickshawPhotoPath())
-                    .addValue("rickshawPhotoSize", profileDetails.getRickshawPhotoSize())
+                    .addValue("rickshawFrontPhotoName", profileDetails.getRickshawFrontPhotoName())
+                    .addValue("rickshawFrontPhotoPath", profileDetails.getRickshawFrontPhotoPath())
+                    .addValue("rickshawFrontPhotoSize", profileDetails.getRickshawFrontPhotoSize())
+                    .addValue("rickshawBackPhotoName", profileDetails.getRickshawBackPhotoName())
+                    .addValue("rickshawBackPhotoPath", profileDetails.getRickshawBackPhotoPath())
+                    .addValue("rickshawBackPhotoSize", profileDetails.getRickshawBackPhotoSize())
+                    .addValue("rickshawSidePhotoName", profileDetails.getRickshawSidePhotoName())
+                    .addValue("rickshawSidePhotoPath", profileDetails.getRickshawSidePhotoPath())
+                    .addValue("rickshawSidePhotoSize", profileDetails.getRickshawSidePhotoSize())
                     .addValue("uploadDate", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("isDeleted", Constants.isDeleted);
@@ -174,9 +181,11 @@ public class UserRegistrationRepositoryImpl implements UserRegistrationRepositor
                     .withCatalogName(Constants.SCHEMA)
                     .withTableName("profile_contents")
                     .usingColumns("profile_user_id", "profile_photo_name", "profile_photo_path", "profile_photo_size",
-                            "aadhar_number", "aadhar_back_photo_name", "aadhar_back_photo_path", "aadhar_back_photo_size",
+                            "paytm_number", "aadhar_number", "aadhar_back_photo_name", "aadhar_back_photo_path", "aadhar_back_photo_size",
                             "aadhar_front_photo_name", "aadhar_front_photo_path", "aadhar_front_photo_size",
-                            "rickshaw_number", "rickshaw_photo_name", "rickshaw_photo_path", "rickshaw_photo_size",
+                            "rickshaw_number", "rickshaw_front_photo_name", "rickshaw_front_photo_path", "rickshaw_front_photo_size",
+                            "rickshaw_back_photo_name", "rickshaw_back_photo_path", "rickshaw_back_photo_size",
+                            "rickshaw_side_photo_name", "rickshaw_side_photo_path", "rickshaw_side_photo_size",
                             "upload_date", "modify_date", "is_deleted")
                     .execute(mapSqlParameterSource);
         } catch (Exception e) {

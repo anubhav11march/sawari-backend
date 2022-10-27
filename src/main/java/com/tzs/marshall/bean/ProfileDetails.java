@@ -27,21 +27,34 @@ public class ProfileDetails extends PersistentUserDetails {
     private Long aadharFrontPhotoSize;
 
     private String aadharNumber;
-
-    private MultipartFile rickshawPhoto;
-    private String rickshawPhotoName;
-    private String rickshawPhotoPath;
-    private Long rickshawPhotoSize;
     private String rickshawNumber;
+    private String paytmNumber;
+
+    private MultipartFile rickshawFrontPhoto;
+    private String rickshawFrontPhotoName;
+    private String rickshawFrontPhotoPath;
+    private Long rickshawFrontPhotoSize;
+
+    private MultipartFile rickshawBackPhoto;
+    private String rickshawBackPhotoName;
+    private String rickshawBackPhotoPath;
+    private Long rickshawBackPhotoSize;
+
+    private MultipartFile rickshawSidePhoto;
+    private String rickshawSidePhotoName;
+    private String rickshawSidePhotoPath;
+    private Long rickshawSidePhotoSize;
 
     public ProfileDetails() {
     }
 
-    public ProfileDetails(PersistentUserDetails userDetails, String rickshawNumber, @Nullable MultipartFile profilePhoto, @Nullable MultipartFile rickshawPhoto) {
+    public ProfileDetails(PersistentUserDetails userDetails, String paytmNumber, String rickshawNumber, MultipartFile rickshawFrontPhoto, MultipartFile rickshawBackPhoto, MultipartFile rickshawSidePhoto) {
         super(userDetails);
+        this.paytmNumber = paytmNumber;
         this.rickshawNumber = rickshawNumber;
-        this.profilePhoto = profilePhoto;
-        this.rickshawPhoto = rickshawPhoto;
+        this.rickshawFrontPhoto = rickshawFrontPhoto;
+        this.rickshawBackPhoto = rickshawBackPhoto;
+        this.rickshawSidePhoto = rickshawSidePhoto;
     }
 
     public MultipartFile getProfilePhoto() {
@@ -140,36 +153,36 @@ public class ProfileDetails extends PersistentUserDetails {
         this.aadharFrontPhotoSize = aadharFrontPhotoSize;
     }
 
-    public MultipartFile getRickshawPhoto() {
-        return rickshawPhoto;
+    public MultipartFile getRickshawFrontPhoto() {
+        return rickshawFrontPhoto;
     }
 
-    public void setRickshawPhoto(MultipartFile rickshawPhoto) {
-        this.rickshawPhoto = rickshawPhoto;
+    public void setRickshawFrontPhoto(MultipartFile rickshawFrontPhoto) {
+        this.rickshawFrontPhoto = rickshawFrontPhoto;
     }
 
-    public String getRickshawPhotoName() {
-        return rickshawPhotoName;
+    public String getRickshawFrontPhotoName() {
+        return rickshawFrontPhotoName;
     }
 
-    public void setRickshawPhotoName(String rickshawPhotoName) {
-        this.rickshawPhotoName = rickshawPhotoName;
+    public void setRickshawFrontPhotoName(String rickshawFrontPhotoName) {
+        this.rickshawFrontPhotoName = rickshawFrontPhotoName;
     }
 
-    public String getRickshawPhotoPath() {
-        return rickshawPhotoPath;
+    public String getRickshawFrontPhotoPath() {
+        return rickshawFrontPhotoPath;
     }
 
-    public void setRickshawPhotoPath(String rickshawPhotoPath) {
-        this.rickshawPhotoPath = rickshawPhotoPath;
+    public void setRickshawFrontPhotoPath(String rickshawFrontPhotoPath) {
+        this.rickshawFrontPhotoPath = rickshawFrontPhotoPath;
     }
 
-    public Long getRickshawPhotoSize() {
-        return rickshawPhotoSize;
+    public Long getRickshawFrontPhotoSize() {
+        return rickshawFrontPhotoSize;
     }
 
-    public void setRickshawPhotoSize(Long rickshawPhotoSize) {
-        this.rickshawPhotoSize = rickshawPhotoSize;
+    public void setRickshawFrontPhotoSize(Long rickshawFrontPhotoSize) {
+        this.rickshawFrontPhotoSize = rickshawFrontPhotoSize;
     }
 
     public String getAadharNumber() {
@@ -186,5 +199,77 @@ public class ProfileDetails extends PersistentUserDetails {
 
     public void setRickshawNumber(String rickshawNumber) {
         this.rickshawNumber = rickshawNumber;
+    }
+
+    public String getPaytmNumber() {
+        return paytmNumber;
+    }
+
+    public void setPaytmNumber(String paytmNumber) {
+        this.paytmNumber = paytmNumber;
+    }
+
+    public MultipartFile getRickshawBackPhoto() {
+        return rickshawBackPhoto;
+    }
+
+    public void setRickshawBackPhoto(MultipartFile rickshawBackPhoto) {
+        this.rickshawBackPhoto = rickshawBackPhoto;
+    }
+
+    public String getRickshawBackPhotoName() {
+        return rickshawBackPhotoName;
+    }
+
+    public void setRickshawBackPhotoName(String rickshawBackPhotoName) {
+        this.rickshawBackPhotoName = rickshawBackPhotoName;
+    }
+
+    public String getRickshawBackPhotoPath() {
+        return rickshawBackPhotoPath;
+    }
+
+    public void setRickshawBackPhotoPath(String rickshawBackPhotoPath) {
+        this.rickshawBackPhotoPath = rickshawBackPhotoPath;
+    }
+
+    public Long getRickshawBackPhotoSize() {
+        return rickshawBackPhotoSize;
+    }
+
+    public void setRickshawBackPhotoSize(Long rickshawBackPhotoSize) {
+        this.rickshawBackPhotoSize = rickshawBackPhotoSize;
+    }
+
+    public MultipartFile getRickshawSidePhoto() {
+        return rickshawSidePhoto;
+    }
+
+    public void setRickshawSidePhoto(MultipartFile rickshawSidePhoto) {
+        this.rickshawSidePhoto = rickshawSidePhoto;
+    }
+
+    public String getRickshawSidePhotoName() {
+        return rickshawSidePhotoName;
+    }
+
+    public void setRickshawSidePhotoName(String rickshawSidePhotoName) {
+        this.rickshawSidePhotoName = rickshawSidePhotoName;
+    }
+
+    public String getRickshawSidePhotoPath() {
+        return rickshawSidePhotoPath;
+    }
+
+    public void setRickshawSidePhotoPath(String rickshawSidePhotoPath) {
+        this.rickshawSidePhotoPath = rickshawSidePhotoPath;
+    }
+
+    public Long getRickshawSidePhotoSize() {
+        return rickshawSidePhotoSize;
+    }
+
+    public void setRickshawSidePhotoSize(Long rickshawSidePhotoSize) {
+        this.rickshawSidePhotoSize = rickshawSidePhotoSize;
     }
 }
