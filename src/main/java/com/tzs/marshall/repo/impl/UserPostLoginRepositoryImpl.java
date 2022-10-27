@@ -98,7 +98,10 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
         try {
             String sql = "UPDATE marshall_service.profile_contents SET " +
                     "profile_photo_name=:profilePhotoName, profile_photo_path=:profilePhotoPath, profile_photo_size=:profilePhotoSize, " +
-                    "paytm_number=:paytmNumber, rickshaw_number=:rickshawNumber, rickshaw_photo_name=:rickshawPhotoName, rickshaw_photo_path=:rickshawPhotoPath, rickshaw_photo_size=:rickshawPhotoSize, " +
+                    "paytm_number=:paytmNumber, rickshaw_number=:rickshawNumber, " +
+                    "rickshaw_front_photo_name=:rickshawFrontPhotoName, rickshaw_front_photo_path=:rickshawFrontPhotoPath, rickshaw_front_photo_size=:rickshawFrontPhotoSize, " +
+                    "rickshaw_back_photo_name=:rickshawBackPhotoName, rickshaw_back_photo_path=:rickshawBackPhotoPath, rickshaw_back_photo_size=:rickshawBackPhotoSize, " +
+                    "rickshaw_side_photo_name=:rickshawSidePhotoName, rickshaw_side_photo_path=:rickshawSidePhotoPath, rickshaw_side_photo_size=:rickshawSidePhotoSize, " +
                     "modify_date=:modifyDate WHERE profile_user_id=:profileUserId AND is_deleted=:isDeleted";
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource
@@ -108,9 +111,15 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
                     .addValue("profilePhotoSize", userDetails.getProfilePhotoSize())
                     .addValue("paytmNumber", userDetails.getPaytmNumber())
                     .addValue("rickshawNumber", userDetails.getRickshawNumber())
-                    .addValue("rickshawPhotoName", userDetails.getRickshawFrontPhotoName())
-                    .addValue("rickshawPhotoPath", userDetails.getRickshawFrontPhotoPath())
-                    .addValue("rickshawPhotoSize", userDetails.getRickshawFrontPhotoSize())
+                    .addValue("rickshawFrontPhotoName", userDetails.getRickshawFrontPhotoName())
+                    .addValue("rickshawFrontPhotoPath", userDetails.getRickshawFrontPhotoPath())
+                    .addValue("rickshawFrontPhotoSize", userDetails.getRickshawFrontPhotoSize())
+                    .addValue("rickshawBackPhotoName", userDetails.getRickshawBackPhotoName())
+                    .addValue("rickshawBackPhotoPath", userDetails.getRickshawBackPhotoPath())
+                    .addValue("rickshawBackPhotoSize", userDetails.getRickshawBackPhotoSize())
+                    .addValue("rickshawSidePhotoName", userDetails.getRickshawSidePhotoName())
+                    .addValue("rickshawSidePhotoPath", userDetails.getRickshawSidePhotoPath())
+                    .addValue("rickshawSidePhotoSize", userDetails.getRickshawSidePhotoSize())
                     .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("isDeleted", Constants.isDeleted);
 

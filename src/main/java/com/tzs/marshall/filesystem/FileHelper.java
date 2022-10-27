@@ -47,11 +47,22 @@ public class FileHelper {
             userDetails.setAadharFrontPhotoSize(fileBean.getSize());
         }
 
-        if (userDetails.getRickshawFrontPhoto() != null) {
+        if (userDetails.getRickshawFrontPhoto() != null && userDetails.getRickshawBackPhoto() != null
+                && userDetails.getRickshawSidePhoto() != null) {
             fileBean = uploadFileHelper(userDetails.getRickshawFrontPhoto(), userDetails.getUserId());
             userDetails.setRickshawFrontPhotoName(fileBean.getFileName());
             userDetails.setRickshawFrontPhotoPath(fileBean.getPath());
             userDetails.setRickshawFrontPhotoSize(fileBean.getSize());
+
+            fileBean = uploadFileHelper(userDetails.getRickshawBackPhoto(), userDetails.getUserId());
+            userDetails.setRickshawBackPhotoName(fileBean.getFileName());
+            userDetails.setRickshawBackPhotoPath(fileBean.getPath());
+            userDetails.setRickshawBackPhotoSize(fileBean.getSize());
+
+            fileBean = uploadFileHelper(userDetails.getRickshawSidePhoto(), userDetails.getUserId());
+            userDetails.setRickshawSidePhotoName(fileBean.getFileName());
+            userDetails.setRickshawSidePhotoPath(fileBean.getPath());
+            userDetails.setRickshawSidePhotoSize(fileBean.getSize());
         }
     }
 
