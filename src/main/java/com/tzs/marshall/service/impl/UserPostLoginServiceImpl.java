@@ -2,8 +2,6 @@ package com.tzs.marshall.service.impl;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.ProfileDetails;
-import com.tzs.marshall.constants.Constants;
-import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.filesystem.FileHelper;
 import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.UserPostLoginService;
@@ -45,22 +43,25 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
     }
 
     @Override
-    public List<PersistentUserDetails> updateUserDetails(PersistentUserDetails userDetails) {
-        if (Constants.USER.equalsIgnoreCase(userDetails.getRoleName())) {
-            log.info("validating email...{}", userDetails.getEmail());
-            UserDetailsValidator.validateEmail(userDetails.getEmail());
-        }
+    public PersistentUserDetails updateUserDetails(PersistentUserDetails userDetails) {
+        log.info("validating email...{}", userDetails.getEmail());
+        UserDetailsValidator.validateEmail(userDetails.getEmail());
         log.info("Updating details in DB...");
-        userPostLoginRepository.saveOrUpdateUserDetails(userDetails);
-        if (Constants.DRIVER.equalsIgnoreCase(userDetails.getRoleName())) {
-            ProfileDetails profileDetails =
-                    new ProfileDetails(userDetails, userDetails.getPaytmNumber(), userDetails.getRickshawNumber(), userDetails.getRickshawFrontPhoto(),
-                            userDetails.getRickshawBackPhoto(), userDetails.getRickshawSidePhoto());
-            fileHelper.fetchAndUploadProfileDetails(profileDetails);
-            userPostLoginRepository.updateProfileDetails(profileDetails);
-        }
+        userPostLoginRepository.updateEssentialDetails(userDetails);
         log.info("Details Updated Successfully...{}", userDetails);
-        return List.of(handleFetchedFullUserDetails(userDetails));
+        return handleFetchedFullUserDetails(userDetails);
+    }
+
+    @Override
+    public PersistentUserDetails updateDriverDetails(PersistentUserDetails userDetails) {
+        log.info("Updating details in DB...");
+        ProfileDetails profileDetails =
+                new ProfileDetails(userDetails, userDetails.getPaytmNumber(), userDetails.getRickshawNumber(), userDetails.getRickshawFrontPhoto(),
+                        userDetails.getRickshawBackPhoto(), userDetails.getRickshawSidePhoto());
+        fileHelper.fetchAndUploadProfileDetails(profileDetails);
+        userPostLoginRepository.updateProfileDetails(profileDetails);
+        log.info("Details Updated Successfully...{}", userDetails);
+        return handleFetchedFullUserDetails(userDetails);
     }
 
     @Override
@@ -70,11 +71,10 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
             PersistentUserDetails profileDetails = userProfile.stream().findFirst().get();
             String profileName = profileDetails.getProfilePhotoName();
             String profilePath = profileDetails.getProfilePhotoPath();
-            if (profileName != null && profilePath != null){
+            if (profileName != null && profilePath != null) {
                 fileHelper.serveImageInResponse(profileName, response, profilePath);
             }
-        }
-         else {
+        } else {
             log.warn("No Profile Image Found");
         }
     }
@@ -87,5 +87,6 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
         fileHelper.fetchAndUploadProfileDetails(profileDetails);
         userPostLoginRepository.updateProfilePhoto(profileDetails);
     }
+
 }
 

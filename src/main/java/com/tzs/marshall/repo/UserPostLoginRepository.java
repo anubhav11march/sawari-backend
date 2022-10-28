@@ -17,6 +17,8 @@ public interface UserPostLoginRepository {
     int updateProfileDetails(PersistentUserDetails userDetails);
 
     int updateProfilePhoto(ProfileDetails profileDetails);
+
+    void updateEssentialDetails(PersistentUserDetails userDetails);
 }
 
 

@@ -98,7 +98,6 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
     public int updateProfileDetails(PersistentUserDetails userDetails) {
         try {
             String sql = "UPDATE marshall_service.profile_contents SET " +
-                    "profile_photo_name=:profilePhotoName, profile_photo_path=:profilePhotoPath, profile_photo_size=:profilePhotoSize, " +
                     "paytm_number=:paytmNumber, rickshaw_number=:rickshawNumber, " +
                     "rickshaw_front_photo_name=:rickshawFrontPhotoName, rickshaw_front_photo_path=:rickshawFrontPhotoPath, rickshaw_front_photo_size=:rickshawFrontPhotoSize, " +
                     "rickshaw_back_photo_name=:rickshawBackPhotoName, rickshaw_back_photo_path=:rickshawBackPhotoPath, rickshaw_back_photo_size=:rickshawBackPhotoSize, " +
@@ -107,9 +106,6 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource
                     .addValue("profileUserId", userDetails.getUserId())
-                    .addValue("profilePhotoName", userDetails.getProfilePhotoName())
-                    .addValue("profilePhotoPath", userDetails.getProfilePhotoPath())
-                    .addValue("profilePhotoSize", userDetails.getProfilePhotoSize())
                     .addValue("paytmNumber", userDetails.getPaytmNumber())
                     .addValue("rickshawNumber", userDetails.getRickshawNumber())
                     .addValue("rickshawFrontPhotoName", userDetails.getRickshawFrontPhotoName())
@@ -161,5 +157,34 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
         }
         return update;
+    }
+
+    @Override
+    public void updateEssentialDetails(PersistentUserDetails userDetails) {
+        try {
+            String sql = "UPDATE marshall_service.user_registration SET " +
+                    "first_name=:firstName, last_name=:lastName, mobile=:mobile " +
+                    "WHERE user_id=:userId AND is_enable=:isEnable AND is_deleted=:isDeleted";
+            String emailSql = "UPDATE marshall_service.subscribe_by_email SET email=:email WHERE subs_id=:subsId";
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource
+                    .addValue("userId", userDetails.getUserId())
+                    .addValue("firstName", userDetails.getFirstName())
+                    .addValue("lastName", userDetails.getLastName())
+                    .addValue("mobile", userDetails.getMobile())
+                    .addValue("isDeleted", Constants.isDeleted)
+                    .addValue("isEnable", Constants.isEnable);
+
+            MapSqlParameterSource emailParameter = new MapSqlParameterSource();
+            emailParameter
+                    .addValue("subsId", userDetails.getSubsId())
+                    .addValue("email", userDetails.getEmail());
+
+            jdbcTemplate.update(sql, mapSqlParameterSource);
+            jdbcTemplate.update(emailSql, emailParameter);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
     }
 }
