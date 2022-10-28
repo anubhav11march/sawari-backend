@@ -66,13 +66,16 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
     @Override
     public void fetchProfileImageById(Long userId, HttpServletResponse response) {
         List<PersistentUserDetails> userProfile = userPostLoginRepository.getUserProfileAndEssentialDetailsById(userId);
-        PersistentUserDetails profileDetails = userProfile.stream().findFirst().get();
-        String profileName = profileDetails.getProfilePhotoName();
-        String profilePath = profileDetails.getProfilePhotoPath();
-        if (profileName != null && profilePath != null){
-            fileHelper.serveImageInResponse(profileName, response, profilePath);
-        } else {
-            throw new ApiException("No Profile Found");
+        if (userProfile.size() != 0) {
+            PersistentUserDetails profileDetails = userProfile.stream().findFirst().get();
+            String profileName = profileDetails.getProfilePhotoName();
+            String profilePath = profileDetails.getProfilePhotoPath();
+            if (profileName != null && profilePath != null){
+                fileHelper.serveImageInResponse(profileName, response, profilePath);
+            }
+        }
+         else {
+            log.warn("No Profile Image Found");
         }
     }
 
