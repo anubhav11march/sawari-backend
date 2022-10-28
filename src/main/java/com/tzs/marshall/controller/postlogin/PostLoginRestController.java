@@ -52,8 +52,15 @@ public class PostLoginRestController {
         userPostLoginService.fetchProfileImageById(userDetails.getUserId(), response);
     }
 
-    @RequestMapping(value = "/profile", method = RequestMethod.PUT, consumes = "multipart/form-data")
-    List<PersistentUserDetails> userRegistration(@ModelAttribute PersistentUserDetails userDetails) {
+    @RequestMapping(value = "/profile", method = RequestMethod.PUT, consumes = {"multipart/form-data"})
+    PersistentUserDetails driverProfileUpdate(@ModelAttribute PersistentUserDetails userDetails,
+                                              @AuthenticationPrincipal PersistentUserDetails driver) {
+        userDetails.setUserId(driver.getUserId());
+        return userPostLoginService.updateDriverDetails(userDetails);
+    }
+
+    @RequestMapping(value = "/profile", method = RequestMethod.PUT, consumes = {"application/json"})
+    PersistentUserDetails userProfileUpdate(@RequestBody PersistentUserDetails userDetails) {
         return userPostLoginService.updateUserDetails(userDetails);
     }
 
