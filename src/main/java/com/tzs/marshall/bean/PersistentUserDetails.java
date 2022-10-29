@@ -155,11 +155,12 @@ public class PersistentUserDetails implements UserDetails {
 
     }
 
-    public PersistentUserDetails(Long userId, String email, String userName, String mobile) {
+    public PersistentUserDetails(Long userId, String email, String userName, String mobile, String paytmNumber) {
         this.userId = userId;
         this.email = email;
         this.userName = userName;
         this.mobile = mobile;
+        this.paytmNumber = paytmNumber;
     }
 
     public Long getUserId() {
