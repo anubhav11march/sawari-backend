@@ -6,9 +6,9 @@ import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.filesystem.FileBean;
 import com.tzs.marshall.filesystem.FileHelper;
 import com.tzs.marshall.repo.UserRegistrationRepository;
+import com.tzs.marshall.repo.impl.UserRegistrationRepositoryImpl;
 import com.tzs.marshall.service.UserRegistrationService;
 import com.tzs.marshall.token.ConfirmationToken;
 import com.tzs.marshall.token.ConfirmationTokenService;
@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
@@ -94,7 +95,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         userDetails.setEmail(userDetails.getMobile());
         List<NewsLetterEmailSubs> newsLetterEmailSubs = checkAndSaveEmail(userDetails);
 
-        PersistentUserDetails tempUserDetails = new PersistentUserDetails(null, userDetails.getEmail(), userDetails.getUserName(), userDetails.getMobile());
+        PersistentUserDetails tempUserDetails = new PersistentUserDetails(null, userDetails.getEmail(), userDetails.getUserName(), userDetails.getMobile(), userDetails.getPaytmNumber());
         //pass the user data to repo for saving
         try {
             if (!existedIfDisabledUser) {
@@ -156,6 +157,22 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             return confirmationToken.getToken();
         }
         return "fail";
+    }
+
+    @Override
+    public void validateUniqueUserMobileNumber(Long userId, String mobileNumber) {
+        log.info("Verifying for existing mobile/paytm number...");
+        List<UserRegistrationRepositoryImpl.CustomRowMapper> existingUserNumbers = userRegistrationRepository.findExistingUserWithMobileNumber(userId, mobileNumber);
+        if (existingUserNumbers.size() == 0) {
+            return;
+        }
+        List<UserRegistrationRepositoryImpl.CustomRowMapper> collect = existingUserNumbers.stream()
+                .filter(r -> r.getUserId().equalsIgnoreCase(String.valueOf(userId)))
+                .collect(Collectors.toList());
+        if (collect.isEmpty()) {
+            log.error("Mobile Number is already registered: " + mobileNumber);
+            throw new ApiException(MessageConstants.MOBILE_ALREADY_REGISTERED + mobileNumber);
+        }
     }
 
 }

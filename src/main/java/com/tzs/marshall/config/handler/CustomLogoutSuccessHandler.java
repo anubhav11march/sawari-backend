@@ -17,16 +17,22 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
 
     private final static Logger log = LoggerFactory.getLogger(CustomLogoutSuccessHandler.class);
 
-    public CustomLogoutSuccessHandler () { super(); }
+    public CustomLogoutSuccessHandler() {
+        super();
+    }
 
     @Override
     public void onLogoutSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException, ServletException {
         final String refererUrl = request.getHeader("Referer");
         log.info("Logging out to referer URL: " + refererUrl);
         String jsonPayload = "{\"isLoggedOut\" : \"%s\", \"timestamp\" : \"%s\"}";
-        String successMessage = String.format(jsonPayload, authentication.isAuthenticated(), Calendar.getInstance().getTime());
-        response.setStatus(HttpStatus.OK.value());
-        response.getWriter().append(successMessage);
+        if (authentication != null) {
+            String successMessage = String.format(jsonPayload, authentication.isAuthenticated(), Calendar.getInstance().getTime());
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().append(successMessage);
+        } else {
+            response.sendError(HttpStatus.BAD_REQUEST.value());
+        }
 //        super.onLogoutSuccess(request, response, authentication);
     }
 

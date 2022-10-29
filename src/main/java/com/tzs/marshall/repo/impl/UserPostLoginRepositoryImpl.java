@@ -129,7 +129,7 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
 
     @Override
     public int updateProfilePhoto(ProfileDetails userDetails) {
-        int update =0;
+        int update = 0;
         try {
             String sql = "UPDATE marshall_service.profile_contents SET " +
                     "profile_photo_name=:profilePhotoName, profile_photo_path=:profilePhotoPath, profile_photo_size=:profilePhotoSize, " +
@@ -145,11 +145,11 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
 
             update = jdbcTemplate.update(sql, mapSqlParameterSource);
             if (update != 1) {
-                 update = new SimpleJdbcInsert(jdbcTemplate.getJdbcTemplate().getDataSource())
+                update = new SimpleJdbcInsert(jdbcTemplate.getJdbcTemplate().getDataSource())
                         .withCatalogName(Constants.SCHEMA)
                         .withTableName("profile_contents")
                         .usingColumns("profile_user_id", "profile_photo_name", "profile_photo_path", "profile_photo_size",
-                                 "modify_date", "is_deleted")
+                                "modify_date", "is_deleted")
                         .execute(mapSqlParameterSource);
             }
         } catch (Exception e) {
@@ -165,7 +165,6 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
             String sql = "UPDATE marshall_service.user_registration SET " +
                     "first_name=:firstName, last_name=:lastName, mobile=:mobile " +
                     "WHERE user_id=:userId AND is_enable=:isEnable AND is_deleted=:isDeleted";
-            String emailSql = "UPDATE marshall_service.subscribe_by_email SET email=:email WHERE subs_id=:subsId";
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource
                     .addValue("userId", userDetails.getUserId())
@@ -175,13 +174,7 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
                     .addValue("isDeleted", Constants.isDeleted)
                     .addValue("isEnable", Constants.isEnable);
 
-            MapSqlParameterSource emailParameter = new MapSqlParameterSource();
-            emailParameter
-                    .addValue("subsId", userDetails.getSubsId())
-                    .addValue("email", userDetails.getEmail());
-
             jdbcTemplate.update(sql, mapSqlParameterSource);
-            jdbcTemplate.update(emailSql, emailParameter);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);

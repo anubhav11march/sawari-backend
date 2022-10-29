@@ -1,8 +1,9 @@
 package com.tzs.marshall.repo;
 
-import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.bean.NewsLetterEmailSubs;
 import com.tzs.marshall.bean.PersistentUserDetails;
+import com.tzs.marshall.bean.ProfileDetails;
+import com.tzs.marshall.repo.impl.UserRegistrationRepositoryImpl;
 
 import java.util.List;
 
@@ -23,6 +24,8 @@ public interface UserRegistrationRepository {
     void rollbackRegistration(PersistentUserDetails authorDetails);
 
     int saveDriverImagesDetails(ProfileDetails userDetails, String roleName);
+
+    List<UserRegistrationRepositoryImpl.CustomRowMapper> findExistingUserWithMobileNumber(Long userId, String mobileNumber);
 }
 
 

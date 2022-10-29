@@ -5,7 +5,7 @@ import com.tzs.marshall.bean.ProfileDetails;
 import com.tzs.marshall.filesystem.FileHelper;
 import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.UserPostLoginService;
-import com.tzs.marshall.validators.UserDetailsValidator;
+import com.tzs.marshall.service.UserRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,8 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
 
     @Autowired
     private UserPostLoginRepository userPostLoginRepository;
+    @Autowired
+    private UserRegistrationService userRegistrationService;
     @Autowired
     private FileHelper fileHelper;
 
@@ -44,8 +46,7 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
 
     @Override
     public PersistentUserDetails updateUserDetails(PersistentUserDetails userDetails) {
-        log.info("validating email...{}", userDetails.getEmail());
-        UserDetailsValidator.validateEmail(userDetails.getEmail());
+        userRegistrationService.validateUniqueUserMobileNumber(userDetails.getUserId(), userDetails.getMobile());
         log.info("Updating details in DB...");
         userPostLoginRepository.updateEssentialDetails(userDetails);
         log.info("Details Updated Successfully...{}", userDetails);
@@ -54,6 +55,7 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
 
     @Override
     public PersistentUserDetails updateDriverDetails(PersistentUserDetails userDetails) {
+        userRegistrationService.validateUniqueUserMobileNumber(userDetails.getUserId(), userDetails.getPaytmNumber());
         log.info("Updating details in DB...");
         ProfileDetails profileDetails =
                 new ProfileDetails(userDetails, userDetails.getPaytmNumber(), userDetails.getRickshawNumber(), userDetails.getRickshawFrontPhoto(),
