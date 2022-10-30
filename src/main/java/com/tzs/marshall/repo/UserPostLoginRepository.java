@@ -19,6 +19,8 @@ public interface UserPostLoginRepository {
     int updateProfilePhoto(ProfileDetails profileDetails);
 
     void updateEssentialDetails(PersistentUserDetails userDetails);
+
+    int updateDriverPaytmNumber(Long userId, String paytmNumber);
 }
 
 

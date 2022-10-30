@@ -2,6 +2,7 @@ package com.tzs.marshall.service.impl;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.ProfileDetails;
+import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.filesystem.FileHelper;
 import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.UserPostLoginService;
@@ -54,16 +55,54 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
     }
 
     @Override
-    public PersistentUserDetails updateDriverDetails(PersistentUserDetails userDetails) {
-        userRegistrationService.validateUniqueUserMobileNumber(userDetails.getUserId(), userDetails.getPaytmNumber());
+    public PersistentUserDetails updateDriverDetails(PersistentUserDetails driverNewDetails) {
+        userRegistrationService.validateUniqueUserMobileNumber(driverNewDetails.getUserId(), driverNewDetails.getPaytmNumber());
+        PersistentUserDetails driverOldDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById(driverNewDetails.getUserId()).stream().findFirst().get();
         log.info("Updating details in DB...");
-        ProfileDetails profileDetails =
-                new ProfileDetails(userDetails, userDetails.getPaytmNumber(), userDetails.getRickshawNumber(), userDetails.getRickshawFrontPhoto(),
-                        userDetails.getRickshawBackPhoto(), userDetails.getRickshawSidePhoto());
-        fileHelper.fetchAndUploadProfileDetails(profileDetails);
-        userPostLoginRepository.updateProfileDetails(profileDetails);
-        log.info("Details Updated Successfully...{}", userDetails);
-        return handleFetchedFullUserDetails(userDetails);
+        boolean skipRickshawDetailsUpdate = checkToUpdateRickshawDetails(driverNewDetails, driverOldDetails);
+        if (skipRickshawDetailsUpdate) {
+            log.info("skipping rickshaw details..");
+            if (driverOldDetails.getPaytmNumber().equalsIgnoreCase(driverNewDetails.getPaytmNumber())) {
+                log.info("Nothing to update.");
+                return handleFetchedFullUserDetails(driverNewDetails);
+            } else {
+                log.info("updating paytm number");
+                userPostLoginRepository.updateDriverPaytmNumber(driverNewDetails.getUserId(), driverNewDetails.getPaytmNumber());
+            }
+        } else {
+            log.info("Updating all driver details...");
+            ProfileDetails profileDetails =
+                    new ProfileDetails(driverNewDetails, driverNewDetails.getPaytmNumber(), driverNewDetails.getRickshawNumber(), driverNewDetails.getRickshawFrontPhoto(),
+                            driverNewDetails.getRickshawBackPhoto(), driverNewDetails.getRickshawSidePhoto());
+            fileHelper.fetchAndUploadProfileDetails(profileDetails);
+            userPostLoginRepository.updateProfileDetails(profileDetails);
+        }
+        log.info("Details Updated Successfully...{}", driverNewDetails);
+        return handleFetchedFullUserDetails(driverNewDetails);
+    }
+
+    private boolean checkToUpdateRickshawDetails(PersistentUserDetails driverNewDetails, PersistentUserDetails driverOldDetails) {
+        boolean shouldSkip = driverNewDetails.getRickshawFrontPhoto() == null && driverNewDetails.getRickshawBackPhoto() == null
+                && driverNewDetails.getRickshawSidePhoto() == null;
+        boolean shouldUpdate = driverNewDetails.getRickshawFrontPhoto() != null && driverNewDetails.getRickshawBackPhoto() != null
+                && driverNewDetails.getRickshawSidePhoto() != null;
+        if (driverNewDetails.getRickshawNumber().equalsIgnoreCase(driverOldDetails.getRickshawNumber())) {
+            if (shouldSkip) {
+                return Boolean.TRUE;
+            } else if (shouldUpdate) {
+                return Boolean.FALSE;
+            } else {
+                log.error("either one or all rickshaw photo is not available to update");
+                throw new ApiException("Please update all 3 rickshaw photos");
+            }
+        } else {
+            if (shouldUpdate) {
+                return Boolean.FALSE;
+            } else {
+                log.error("Driver trying to update the number but either one or all rickshaw photo is not available to update");
+                throw new ApiException("Please update all 3 rickshaw photos to update your rickshaw number");
+            }
+        }
     }
 
     @Override

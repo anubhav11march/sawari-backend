@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileBean uploadFileHandler(FileBean fileBean) {
         log.info("Validating File before upload...");
-        fileBean = fileHelper.uploadFileHelper(fileBean.getFile(), fileBean.getFileUserId());
+        fileBean = fileHelper.uploadFileHelper(fileBean.getFile(), fileBean.getFileUserId(), fileBean.getUploadBy(), "Content");
         try {
             if (fileBean.isStatus() == Boolean.TRUE) {
                 log.info("Uploading File Details to DB...");
@@ -67,7 +67,7 @@ public class FileServiceImpl implements FileService {
     public FileBean updateFileHandler(FileBean fileBean) {
         log.info("Updating File Details...");
         if (fileBean.getFile() != null) {
-            fileBean = fileHelper.uploadFileHelper(fileBean.getFile(), fileBean.getFileUserId());
+            fileBean = fileHelper.uploadFileHelper(fileBean.getFile(), fileBean.getFileUserId(), fileBean.getUploadBy(), "contents");
         }
         log.info("Updating Files details to DB.");
         fileRepository.updateFile(fileBean);

@@ -22,3 +22,4 @@ ADD UNIQUE INDEX `paytm_number_UNIQUE` (`paytm_number` ASC) VISIBLE,
 ADD UNIQUE INDEX `aadhar_number_UNIQUE` (`aadhar_number` ASC) VISIBLE,
 ADD UNIQUE INDEX `rickshaw_number_UNIQUE` (`rickshaw_number` ASC) VISIBLE;
 ;
+UPDATE `marshall_service`.`properties` SET `value` = '/var/marshall/docs/' WHERE (`id` = '45');
