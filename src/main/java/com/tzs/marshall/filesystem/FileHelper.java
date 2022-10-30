@@ -29,19 +29,19 @@ public class FileHelper {
     public void fetchAndUploadProfileDetails(ProfileDetails userDetails) {
         FileBean fileBean;
         if (userDetails.getProfilePhoto() != null) {
-            fileBean = uploadFileHelper(userDetails.getProfilePhoto(), userDetails.getUserId());
+            fileBean = uploadFileHelper(userDetails.getProfilePhoto(), userDetails.getUserId(), userDetails.getRoleName(), "profile");
             userDetails.setProfilePhotoName(fileBean.getFileName());
             userDetails.setProfilePhotoPath(fileBean.getPath());
             userDetails.setProfilePhotoSize(fileBean.getSize());
         }
 
         if (userDetails.getAadharBackPhoto() != null && userDetails.getAadharFrontPhoto() != null) {
-            fileBean = uploadFileHelper(userDetails.getAadharBackPhoto(), userDetails.getUserId());
+            fileBean = uploadFileHelper(userDetails.getAadharBackPhoto(), userDetails.getUserId(), userDetails.getRoleName(), "aadhar");
             userDetails.setAadharBackPhotoName(fileBean.getFileName());
             userDetails.setAadharBackPhotoPath(fileBean.getPath());
             userDetails.setAadharBackPhotoSize(fileBean.getSize());
 
-            fileBean = uploadFileHelper(userDetails.getAadharFrontPhoto(), userDetails.getUserId());
+            fileBean = uploadFileHelper(userDetails.getAadharFrontPhoto(), userDetails.getUserId(), userDetails.getRoleName(), "aadhar");
             userDetails.setAadharFrontPhotoName(fileBean.getFileName());
             userDetails.setAadharFrontPhotoPath(fileBean.getPath());
             userDetails.setAadharFrontPhotoSize(fileBean.getSize());
@@ -49,24 +49,24 @@ public class FileHelper {
 
         if (userDetails.getRickshawFrontPhoto() != null && userDetails.getRickshawBackPhoto() != null
                 && userDetails.getRickshawSidePhoto() != null) {
-            fileBean = uploadFileHelper(userDetails.getRickshawFrontPhoto(), userDetails.getUserId());
+            fileBean = uploadFileHelper(userDetails.getRickshawFrontPhoto(), userDetails.getUserId(), userDetails.getRoleName(), "rickshaw");
             userDetails.setRickshawFrontPhotoName(fileBean.getFileName());
             userDetails.setRickshawFrontPhotoPath(fileBean.getPath());
             userDetails.setRickshawFrontPhotoSize(fileBean.getSize());
 
-            fileBean = uploadFileHelper(userDetails.getRickshawBackPhoto(), userDetails.getUserId());
+            fileBean = uploadFileHelper(userDetails.getRickshawBackPhoto(), userDetails.getUserId(), userDetails.getRoleName(), "rickshaw");
             userDetails.setRickshawBackPhotoName(fileBean.getFileName());
             userDetails.setRickshawBackPhotoPath(fileBean.getPath());
             userDetails.setRickshawBackPhotoSize(fileBean.getSize());
 
-            fileBean = uploadFileHelper(userDetails.getRickshawSidePhoto(), userDetails.getUserId());
+            fileBean = uploadFileHelper(userDetails.getRickshawSidePhoto(), userDetails.getUserId(), userDetails.getRoleName(), "rickshaw");
             userDetails.setRickshawSidePhotoName(fileBean.getFileName());
             userDetails.setRickshawSidePhotoPath(fileBean.getPath());
             userDetails.setRickshawSidePhotoSize(fileBean.getSize());
         }
     }
 
-    public FileBean uploadFileHelper(MultipartFile file,  Long userId) {
+    public FileBean uploadFileHelper(MultipartFile file, Long userId, String roleName, String subFolder) {
         FileBean fileBean = new FileBean();
         fileBean.setStatus(Boolean.FALSE);
         String contentType = Objects.requireNonNull(file.getContentType());
@@ -79,7 +79,8 @@ public class FileHelper {
                 String fileName = userId + "-" + uuid + "-"
                         + Objects.requireNonNull(file.getOriginalFilename()).trim();
                 log.info("File Name Created: {}", fileName);
-                Path path = Paths.get(DBProperties.properties.getProperty(UPLOAD_DIR) + userId + File.separator + fileName);
+                Path path = Paths.get(DBProperties.properties.getProperty(UPLOAD_DIR) + roleName
+                        + File.separator + userId + File.separator + subFolder + File.separator + fileName);
                 log.info("Path: {}", path.toString());
                 File contentSaveDir = new File(String.valueOf(path));
                 if (!contentSaveDir.exists()) {

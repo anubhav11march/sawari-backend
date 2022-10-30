@@ -101,3 +101,13 @@ DELIMITER ;
 
 
 
+--Foreign Key at profile_contents
+ALTER TABLE `marshall_service`.`profile_contents`
+ADD INDEX `profile_user_id_idx` (`profile_user_id` ASC) VISIBLE;
+;
+ALTER TABLE `marshall_service`.`profile_contents`
+ADD CONSTRAINT `profile_user_id`
+  FOREIGN KEY (`profile_user_id`)
+  REFERENCES `marshall_service`.`user_registration` (`user_id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE;

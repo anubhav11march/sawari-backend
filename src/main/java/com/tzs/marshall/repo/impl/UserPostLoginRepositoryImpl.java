@@ -180,4 +180,23 @@ public class UserPostLoginRepositoryImpl implements UserPostLoginRepository {
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
         }
     }
+
+    @Override
+    public int updateDriverPaytmNumber(Long userId, String paytmNumber) {
+        try {
+            String sql = "UPDATE marshall_service.profile_contents SET " +
+                    "paytm_number=:paytmNumber, modify_date=:modifyDate WHERE profile_user_id=:profileUserId AND is_deleted=:isDeleted";
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource
+                    .addValue("profileUserId", userId)
+                    .addValue("paytmNumber", paytmNumber)
+                    .addValue("modifyDate", Timestamp.valueOf(LocalDateTime.now()))
+                    .addValue("isDeleted", Constants.isDeleted);
+
+            return jdbcTemplate.update(sql, mapSqlParameterSource);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
 }
