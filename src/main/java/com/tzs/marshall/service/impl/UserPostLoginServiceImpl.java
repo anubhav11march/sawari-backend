@@ -82,10 +82,12 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
     }
 
     private boolean checkToUpdateRickshawDetails(PersistentUserDetails driverNewDetails, PersistentUserDetails driverOldDetails) {
-        boolean shouldSkip = driverNewDetails.getRickshawFrontPhoto() == null && driverNewDetails.getRickshawBackPhoto() == null
-                && driverNewDetails.getRickshawSidePhoto() == null;
-        boolean shouldUpdate = driverNewDetails.getRickshawFrontPhoto() != null && driverNewDetails.getRickshawBackPhoto() != null
-                && driverNewDetails.getRickshawSidePhoto() != null;
+        boolean shouldSkip = (driverNewDetails.getRickshawFrontPhoto() == null || driverNewDetails.getRickshawFrontPhoto().isEmpty())
+                && (driverNewDetails.getRickshawBackPhoto() == null || driverNewDetails.getRickshawBackPhoto().isEmpty())
+                && (driverNewDetails.getRickshawSidePhoto() == null || driverNewDetails.getRickshawSidePhoto().isEmpty());
+        boolean shouldUpdate = (driverNewDetails.getRickshawFrontPhoto() != null || !driverNewDetails.getRickshawFrontPhoto().isEmpty())
+                && (driverNewDetails.getRickshawBackPhoto() != null || !driverNewDetails.getRickshawBackPhoto().isEmpty())
+                && (driverNewDetails.getRickshawSidePhoto() != null || !driverNewDetails.getRickshawSidePhoto().isEmpty());
         if (driverNewDetails.getRickshawNumber().equalsIgnoreCase(driverOldDetails.getRickshawNumber())) {
             if (shouldSkip) {
                 return Boolean.TRUE;

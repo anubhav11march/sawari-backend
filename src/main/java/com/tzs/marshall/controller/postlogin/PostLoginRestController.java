@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
 import java.util.List;
@@ -54,8 +55,9 @@ public class PostLoginRestController {
 
     @RequestMapping(value = "/profile", method = RequestMethod.PUT, consumes = {"multipart/form-data"})
     PersistentUserDetails driverProfileUpdate(@ModelAttribute PersistentUserDetails userDetails,
-                                              @AuthenticationPrincipal PersistentUserDetails driver) {
+                                              @AuthenticationPrincipal PersistentUserDetails driver, HttpServletRequest request) {
         userDetails.setUserId(driver.getUserId());
+        log.info("Request Received: "+ request.toString());
         return userPostLoginService.updateDriverDetails(userDetails);
     }
 
