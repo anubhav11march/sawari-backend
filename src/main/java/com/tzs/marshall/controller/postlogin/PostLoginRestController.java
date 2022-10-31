@@ -60,9 +60,9 @@ public class PostLoginRestController {
         userDetails.setUserId(driver.getUserId());
         log.info("Request Received: "+ request.toString());
         log.info("allRequestParam: " + allMultipartParam);
-        /*userDetails.setRickshawFrontPhoto(allMultipartParam.get("rickshawFrontPhoto"));
+        userDetails.setRickshawFrontPhoto(allMultipartParam.get("rickshawFrontPhoto"));
         userDetails.setRickshawBackPhoto(allMultipartParam.get("rickshawBackPhoto"));
-        userDetails.setRickshawSidePhoto(allMultipartParam.get("rickshawSidePhoto"));*/
+        userDetails.setRickshawSidePhoto(allMultipartParam.get("rickshawSidePhoto"));
         return userPostLoginService.updateDriverDetails(userDetails);
     }
 
