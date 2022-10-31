@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping({"/user", "/admin", "driver"})
@@ -54,10 +55,14 @@ public class PostLoginRestController {
     }
 
     @RequestMapping(value = "/profile", method = RequestMethod.PUT, consumes = {"multipart/form-data"})
-    PersistentUserDetails driverProfileUpdate(@ModelAttribute PersistentUserDetails userDetails,
+    PersistentUserDetails driverProfileUpdate(@RequestParam Map<String, MultipartFile> allMultipartParam, @ModelAttribute PersistentUserDetails userDetails,
                                               @AuthenticationPrincipal PersistentUserDetails driver, HttpServletRequest request) {
         userDetails.setUserId(driver.getUserId());
         log.info("Request Received: "+ request.toString());
+        log.info("allRequestParam: " + allMultipartParam);
+        /*userDetails.setRickshawFrontPhoto(allMultipartParam.get("rickshawFrontPhoto"));
+        userDetails.setRickshawBackPhoto(allMultipartParam.get("rickshawBackPhoto"));
+        userDetails.setRickshawSidePhoto(allMultipartParam.get("rickshawSidePhoto"));*/
         return userPostLoginService.updateDriverDetails(userDetails);
     }
 
