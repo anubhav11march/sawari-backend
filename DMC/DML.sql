@@ -23,3 +23,13 @@ ADD UNIQUE INDEX `aadhar_number_UNIQUE` (`aadhar_number` ASC) VISIBLE,
 ADD UNIQUE INDEX `rickshaw_number_UNIQUE` (`rickshaw_number` ASC) VISIBLE;
 ;
 UPDATE `marshall_service`.`properties` SET `value` = '/var/marshall/docs/' WHERE (`id` = '45');
+
+--fare
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISTANCE_RANGE', '0-2,2.1-3.5,3.6-4.5,4.6-5.5,5.6-7');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISTANCE_THRESHOLD', '5.6');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('MAX_DISTANCE', '7.0');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('BASE_PRICE', '10');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISTANCE_FACTOR', '5');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISTANCE_SURCHARGE', '15');
+
+--fare
