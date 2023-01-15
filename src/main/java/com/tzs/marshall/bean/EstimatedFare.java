@@ -14,4 +14,8 @@ public class EstimatedFare {
     private Double fare;
     private Double distance;
     private String currency;
+
+    public void setDistance(String distance) {
+        this.distance = Double.parseDouble(distance.substring(0, distance.indexOf(" km")));
+    }
 }
