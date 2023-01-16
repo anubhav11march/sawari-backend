@@ -20,7 +20,7 @@ public class FareCalculationController {
     private static final Logger log = LoggerFactory.getLogger(FareCalculationController.class);
 
 
-    @RequestMapping(value = "/fare", method = RequestMethod.GET)
+    @RequestMapping(value = "/fare", method = RequestMethod.POST)
     public EstimatedFare getEstimatedFare(@RequestBody EstimatedFare estimatedFare) {
         Double distnace = estimatedFare.getDistance();
         Integer passenger = estimatedFare.getPassengers();
