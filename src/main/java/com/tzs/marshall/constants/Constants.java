@@ -15,6 +15,15 @@ public interface Constants {
     Boolean isDeleted = Boolean.FALSE;
     Boolean isEnable = Boolean.TRUE;
     Map<String, Integer> ORDER_STATUS = new HashMap<>();
+    String OPEN = "OPEN";
+    String CANCEL = "CANCEL";
+    String BOOK = "BOOK";
+    String REJECT = "REJECT";
+    String ACCEPT = "ACCEPT";
+    String CLOSE = "CLOSE";
+    String ON_DUTY = "ON_DUTY";
+    String OFF_DUTY = "OFF_DUTY";
+    String NOT_SERVED = "NOT_SERVED";
     String INITIATED = "INITIATED";
     String CREATED = "CREATED";
     String PENDING = "PENDING";

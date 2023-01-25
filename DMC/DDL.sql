@@ -111,3 +111,52 @@ ADD CONSTRAINT `profile_user_id`
   REFERENCES `marshall_service`.`user_registration` (`user_id`)
   ON DELETE RESTRICT
   ON UPDATE CASCADE;
+
+
+--driverStatusForBookingRequest
+CREATE TABLE `marshall_service`.`driver_status` (
+  `driver_id` INT NOT NULL,
+  `status` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`driver_id`),
+  UNIQUE INDEX `id_UNIQUE` (`driver_id` ASC) VISIBLE);
+
+
+CREATE TABLE `marshall_service`.`user_location` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `latitude` VARCHAR(45) NULL,
+  `longitude` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+
+CREATE TABLE `marshall_service`.`driver_booking_status` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `booking_request_id` INT NULL,
+  `driver_id` INT NULL,
+  `booking_status` VARCHAR(10) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE),
+  UNIQUE INDEX `booking_UNIQUE` (`booking_request_id` ASC, `driver_id` ASC, `booking_status` ASC) VISIBLE;
+
+
+CREATE TABLE `marshall_service`.`ride_request` (
+  `booking_request_id` INT NOT NULL AUTO_INCREMENT,
+  `customer_id` INT NULL,
+  `mobile_no` VARCHAR(10) NULL,
+  `pickup_location_points` VARCHAR(45) NULL,
+  `drop_location_points` VARCHAR(45) NULL,
+  `passengers` VARCHAR(1) NULL,
+  `distance` DECIMAL(4,2) NULL,
+  `fare` DECIMAL(6,3) NULL,
+  `currency` VARCHAR(3) NULL DEFAULT 'INR',
+  `otp` VARCHAR(10) NULL,
+  `booking_status` VARCHAR(10) NULL,
+  `payment_mode` VARCHAR(10) NULL,
+  `payment_status` VARCHAR(10) NULL DEFAULT 'UNPAID',
+  `driver_id` INT NULL,
+  `date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`request_id`),
+  UNIQUE INDEX `request_id_UNIQUE` (`request_id` ASC) VISIBLE);
+
+  commit;
