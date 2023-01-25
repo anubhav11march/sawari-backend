@@ -1,6 +1,6 @@
 package com.tzs.marshall.controller.postlogin;
 
-import com.tzs.marshall.bean.EstimatedFare;
+import com.tzs.marshall.bean.Fare;
 import com.tzs.marshall.service.FareCalculationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,9 @@ public class FareCalculationController {
 
 
     @RequestMapping(value = "/fare", method = RequestMethod.POST)
-    public EstimatedFare getEstimatedFare(@RequestBody EstimatedFare estimatedFare) {
-        Double distnace = estimatedFare.getDistance();
-        Integer passenger = estimatedFare.getPassengers();
+    public Fare getEstimatedFare(@RequestBody Fare fare) {
+        Double distnace = fare.getDistance();
+        Integer passenger = fare.getPassengers();
         return fareCalculationService.getEstimatedFareByPassengerAndDistance(passenger, distnace);
 
     }

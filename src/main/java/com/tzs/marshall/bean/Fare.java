@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class EstimatedFare {
+public class Fare {
     private Integer passengers;
     private Double fare;
     private Double distance;
@@ -17,5 +17,17 @@ public class EstimatedFare {
 
     public void setDistance(String distance) {
         this.distance = Double.parseDouble(distance.substring(0, distance.indexOf(" km")));
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public void setFare(String fare) {
+        this.fare = Double.parseDouble(fare);
+    }
+
+    public void setFare (Double fare) {
+        this.fare = fare;
     }
 }

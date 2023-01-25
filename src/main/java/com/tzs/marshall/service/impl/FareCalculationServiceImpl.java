@@ -1,7 +1,7 @@
 package com.tzs.marshall.service.impl;
 
 import com.tzs.marshall.bean.DBProperties;
-import com.tzs.marshall.bean.EstimatedFare;
+import com.tzs.marshall.bean.Fare;
 import com.tzs.marshall.service.FareCalculationService;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class FareCalculationServiceImpl implements FareCalculationService {
     private static final double DISTANCE_SURCHARGE = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_SURCHARGE", "15"));
 
     @Override
-    public EstimatedFare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance) {
+    public Fare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance) {
         double fare;
         double distanceSurcharge = distance >= DISTANCE_THRESHOLD ? DISTANCE_SURCHARGE : 0;
         if (distance <= MAX_DISTANCE) {
@@ -53,7 +53,7 @@ public class FareCalculationServiceImpl implements FareCalculationService {
         } else {
             throw new RuntimeException("Destination distance exceeds the service area.");
         }
-        return new EstimatedFare(passenger, fare, distance, "INR");
+        return new Fare(passenger, fare, distance, "INR");
     }
 
     private int findLowerDistanceFromDistanceRange(double distance) {

@@ -1,8 +1,8 @@
 package com.tzs.marshall.service;
 
-import com.tzs.marshall.bean.EstimatedFare;
+import com.tzs.marshall.bean.Fare;
 
 public interface FareCalculationService {
 
-    EstimatedFare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance);
+    Fare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance);
 }
