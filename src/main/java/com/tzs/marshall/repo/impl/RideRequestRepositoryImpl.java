@@ -66,7 +66,9 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         try {
             Number key = new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                     .withTableName("ride_request")
-                    .usingColumns("customer_id", "mobile_no", "pickup_location_points", "drop_location_points", "passengers", "fare", "currency", "distance", "otp", "booking_status", "payment_mode", "payment_status")
+                    .usingColumns("customer_id", "mobile_no", "pickup_location_points", "drop_location_points",
+                            "pickup_location_word", "drop_location_word", "passengers", "fare", "currency",
+                            "distance", "otp", "booking_status", "payment_mode", "payment_status")
                     .usingGeneratedKeyColumns("booking_request_id")
                     .executeAndReturnKey(mapSqlParameterSource);
             bookingRequestId = Long.parseLong(String.valueOf(key));
@@ -112,7 +114,9 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     public void updateBookingRequest(RideRequest rideRequest, Long userId) {
         try {
             String query = "UPDATE marshall_service.ride_request SET " +
-                    "pickup_location_points=:pickup_location_points, drop_location_points=:drop_location_points, passengers=:passengers, fare=:fare, currency=:currency, distance=:distance, otp=:otp, " +
+                    "pickup_location_points=:pickup_location_points, drop_location_points=:drop_location_points, " +
+                    "pickup_location_word=:pickup_location_word, drop_location_word=:drop_location_word, " +
+                    "passengers=:passengers, fare=:fare, currency=:currency, distance=:distance, otp=:otp, " +
                     "booking_status=:booking_status, payment_mode=:payment_mode, payment_status=:payment_status, date=:date " +
                     "WHERE booking_request_id=:booking_request_id";
             jdbcTemplate.update(query, getMapSqlParameterSource(rideRequest, userId));
@@ -260,6 +264,8 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         mapSqlParameterSource.addValue("mobile_no", rideRequest.getMobileNo());
         mapSqlParameterSource.addValue("pickup_location_points", rideRequest.getPickupLocationPoints());
         mapSqlParameterSource.addValue("drop_location_points", rideRequest.getDropLocationPoints());
+        mapSqlParameterSource.addValue("pickup_location_word", rideRequest.getPickupLocationWord());
+        mapSqlParameterSource.addValue("drop_location_word", rideRequest.getDropLocationWord());
         mapSqlParameterSource.addValue("passengers", rideRequest.getPassengers());
         mapSqlParameterSource.addValue("fare", rideRequest.getFare());
         mapSqlParameterSource.addValue("currency", rideRequest.getCurrency());

@@ -159,4 +159,9 @@ CREATE TABLE `marshall_service`.`ride_request` (
   PRIMARY KEY (`booking_request_id`),
   UNIQUE INDEX `request_id_UNIQUE` (`booking_request_id` ASC) VISIBLE);
 
+--adding pickup & drop location as words
+ALTER TABLE `marshall_service`.`ride_request`
+ADD COLUMN `pickup_location_word` VARCHAR(155) NULL AFTER `pickup_location_points`,
+ADD COLUMN `drop_location_word` VARCHAR(155) NULL AFTER `drop_location_points`;
+
   commit;
