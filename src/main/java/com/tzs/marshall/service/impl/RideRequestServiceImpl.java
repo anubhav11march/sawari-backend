@@ -135,6 +135,11 @@ public class RideRequestServiceImpl implements RideRequestService {
         rideRequestRepository.rejectRideBookingRequest(Long.valueOf(bookingRequestId), driverId);
     }
 
+    @Override
+    public Map<Integer, String> getDriverDutyStatus(Long userId) {
+        return rideRequestRepository.getDriverDutyStatusById(userId);
+    }
+
     private List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {
         List<Long> nearestDriverIds = driverLocations.values().stream().filter(loc -> {
             double driverCustomerDistance = calculateDriverAndCustomerDistance(rideRequest.getPickupLocation().getLatitude(), rideRequest.getPickupLocation().getLongitude(), loc.getLatitude(), loc.getLongitude());
