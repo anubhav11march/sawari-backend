@@ -16,6 +16,8 @@ public class RideRequest extends Fare {
     private Long customerId;
     private String mobileNo;
     private Location pickupLocation;
+    private String pickupLocationWord;
+    private String dropLocationWord;
     private Location dropLocation;
     private String paymentMode;
     private String paymentStatus;

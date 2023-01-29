@@ -7,6 +7,7 @@ import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.constants.RequestTypeDictionary;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.filesystem.FileHelper;
+import com.tzs.marshall.repo.RideRequestRepository;
 import com.tzs.marshall.repo.UserRegistrationRepository;
 import com.tzs.marshall.repo.impl.UserRegistrationRepositoryImpl;
 import com.tzs.marshall.service.UserRegistrationService;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.tzs.marshall.constants.Constants.OFF_DUTY;
+
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
@@ -33,6 +36,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private BCryptPasswordEncoder bCryptPasswordEncoders;
     @Autowired
     private FileHelper fileHelper;
+    @Autowired
+    private RideRequestRepository rideRequestRepository;
 
     private static final Logger log = LoggerFactory.getLogger(UserRegistrationServiceImpl.class);
 
@@ -109,6 +114,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 userRegistrationRepository.saveDriverImagesDetails(userDetails, userDetails.getRoleName());
                 userRegistrationRepository.insertIntoUserBridgeTable(userDetails.getUsername(), userDetails.getRoleName(), userDetails.getTypeName());
                 log.info("User Record Inserted.\n" + userDetails);
+                rideRequestRepository.updateDriverDutyStatusById(userId, OFF_DUTY);
             }
             log.info("Generating unique token...");
             confirmationTokenService.tokenHandler(userDetails.getMobile(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), null);
