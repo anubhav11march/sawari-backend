@@ -239,6 +239,20 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
             updateRideBookingRequestStatusByBookingId(bookingRequestId, REJECT);
     }
 
+    @Override
+    public Map<Integer, String> getDriverDutyStatusById(Long userId) {
+        try {
+            Map<Integer, String> driverStatusMap = new HashMap<>();
+            String query = "SELECT driver_id, status FROM marshall_service.driver_status WHERE driver_id=:userId";
+            jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId),
+                    (rs, rowNum) -> driverStatusMap.put(rs.getInt("driver_id"), rs.getString("status")));
+            return driverStatusMap;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
     private MapSqlParameterSource getMapSqlParameterSource(RideRequest rideRequest, Long userId) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("booking_request_id", rideRequest.getBookingRequestId());
