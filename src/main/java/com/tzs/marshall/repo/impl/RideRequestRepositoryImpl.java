@@ -90,7 +90,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
             });
             jdbcTemplate.getJdbcOperations().batchUpdate(query, objects);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             if (!e.getMessage().contains("Duplicate entry"))
                 throw new ApiException(MessageConstants.SOMETHING_WRONG);
         }
