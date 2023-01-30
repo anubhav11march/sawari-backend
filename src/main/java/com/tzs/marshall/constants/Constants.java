@@ -37,7 +37,9 @@ public interface Constants {
     String TRANSACTION_DIR = "transactions" + File.separator + "screenshot";
     String QRCODE_DIR = "images/qrcodes";
     String IMAGE_TYPE = "image/jpeg,image/jpg,image/png";
-    String BASE_PATH = "/home/admin/aesh/project-ether/src/main/resources/static";
+    String BASE_PATH = "/var/marshall/docs/";
+    String CONFIG_FILE = "config/";
+    String DISCOUNT_CONFIG_FILE = "discount_config.json";
     String EDITOR_QUERY = " FROM\n" +
             "    (SELECT user_id, first_name, middle_name, last_name, phone, mobile, email, alternate_email, role_name, type_name, permission_name, is_deleted, is_enable FROM marshall_service.view_user_details \n" +
             "\tunion \n" +

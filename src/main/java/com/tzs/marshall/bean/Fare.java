@@ -12,6 +12,7 @@ import lombok.*;
 public class Fare {
     private Integer passengers;
     private Double fare;
+    private Double discount;
     private Double distance;
     private String currency;
 

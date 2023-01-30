@@ -165,5 +165,9 @@ ALTER TABLE `marshall_service`.`ride_request`
 ADD COLUMN `pickup_location_word` VARCHAR(155) NULL AFTER `pickup_location_points`,
 ADD COLUMN `drop_location_word` VARCHAR(155) NULL AFTER `drop_location_points`;
 
+--add discount column in ride_request
+ALTER TABLE `marshall_service`.`ride_request`
+ADD COLUMN `discount` DECIMAL(6,3) NULL AFTER `fare`;
+
 
   commit;
