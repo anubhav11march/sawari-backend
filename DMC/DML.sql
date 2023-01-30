@@ -33,3 +33,7 @@ INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISTANCE_
 INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISTANCE_SURCHARGE', '15');
 
 --fare
+UPDATE `marshall_service`.`properties` SET `value` = '0-2,2.1-3.5,3.6-4.5,4.6-6,6.1-7' WHERE (`id` = '54');
+UPDATE `marshall_service`.`properties` SET `value` = '6.1' WHERE (`id` = '55');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISCOUNT_FARE_THRESHOLD', '100');
+

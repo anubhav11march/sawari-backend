@@ -29,7 +29,7 @@ public class FareCalculationServiceImpl implements FareCalculationService {
     private static final double DISTANCE_FACTOR = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_FACTOR", "5"));
     private static final double DISTANCE_SURCHARGE = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_SURCHARGE", "15"));
 
-    private static final double DISCOUNT_CONDITION = Double.parseDouble(DBProperties.properties.getProperty("DISCOUNT_CONDITION", "100"));
+    private static final double DISCOUNT_FARE_THRESHOLD = Double.parseDouble(DBProperties.properties.getProperty("DISCOUNT_FARE_THRESHOLD", "100"));
 
     @Override
     public Fare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance) {
@@ -43,7 +43,7 @@ public class FareCalculationServiceImpl implements FareCalculationService {
             } else {
                 fare = ((BASE_PRICE + (DISTANCE_FACTOR * minDistRange) + distanceSurcharge) * passenger);
             }
-            if (fare >= DISCOUNT_CONDITION) {
+            if (fare >= DISCOUNT_FARE_THRESHOLD) {
                 DiscountConfig[] discountConfig = getDiscountConfig();
                 Arrays.stream(discountConfig)
                         .filter(p -> p.getPassenger().equalsIgnoreCase(String.valueOf(passenger)))
