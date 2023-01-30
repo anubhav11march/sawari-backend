@@ -127,7 +127,8 @@ CREATE TABLE `marshall_service`.`user_location` (
   `latitude` VARCHAR(45) NULL,
   `longitude` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
+  UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE);
 
 
 CREATE TABLE `marshall_service`.`driver_booking_status` (
@@ -163,5 +164,10 @@ CREATE TABLE `marshall_service`.`ride_request` (
 ALTER TABLE `marshall_service`.`ride_request`
 ADD COLUMN `pickup_location_word` VARCHAR(155) NULL AFTER `pickup_location_points`,
 ADD COLUMN `drop_location_word` VARCHAR(155) NULL AFTER `drop_location_points`;
+
+--add discount column in ride_request
+ALTER TABLE `marshall_service`.`ride_request`
+ADD COLUMN `discount` DECIMAL(6,3) NULL AFTER `fare`;
+
 
   commit;

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping({"/user", "/admin", "driver"})
+@RequestMapping({"/user", "/admin", "/driver"})
 public class RideController {
 
     @Autowired
