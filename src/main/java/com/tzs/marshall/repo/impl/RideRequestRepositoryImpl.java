@@ -13,7 +13,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -68,7 +70,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
                     .withTableName("ride_request")
                     .usingColumns("customer_id", "mobile_no", "pickup_location_points", "drop_location_points",
                             "pickup_location_word", "drop_location_word", "passengers", "fare", "discount", "currency",
-                            "distance", "otp", "booking_status", "payment_mode", "payment_status")
+                            "distance", "otp", "booking_status", "payment_mode", "payment_status", "date")
                     .usingGeneratedKeyColumns("booking_request_id")
                     .executeAndReturnKey(mapSqlParameterSource);
             bookingRequestId = Long.parseLong(String.valueOf(key));
@@ -117,7 +119,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
                     "pickup_location_points=:pickup_location_points, drop_location_points=:drop_location_points, " +
                     "pickup_location_word=:pickup_location_word, drop_location_word=:drop_location_word, " +
                     "passengers=:passengers, fare=:fare, discount=:discount, currency=:currency, distance=:distance, otp=:otp, " +
-                    "booking_status=:booking_status, payment_mode=:payment_mode, payment_status=:payment_status, date=:date " +
+                    "booking_status=:booking_status, payment_mode=:payment_mode, payment_status=:payment_status, modify_date=:modify_date " +
                     "WHERE booking_request_id=:booking_request_id";
             jdbcTemplate.update(query, getMapSqlParameterSource(rideRequest, userId));
         } catch (Exception e) {
@@ -184,9 +186,10 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public void updateRideBookingRequestStatusByBookingId(Long bookingRequestId, String status) {
         try {
-            String query = "UPDATE marshall_service.ride_request SET booking_status=:booking_status " +
+            String query = "UPDATE marshall_service.ride_request SET booking_status=:booking_status, modify_date=:modify_date " +
                     "WHERE booking_request_id=:booking_request_id";
             jdbcTemplate.update(query, new MapSqlParameterSource().addValue("booking_request_id", bookingRequestId)
+                    .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("booking_status", status));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -197,10 +200,11 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public void acceptRideBookingRequest(Long bookingRequestId, Long driverId, String status) {
         try {
-            String query = "UPDATE marshall_service.ride_request SET booking_status=:status, driver_id=:driverId " +
+            String query = "UPDATE marshall_service.ride_request SET booking_status=:status, driver_id=:driverId, modify_date=:modify_date " +
                     "WHERE booking_request_id=:bookingRequestId";
             jdbcTemplate.update(query, new MapSqlParameterSource().addValue("status", status)
                     .addValue("driverId", driverId)
+                    .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("bookingRequestId", bookingRequestId));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -256,6 +260,21 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         }
     }
 
+    @Override
+    public int updatePaymentStatusByRideBookingRequestId(Long bookingRequestId, String paymentStatus) {
+        try {
+            String query = "UPDATE marshall_service.ride_request SET payment_status=:paymentStatus, modify_date=:modify_date " +
+                    "WHERE booking_request_id=:bookingRequestId";
+            int update = jdbcTemplate.update(query, new MapSqlParameterSource().addValue("paymentStatus", paymentStatus)
+                    .addValue("bookingRequestId", bookingRequestId)
+                    .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now())));
+            return update;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
     private MapSqlParameterSource getMapSqlParameterSource(RideRequest rideRequest, Long userId) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("booking_request_id", rideRequest.getBookingRequestId());
@@ -274,7 +293,8 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         mapSqlParameterSource.addValue("booking_status", rideRequest.getBookingStatus());
         mapSqlParameterSource.addValue("payment_mode", rideRequest.getPaymentMode());
         mapSqlParameterSource.addValue("payment_status", rideRequest.getPaymentStatus());
-        mapSqlParameterSource.addValue("date", Timestamp.valueOf(LocalDateTime.now()));
+        mapSqlParameterSource.addValue("modify_date", Timestamp.valueOf(LocalDateTime.now()));
+        mapSqlParameterSource.addValue("date", Date.valueOf(LocalDate.now()));
         return mapSqlParameterSource;
     }
 }

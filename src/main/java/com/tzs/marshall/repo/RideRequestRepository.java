@@ -39,4 +39,6 @@ public interface RideRequestRepository {
     void rejectRideBookingRequest(Long bookingRequestId, Long driverId);
 
     String getDriverDutyStatusById(Long userId);
+
+    int updatePaymentStatusByRideBookingRequestId(Long bookingRequestId, String paymentStatus);
 }

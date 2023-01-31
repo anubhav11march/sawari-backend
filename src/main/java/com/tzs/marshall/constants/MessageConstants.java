@@ -58,6 +58,7 @@ public interface MessageConstants {
     String REQUIRED_PARAMS_MISSING = "Required Parameters are missing.";
     String UPDATE_ORDER_ERR = "We are unable to update Order Details, Please try again later.";
     String TOKEN_VERIFIED_ERR = "We cannot verify your token at this moment, Please try again later.";
+    String INVALID_TOKEN = "Invalid Token/OTP";
     String TOKEN_VERIFIED = "Your token is verified successfully.";
     String ACCOUNT_VERIFIED = "Your account is now enable.";
     String PASSWORD_UPDATED = "Your password is updated successfully.";

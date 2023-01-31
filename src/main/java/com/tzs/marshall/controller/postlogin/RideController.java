@@ -4,12 +4,18 @@ import com.tzs.marshall.bean.Location;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
 import com.tzs.marshall.constants.Constants;
+import com.tzs.marshall.constants.MessageConstants;
+import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.service.RideRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.tzs.marshall.constants.Constants.ADMIN;
+import static com.tzs.marshall.constants.Constants.DRIVER;
 
 @RestController
 @RequestMapping({"/user", "/admin", "/driver"})
@@ -40,6 +46,18 @@ public class RideController {
     @RequestMapping(value = "/ride/book/reject", method = RequestMethod.POST)
     public void rejectBookingRequest(@RequestParam String bookingRequestId, @AuthenticationPrincipal PersistentUserDetails userDetails) {
         rideRequestService.rejectRideBookingRequest(bookingRequestId, userDetails.getUserId());
+    }
+
+    //otp-verification and ride start
+    @RequestMapping(value = "/ride/book/otp-verfication", method = RequestMethod.POST)
+    public RideRequest verifyOtpAndStartRide(@RequestParam Map<String, String> allRequestParam) {
+        return rideRequestService.verifyOtpAndStartRide(allRequestParam.get("otp"), allRequestParam.get("bookingRequestId"));
+    }
+
+    //modify payment status before ending the trip: paymentStatus=PAID/UNPAID
+    @RequestMapping(value = "/ride/book/payment", method = RequestMethod.POST)
+    public Boolean updatePaymentStatus(@RequestParam Map<String, String> allRequestParam) {
+        return rideRequestService.updatePaymentStatusOfRideBookingRequest(allRequestParam.get("bookingRequestId"), allRequestParam.get("paymentStatus"));
     }
 
     //close the booking request after trip end for driver
@@ -80,5 +98,17 @@ public class RideController {
     public void writeUserLocation (@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestBody Location location) {
         location.setUserId(userDetails.getUserId());
         rideRequestService.writeUserLocation(location);
+    }
+
+    //total earning
+    @RequestMapping(value = "rides/earning", method = RequestMethod.GET)
+    public Map<String, Object> getTotalEarning(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam(required = false) String userId) {
+        if (ADMIN.equalsIgnoreCase(userDetails.getRoleName())) {
+            return rideRequestService.getTotalEarningByDriver(Long.valueOf(userId));
+        } else if (DRIVER.equalsIgnoreCase(userDetails.getRoleName())) {
+            return rideRequestService.getTotalEarningByDriver(userDetails.getUserId());
+        } else {
+            throw new ApiException(MessageConstants.NOT_AUTHORIZED);
+        }
     }
 }
