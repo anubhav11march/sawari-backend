@@ -244,13 +244,12 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     }
 
     @Override
-    public Map<Integer, String> getDriverDutyStatusById(Long userId) {
+    public String getDriverDutyStatusById(Long userId) {
         try {
-            Map<Integer, String> driverStatusMap = new HashMap<>();
-            String query = "SELECT driver_id, status FROM marshall_service.driver_status WHERE driver_id=:userId";
-            jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId),
-                    (rs, rowNum) -> driverStatusMap.put(rs.getInt("driver_id"), rs.getString("status")));
-            return driverStatusMap;
+            String query = "SELECT status FROM marshall_service.driver_status WHERE driver_id=:userId";
+            List<String> driverDutyStatus = jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId),
+                    (rs, rowNum) -> rs.getString("status"));
+            return driverDutyStatus.stream().findFirst().get();
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);

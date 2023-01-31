@@ -38,5 +38,5 @@ public interface RideRequestRepository {
 
     void rejectRideBookingRequest(Long bookingRequestId, Long driverId);
 
-    Map<Integer, String> getDriverDutyStatusById(Long userId);
+    String getDriverDutyStatusById(Long userId);
 }
