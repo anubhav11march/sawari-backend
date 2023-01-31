@@ -18,6 +18,7 @@ public interface Constants {
     String OPEN = "OPEN";
     String CANCEL = "CANCEL";
     String BOOK = "BOOK";
+    String START = "START";
     String REJECT = "REJECT";
     String ACCEPT = "ACCEPT";
     String CLOSE = "CLOSE";

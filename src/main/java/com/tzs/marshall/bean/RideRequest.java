@@ -24,6 +24,7 @@ public class RideRequest extends Fare {
     private String bookingStatus;
     private String otp;
     private Long driverId;
+    private Date modifyDate;
     private Date date;
 
     public RideRequest(Long bookingRequestId, Long driverId, String bookingStatus) {

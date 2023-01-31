@@ -6,6 +6,7 @@ import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RideRequestService {
 
@@ -28,4 +29,10 @@ public interface RideRequestService {
     void rejectRideBookingRequest(String bookingRequestId, Long userId);
 
     String getDriverDutyStatus(Long userId);
+
+    RideRequest verifyOtpAndStartRide(@NotNull String otp, String bookingRequestId);
+
+    Boolean updatePaymentStatusOfRideBookingRequest(String bookingRequestId, String paymentStatus);
+
+    Map<String, Object> getTotalEarningByDriver(Long userId);
 }

@@ -13,10 +13,10 @@ import com.tzs.marshall.service.RideRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.tzs.marshall.constants.Constants.*;
@@ -118,7 +118,17 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public void updateRideBookingStatus(String bookingRequestId, String status) {
-        rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
+        if (CLOSE.equalsIgnoreCase(status)) {
+            List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
+            RideRequest rideRequest = rideBookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+            if (PAID.equalsIgnoreCase(rideRequest.getPaymentStatus())) {
+                rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
+            } else {
+                throw new ApiException(MessageConstants.PAYMENT_ERR);
+            }
+        } else {
+            rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
+        }
     }
 
     @Override
@@ -127,7 +137,7 @@ public class RideRequestServiceImpl implements RideRequestService {
         rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), null, CLOSE);
         rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
         List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
-        return bookingRequestByBookingId.stream().findFirst().get();
+        return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
     }
 
     @Override
@@ -138,6 +148,69 @@ public class RideRequestServiceImpl implements RideRequestService {
     @Override
     public String getDriverDutyStatus(Long userId) {
         return rideRequestRepository.getDriverDutyStatusById(userId);
+    }
+
+    @Override
+    public RideRequest verifyOtpAndStartRide(String otp, String bookingRequestId) {
+        List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
+        RideRequest rideRequest = rideBookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+        if (rideRequest.getOtp().equalsIgnoreCase(otp)) {
+            rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), START);
+            rideRequest.setBookingStatus(START);
+        } else {
+            throw new ApiException(MessageConstants.INVALID_TOKEN);
+        }
+        return rideRequest;
+    }
+
+    @Override
+    public Boolean updatePaymentStatusOfRideBookingRequest(String bookingRequestId, String paymentStatus) {
+        int i = rideRequestRepository.updatePaymentStatusByRideBookingRequestId(Long.valueOf(bookingRequestId), paymentStatus.toUpperCase());
+        return i == 1 ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    @Override
+    public Map<String, Object> getTotalEarningByDriver(Long userId) {
+
+        Map<String, Object> rideMap = new HashMap<>();
+        List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
+        getTotalEarning(allRideBookingRequestsByUserId, rideMap);
+        List<RideRequest> closedRides = (List<RideRequest>) rideMap.get("totalRides");
+        getTotalEarningOfTheDay(closedRides, rideMap);
+        return rideMap;
+    }
+
+    private void getTotalEarning(List<RideRequest> allRideBookingRequestsByUserId, Map<String, Object> rideMap) {
+        AtomicReference<Double> totalEarnings = new AtomicReference<>(0D);
+        List<RideRequest> closedRides = new ArrayList<>();
+        allRideBookingRequestsByUserId.stream().filter(ride -> CLOSE.equalsIgnoreCase(ride.getBookingStatus()))
+                .forEach(ride -> {
+                    totalEarnings.set(totalEarnings.get() + ride.getFare());
+                    closedRides.add(ride);
+                });
+        Double commission = ((Double.parseDouble(DBProperties.properties.getProperty("COMMISSION", "20")) * totalEarnings.get()) / 100);
+        Double balance = totalEarnings.get() - commission;
+        rideMap.put("totalEarning", totalEarnings);
+        rideMap.put("totalRides", closedRides);
+        rideMap.put("totalCommission", commission);
+        rideMap.put("balance", balance);
+    }
+
+    private void getTotalEarningOfTheDay(List<RideRequest> closedRides, Map<String, Object> rideMap) {
+        AtomicReference<Double> totalEarningsOfTheDay = new AtomicReference<>(0D);
+        List<RideRequest> closedRidesOfTheDay = new ArrayList<>();
+        closedRides.stream().filter(ride -> ride.getDate().equals(Date.valueOf(LocalDate.now())))
+                .forEach(ride -> {
+                    totalEarningsOfTheDay.set(totalEarningsOfTheDay.get() + ride.getFare());
+                    closedRidesOfTheDay.add(ride);
+                });
+        Double totalCommissionOfTheDay = ((Double.parseDouble(DBProperties.properties.getProperty("COMMISSION", "20")) * totalEarningsOfTheDay.get()) / 100);
+        Double balanceOfTheDay = totalEarningsOfTheDay.get() - totalCommissionOfTheDay;
+
+        rideMap.put("totalEarningOfTheDay", totalEarningsOfTheDay.get());
+        rideMap.put("totalRidesOfTheDay", closedRidesOfTheDay);
+        rideMap.put("totalCommissionOfTheDay", totalCommissionOfTheDay);
+        rideMap.put("balanceOfTheDay", balanceOfTheDay);
     }
 
     private List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {

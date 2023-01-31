@@ -37,3 +37,8 @@ UPDATE `marshall_service`.`properties` SET `value` = '0-2,2.1-3.5,3.6-4.5,4.6-6,
 UPDATE `marshall_service`.`properties` SET `value` = '6.1' WHERE (`id` = '55');
 INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISCOUNT_FARE_THRESHOLD', '100');
 
+--location/commsion
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('COMMISSION', '20');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('WRITE_LOCATION_INTERVAL', '15');
+
+

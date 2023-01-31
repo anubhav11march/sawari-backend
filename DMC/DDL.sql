@@ -169,5 +169,10 @@ ADD COLUMN `drop_location_word` VARCHAR(155) NULL AFTER `drop_location_points`;
 ALTER TABLE `marshall_service`.`ride_request`
 ADD COLUMN `discount` DECIMAL(6,3) NULL AFTER `fare`;
 
+--add date col
+ALTER TABLE `marshall_service`.`ride_request`
+ADD COLUMN `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `driver_id`,
+CHANGE COLUMN `date` `date` DATE NULL FIRST;
+
 
   commit;
