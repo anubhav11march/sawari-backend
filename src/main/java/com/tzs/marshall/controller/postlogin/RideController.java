@@ -10,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping({"/user", "/admin", "/driver"})
@@ -65,7 +64,7 @@ public class RideController {
 
     //get the driver duty status
     @RequestMapping(value = "/duty/status", method = RequestMethod.GET)
-    public Map<Integer, String> getDriverDutyStatus(@AuthenticationPrincipal PersistentUserDetails userDetails) {
+    public String getDriverDutyStatus(@AuthenticationPrincipal PersistentUserDetails userDetails) {
         return rideRequestService.getDriverDutyStatus(userDetails.getUserId());
     }
 

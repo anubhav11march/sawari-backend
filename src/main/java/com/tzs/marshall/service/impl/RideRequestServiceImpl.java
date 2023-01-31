@@ -136,7 +136,7 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     @Override
-    public Map<Integer, String> getDriverDutyStatus(Long userId) {
+    public String getDriverDutyStatus(Long userId) {
         return rideRequestRepository.getDriverDutyStatusById(userId);
     }
 
