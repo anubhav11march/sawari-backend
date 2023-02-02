@@ -34,21 +34,21 @@ public class RideRequest extends Fare {
     }
 
     public String getPickupLocationPoints() {
-        return this.getPickupLocation().getLatitude().concat(",").concat(this.getPickupLocation().getLongitude());
+        return this.getPickupLocation().getLatitude() + "," + this.getPickupLocation().getLongitude();
     }
 
     public String getDropLocationPoints() {
-        return this.getDropLocation().getLatitude().concat(",").concat(this.getDropLocation().getLongitude());
+        return this.getDropLocation().getLatitude() + "," + this.getDropLocation().getLongitude();
     }
 
     public void setPickupLocationPoints(String pickupLocationPoints) {
         String[] split = pickupLocationPoints.split(",");
-        this.pickupLocation = new Location(this.customerId, split[0], split[1]);
+        this.pickupLocation = new Location(this.customerId, Double.valueOf(split[0]), Double.valueOf(split[1]));
     }
 
     public void setDropLocationPoints(String dropLocationPoints) {
         String[] split = dropLocationPoints.split(",");
-        this.dropLocation = new Location(this.customerId, split[0], split[1]);
+        this.dropLocation = new Location(this.customerId, Double.valueOf(split[0]), Double.valueOf(split[1]));
     }
 
 }

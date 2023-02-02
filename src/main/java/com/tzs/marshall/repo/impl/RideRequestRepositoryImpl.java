@@ -53,7 +53,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
             String query = "SELECT ul.user_id, ul.latitude, ul.longitude FROM marshall_service.user_location ul, marshall_service.driver_status ds " +
                     "WHERE ul.user_id = ds.driver_id AND ds.status =:driverStatus";
             jdbcTemplate.query(query, new MapSqlParameterSource().addValue("driverStatus", driverStatus),
-                    (rs, rowNum) -> locationMap.put(rs.getInt("user_id"), new Location(rs.getLong("user_id"), rs.getString("latitude"), rs.getString("longitude"))));
+                    (rs, rowNum) -> locationMap.put(rs.getInt("user_id"), new Location(rs.getLong("user_id"), rs.getDouble("latitude"), rs.getDouble("longitude"))));
             return locationMap;
         } catch (Exception e) {
             log.error(e.getMessage());
