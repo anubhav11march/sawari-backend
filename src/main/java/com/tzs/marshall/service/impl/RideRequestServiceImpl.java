@@ -221,9 +221,9 @@ public class RideRequestServiceImpl implements RideRequestService {
         return nearestDriverIds;
     }
 
-    private double calculateDriverAndCustomerDistance(String customerPickupLatitude, String customerPickupLongitude, String driverLatitude, String driverLongitude) {
+    private Double calculateDriverAndCustomerDistance(Double customerPickupLatitude, Double customerPickupLongitude, Double driverLatitude, Double driverLongitude) {
         //TODO: Google Maps Api Call to calculate distance between two points
-        return 04;
+        return 04.0;
     }
 
 
