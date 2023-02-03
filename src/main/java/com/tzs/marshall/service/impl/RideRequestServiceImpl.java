@@ -10,6 +10,8 @@ import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.RideRequestRepository;
 import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.RideRequestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ public class RideRequestServiceImpl implements RideRequestService {
     private RideRequestRepository rideRequestRepository;
     @Autowired
     private UserPostLoginRepository userPostLoginRepository;
+
+    private static Logger log = LoggerFactory.getLogger(RideRequestServiceImpl.class);
 
     @Override
     public void handleRideRequest(RideRequest rideRequest, String option) {
@@ -58,7 +62,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             while (count <= 3 && nearestAvailableDrivers == null) {
                 Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(driverStatus);
                 nearestAvailableDrivers = findNearestAvailableDrivers(rideRequest, driverLocations);
-                if (nearestAvailableDrivers == null || nearestAvailableDrivers.isEmpty()) {
+                if (nearestAvailableDrivers.isEmpty()) {
                     //TODO: ask driver to update their current location
                     Thread.sleep(5000);
                 }
@@ -67,23 +71,33 @@ public class RideRequestServiceImpl implements RideRequestService {
         } catch (InterruptedException e) {
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
         }
-        if (nearestAvailableDrivers.size()==0) {
+        if (nearestAvailableDrivers.isEmpty()) {
+            log.error("There is no nearest driver available.");
             rideRequest.setBookingStatus(NOT_SERVED);
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, rideRequest.getBookingStatus());
             throw new ApiException("There is no available driver at this moment");
         }
-        List<RideRequest> persistentNearestDrivers = persistNearestAvailableDriverWithBookinId(bookingRequestId, nearestAvailableDrivers, bookingStatus);
+        List<RideRequest> persistentNearestDrivers = persistNearestAvailableDriverWithBookingId(bookingRequestId, nearestAvailableDrivers, bookingStatus);
         rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
         //broadcast the booking request to the nearest available drivers
         //wait for the driver to accept the request
+        //get the driver detail who has accepted the booking request
+        List<Integer> acceptedDriverId = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(bookingRequestId, ACCEPT);
         //update driver details in booking request
         //send driver details to customer and customer details to driver
         //send profile pic, rickshaw pics as well
-        List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById(nearestAvailableDrivers.get(0));
-        return driverDetails.stream().findFirst().get();
+        if (!acceptedDriverId.isEmpty()) {
+            List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
+            return driverDetails.stream().findFirst().get();
+        } else {
+            log.error("No driver has accepted the request");
+            rideRequest.setBookingStatus(NOT_SERVED);
+            rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, rideRequest.getBookingStatus());
+            throw new ApiException("No driver has accepted the request");
+        }
     }
 
-    private List<RideRequest> persistNearestAvailableDriverWithBookinId(Long bookingRequestId, List<Long> nearestAvailableDrivers, String bookingStatus) {
+    private List<RideRequest> persistNearestAvailableDriverWithBookingId(Long bookingRequestId, List<Long> nearestAvailableDrivers, String bookingStatus) {
         List<RideRequest> persistentNearestAvailableDrivers = new ArrayList<>();
         nearestAvailableDrivers.forEach( d -> {
             RideRequest rideRequest = new RideRequest(bookingRequestId, d, bookingStatus);
@@ -133,11 +147,17 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public RideRequest acceptRideBookingRequest(String bookingRequestId, Long driverId) {
-        rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), driverId, ACCEPT);
-        rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), null, CLOSE);
-        rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
-        List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
-        return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+        List<Integer> acceptedDrivers = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(Long.valueOf(bookingRequestId), ACCEPT);
+        if (acceptedDrivers != null || !acceptedDrivers.isEmpty()) {
+            rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), driverId, ACCEPT);
+            rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), null, CLOSE);
+            rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
+            List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
+            return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+        } else {
+            log.error("{} bookingRequest has already been accepted by driverId: {}", bookingRequestId, acceptedDrivers);
+            throw new ApiException("This request is already accepted");
+        }
     }
 
     @Override
