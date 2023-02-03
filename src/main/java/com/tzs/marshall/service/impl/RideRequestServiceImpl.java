@@ -67,7 +67,7 @@ public class RideRequestServiceImpl implements RideRequestService {
         } catch (InterruptedException e) {
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
         }
-        if (nearestAvailableDrivers == null) {
+        if (nearestAvailableDrivers.size()==0) {
             rideRequest.setBookingStatus(NOT_SERVED);
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, rideRequest.getBookingStatus());
             throw new ApiException("There is no available driver at this moment");
@@ -216,14 +216,14 @@ public class RideRequestServiceImpl implements RideRequestService {
     private List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {
         List<Long> nearestDriverIds = driverLocations.values().stream().filter(loc -> {
             double driverCustomerDistance = calculateDriverAndCustomerDistance(rideRequest.getPickupLocation().getLatitude(), rideRequest.getPickupLocation().getLongitude(), loc.getLatitude(), loc.getLongitude());
-            return driverCustomerDistance > Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS", "3.0"));
+            return driverCustomerDistance < Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS", "3.0"));
         }).map(Location::getUserId).collect(Collectors.toList());
         return nearestDriverIds;
     }
 
     private Double calculateDriverAndCustomerDistance(Double customerPickupLatitude, Double customerPickupLongitude, Double driverLatitude, Double driverLongitude) {
         //TODO: Google Maps Api Call to calculate distance between two points
-        return 04.0;
+        return 02.0;
     }
 
 
