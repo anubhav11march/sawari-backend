@@ -56,16 +56,17 @@ public class RideRequestServiceImpl implements RideRequestService {
         } else {
             bookingRequestId = rideRequestRepository.saveBookingRequest(rideRequest, userId);
         }
-        List<Long> nearestAvailableDrivers = null;
+        List<Long> nearestAvailableDrivers = new ArrayList<>();
         int count = 0;
         try {
-            while (count <= 3 && nearestAvailableDrivers == null) {
+            while (count < 3 && nearestAvailableDrivers.isEmpty()) {
                 Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(driverStatus);
                 nearestAvailableDrivers = findNearestAvailableDrivers(rideRequest, driverLocations);
-                if (nearestAvailableDrivers.isEmpty()) {
-                    //TODO: ask driver to update their current location
-                    Thread.sleep(5000);
+                if (!nearestAvailableDrivers.isEmpty()) {
+                    break;
                 }
+                //TODO: ask driver to update their current location
+                Thread.sleep(5000);
                 count++;
             }
         } catch (InterruptedException e) {
@@ -81,17 +82,33 @@ public class RideRequestServiceImpl implements RideRequestService {
         rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
         //broadcast the booking request to the nearest available drivers
         //wait for the driver to accept the request
-        //get the driver detail who has accepted the booking request
-        List<Integer> acceptedDriverId = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(bookingRequestId, ACCEPT);
-        //update driver details in booking request
-        //send driver details to customer and customer details to driver
-        //send profile pic, rickshaw pics as well
+        count = 0;
+        List<Integer> acceptedDriverId = new ArrayList<>();
+        try {
+            while (count < 3 && acceptedDriverId.isEmpty()) {
+                log.info("Waiting for drivers to accept the request");
+                Thread.sleep(15000);
+                //get the driver detail who has accepted the booking request
+                acceptedDriverId = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(bookingRequestId, ACCEPT);
+                if (!acceptedDriverId.isEmpty()) {
+                    break;
+                }
+                count++;
+            }
+        } catch (InterruptedException e) {
+            rideRequestRepository.updateDriverBookingStatus(bookingRequestId, null, CLOSE);
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+        //update driver details in booking request: this has been handled at acceptRideBookingRequest method
+        //send customer/booking request details to driver : this has been handled while a driver accept the booking request
+        // and driver details to customer i.e. send profile pic, rickshaw pics as well
         if (!acceptedDriverId.isEmpty()) {
             List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
             return driverDetails.stream().findFirst().get();
         } else {
             log.error("No driver has accepted the request");
             rideRequest.setBookingStatus(NOT_SERVED);
+            rideRequestRepository.updateDriverBookingStatus(bookingRequestId, null, CLOSE);
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, rideRequest.getBookingStatus());
             throw new ApiException("No driver has accepted the request");
         }
@@ -149,8 +166,8 @@ public class RideRequestServiceImpl implements RideRequestService {
     public RideRequest acceptRideBookingRequest(String bookingRequestId, Long driverId) {
         List<Integer> acceptedDrivers = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(Long.valueOf(bookingRequestId), ACCEPT);
         if (acceptedDrivers != null || !acceptedDrivers.isEmpty()) {
-            rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), driverId, ACCEPT);
             rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), null, CLOSE);
+            rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), driverId, ACCEPT);
             rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
             List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
             return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
