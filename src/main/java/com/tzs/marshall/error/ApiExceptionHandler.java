@@ -31,7 +31,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final List<String> errors = new ArrayList<>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -46,7 +46,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleBindException(final BindException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final List<String> errors = new ArrayList<>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -61,7 +61,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final String error = ex.getValue() + " value for " + ex.getPropertyName() + " should be of type " + ex.getRequiredType();
         final List<String> errors = new ArrayList<>();
         errors.add(error);
@@ -72,7 +72,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestPart(final MissingServletRequestPartException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final String error = ex.getRequestPartName() + " part is missing";
         final List<String> errors = new ArrayList<>();
         errors.add(error);
@@ -83,7 +83,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(final MissingServletRequestParameterException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final String error = ex.getParameterName() + " parameter is missing";
         final List<String> errors = new ArrayList<>();
         errors.add(error);
@@ -96,7 +96,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
         final List<String> errors = new ArrayList<>();
         errors.add(error);
@@ -109,7 +109,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
         final List<String> errors = new ArrayList<>();
         errors.add(error);
@@ -122,7 +122,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final StringBuilder builder = new StringBuilder();
         builder.append(ex.getMethod());
         builder.append(" method is not supported for this request. Supported methods are ");
@@ -138,7 +138,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final StringBuilder builder = new StringBuilder();
         builder.append(ex.getContentType());
         builder.append(" media type is not supported. Supported media types are ");
@@ -154,7 +154,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class, IllegalStateException.class, Exception.class})
     public ResponseEntity<Object> handleAll(final Exception ex, final WebRequest request) {
-        logger.error("request: " + request.toString() + ex.getClass().getName() + ex.getMessage());
+        logger.error("request: " + request.toString() + " : " + ex);
         final List<String> errors = new ArrayList<>();
         errors.add(ex.getLocalizedMessage());
         final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), errors);
