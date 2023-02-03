@@ -17,7 +17,8 @@ public class Fare {
     private String currency;
 
     public void setDistance(String distance) {
-        this.distance = Double.parseDouble(distance.substring(0, distance.indexOf(" km")));
+        int index = distance.contains(" km") ? distance.indexOf(" km") : distance.indexOf(" ");
+        this.distance = Double.parseDouble(distance.substring(0, index));
     }
 
     public void setDistance(Double distance) {
