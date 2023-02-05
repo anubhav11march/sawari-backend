@@ -93,10 +93,22 @@ public class PostLoginRestController {
                 .body(resource);
     }
 
-    @RequestMapping(value = "/qrCode", method = RequestMethod.GET)
-    public String getImagePath(@RequestParam("qrCodeType") String qrCodeType, HttpServletResponse response) {
-        String path = aeshSubscriptionService.fetchQrCode(qrCodeType);
-        path = path.replaceAll("\\\\", "/").replaceAll(Constants.BASE_PATH, "");
-        return Paths.get(path).toString();
+    @RequestMapping(value = "/image", method = RequestMethod.GET)
+    public void getImagePath(@RequestParam Map<String, String> allRequestParams,
+                             HttpServletResponse response,
+                             @AuthenticationPrincipal PersistentUserDetails userDetails) {
+        String dirPathI;
+        String imageName = allRequestParams.get("imageName");
+        String imageType = allRequestParams.get("imageType");
+        String option = allRequestParams.get("option");
+        if ("qrcode".equalsIgnoreCase(imageType))
+            dirPathI = DBProperties.properties.getProperty(imageName.toUpperCase());
+        else {
+            Map<String, String> imageByTypeNameAndId = userPostLoginService.getImageByTypeNameAndId(imageType, option, userDetails.getUserId());
+            imageName = imageByTypeNameAndId.get("name");
+            dirPathI = imageByTypeNameAndId.get("path");
+        }
+        log.info("Serving image to client");
+        fileHelper.serveImageInResponse(imageName, response, dirPathI);
     }
 }
