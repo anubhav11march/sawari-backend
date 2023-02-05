@@ -6,7 +6,7 @@ import com.tzs.marshall.bean.TransactionDetail;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.repo.AESHSubscriptionRepository;
+import com.tzs.marshall.repo.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Objects;
 
 @Repository
-public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepository {
+public class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private static final Logger log = LoggerFactory.getLogger(AESHSubscriptionRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionRepositoryImpl.class);
 
-    public AESHSubscriptionRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    public SubscriptionRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -66,7 +66,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
                     .addValue("isActive", orderDetails.getIsActive())
                     .addValue("isPaid", orderDetails.getIsPaid());
             return new SimpleJdbcCall(jdbcTemplate.getJdbcTemplate().getDataSource())
-                    .withSchemaName("ether_service")
+                    .withCatalogName("marshall_service")
                     .withProcedureName("spInsertOrUpdateOrderDetails")
                     .returningResultSet("orderDetails", BeanPropertyRowMapper.newInstance(OrderDetails.class))
                     .execute(mapSqlParameterSource);
@@ -79,7 +79,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getOrderDetailsByAuthorIdAndFileId(long authorId, long fileId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId AND file_id=:fileId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId AND file_id=:fileId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("authorId", authorId).addValue("fileId", fileId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -92,7 +92,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllOrdersByOrderId(long orderId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE order_id=:orderId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE order_id=:orderId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("orderId", orderId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -105,7 +105,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllOrdersByAuthorId(long authorId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("authorId", authorId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -118,7 +118,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getOrderDetailsByFileIdAndReportId(long fileId, long reportId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE file_id=:fileId AND report_id=:reportId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE file_id=:fileId AND report_id=:reportId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("fileId", fileId).addValue("reportId", reportId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -131,7 +131,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllOrdersByAdminId(long adminId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE admin_id=:adminId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE admin_id=:adminId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("adminId", adminId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -144,7 +144,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllOrdersByReportId(long reportId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE report_id=:reportId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE report_id=:reportId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("reportId", reportId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -157,7 +157,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllUnPaidOrdersByAuthorId(long authorId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId AND is_paid=:isPaid ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId AND is_paid=:isPaid ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("authorId", authorId).addValue("isPaid", Boolean.FALSE),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -170,7 +170,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllPaidOrdersByAuthorId(long authorId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId AND is_paid=:isPaid ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE author_id=:authorId AND is_paid=:isPaid ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("authorId", authorId).addValue("isPaid", Boolean.TRUE),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -183,7 +183,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllUnPaidOrders() {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE is_paid=:isPaid ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE is_paid=:isPaid ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("isPaid", Boolean.FALSE),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -196,7 +196,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllPaidOrders() {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE is_paid=:isPaid ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE is_paid=:isPaid ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("isPaid", Boolean.TRUE),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
@@ -222,7 +222,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
                     .addValue("modifyDate", transactionDetail.getModifyDate())
                     .addValue("paymentStatus", transactionDetail.getPaymentStatus());
             return new SimpleJdbcCall(jdbcTemplate.getJdbcTemplate().getDataSource())
-                    .withSchemaName("ether_service")
+                    .withCatalogName("marshall_service")
                     .withProcedureName("spInsertOrUpdateTransactionDetails")
                     .returningResultSet("transactionDetails", BeanPropertyRowMapper.newInstance(TransactionDetail.class))
                     .execute(mapSqlParameterSource);
@@ -278,7 +278,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getPendingOrderByAuthorId(long authorId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE status=:status AND author_id=:authorId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE status=:status AND author_id=:authorId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("status", Constants.PENDING).addValue("authorId", authorId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
         } catch (Exception e) {
@@ -290,7 +290,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getAllPendingOrders() {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE status=:status ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE status=:status ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("status", Constants.PENDING),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));
         } catch (Exception e) {
@@ -302,7 +302,7 @@ public class AESHSubscriptionRepositoryImpl implements AESHSubscriptionRepositor
     @Override
     public List<OrderDetails> getPendingOrderByAuthorIdAndFileId(long authorId, long fileId) {
         try {
-            String query = "SELECT * FROM marshall_service.order_details WHERE status=:status AND author_id=:authorId AND file_id=:fileId ORDER BY modify_date";
+            String query = "SELECT * FROM marshall_service.order_details WHERE status=:status AND author_id=:authorId AND file_id=:fileId ORDER BY modify_date desc";
             return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("status", Constants.PENDING)
                             .addValue("authorId", authorId).addValue("fileId", fileId),
                     BeanPropertyRowMapper.newInstance(OrderDetails.class));

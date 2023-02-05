@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-public interface AESHSubscriptionService {
+public interface SubscriptionService {
 
     List<AESHServicePlan> fetchAllServicePlans();
 
@@ -35,7 +35,7 @@ public interface AESHSubscriptionService {
 
     List<OrderDetails> fetchAllPaidOrders();
 
-    List<TransactionDetail> getTransactionDetailById(long id);
+    TransactionDetail getTransactionDetailByOrderId(long id);
 
     TransactionDetail transactionDetailsHandler(TransactionDetail transactionDetail, PersistentUserDetails authorDetails) throws IOException;
 

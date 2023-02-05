@@ -7,7 +7,7 @@ import com.tzs.marshall.bean.TransactionDetail;
 import java.util.List;
 import java.util.Map;
 
-public interface AESHSubscriptionRepository {
+public interface SubscriptionRepository {
 
     List<AESHServicePlan> fetchAllServicePlansDetails();
 
