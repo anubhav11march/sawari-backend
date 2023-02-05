@@ -213,6 +213,8 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public void createOrUpdateFirebaseToken(Long userId, String token) {
+        Map tokenMap = new Gson().fromJson(token, Map.class);
+        token = String.valueOf(tokenMap.get("token"));
         rideRequestRepository.insertOrUpdateFirebaseTokenById(userId, token);
     }
 

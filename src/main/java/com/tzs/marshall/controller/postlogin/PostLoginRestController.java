@@ -97,12 +97,13 @@ public class PostLoginRestController {
                              HttpServletResponse response,
                              @AuthenticationPrincipal PersistentUserDetails userDetails) {
         String dirPathI;
-        String imageName = allRequestParams.get("imageName");
+        String imageName;
         String imageType = allRequestParams.get("imageType");
         String option = allRequestParams.get("option");
-        if ("qrcode".equalsIgnoreCase(imageType))
-            dirPathI = DBProperties.properties.getProperty(imageName.toUpperCase());
-        else {
+        if ("qrcode".equalsIgnoreCase(imageType)) {
+            imageName = option.toUpperCase();
+            dirPathI = DBProperties.properties.getProperty(imageName);
+        } else {
             Map<String, String> imageByTypeNameAndId = userPostLoginService.getImageByTypeNameAndId(imageType, option, userDetails.getUserId());
             imageName = imageByTypeNameAndId.get("name");
             dirPathI = imageByTypeNameAndId.get("path");
