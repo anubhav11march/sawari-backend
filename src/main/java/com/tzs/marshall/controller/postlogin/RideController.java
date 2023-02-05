@@ -101,7 +101,7 @@ public class RideController {
     }
 
     //total earning
-    @RequestMapping(value = "rides/earning", method = RequestMethod.GET)
+    @RequestMapping(value = "/rides/earning", method = RequestMethod.GET)
     public Map<String, Object> getTotalEarning(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam(required = false) String userId) {
         if (ADMIN.equalsIgnoreCase(userDetails.getRoleName())) {
             return rideRequestService.getTotalEarningByDriver(Long.valueOf(userId));
@@ -111,4 +111,16 @@ public class RideController {
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         }
     }
+
+    //firebase token
+    @RequestMapping(value = "/firebase/token", method = RequestMethod.POST)
+    public void createFirebaseToken(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestBody String token) {
+        rideRequestService.createOrUpdateFirebaseToken(userDetails.getUserId(), token);
+    }
+
+    @RequestMapping(value = "/firebase/token", method = RequestMethod.GET)
+    public String getFirebaseToken(@AuthenticationPrincipal PersistentUserDetails userDetails) {
+        return rideRequestService.getFirebaseTokenById(userDetails.getUserId());
+    }
+
 }

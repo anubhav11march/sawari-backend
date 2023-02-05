@@ -41,4 +41,13 @@ INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('DISCOUNT_
 INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('COMMISSION', '20');
 INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('WRITE_LOCATION_INTERVAL', '15');
 
+--MAP
+UPDATE `marshall_service`.`properties` SET `value` = '15' WHERE (`name` = 'COMMISSION');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('REQUEST_ACCEPT_INTERVAL', '20000');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('BOOKING_RADIUS', '3.0');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('MAP_BASE_URL', 'https://maps.googleapis.com/maps/api');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('MAP_DISTANCE_PATH', '/distancematrix/json');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('MAP_KEY', 'AIzaSyANybxLdy_U-1VYJdrh7XBzHqePU1CQ-8c');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('FIREBASE_URL', 'https://fcm.googleapis.com/fcm/send');
+INSERT INTO `marshall_service`.`properties` (`name`, `value`) VALUES ('FIREBASE_KEY', 'AAAATM9x-Vk:APA91bGds48ddhXCfGjmCHWUkMeKAVDM7EJ_3Fy7DDkMud2U1LnJVec7aL87lVFTOJIQcCBOwLnoN8w4rBc_qf3IAaNEYZQ8XY1pTya4AGkGesKx5S-Nu42A0--G7xJVG2A2HnCz-8Ux');
 

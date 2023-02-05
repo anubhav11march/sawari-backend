@@ -43,4 +43,8 @@ public interface RideRequestRepository {
     int updatePaymentStatusByRideBookingRequestId(Long bookingRequestId, String paymentStatus);
 
     List<Integer> getDriverBookingRequestByStatusAndBookingId(Long bookingRequestId, String status);
+
+    void insertOrUpdateFirebaseTokenById(Long userId, String token);
+
+    Map<Long, String> getFirebaseTokenByDriverId(List<Long> userId);
 }

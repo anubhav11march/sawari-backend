@@ -35,4 +35,8 @@ public interface RideRequestService {
     Boolean updatePaymentStatusOfRideBookingRequest(String bookingRequestId, String paymentStatus);
 
     Map<String, Object> getTotalEarningByDriver(Long userId);
+
+    void createOrUpdateFirebaseToken(Long userId, String token);
+
+    String getFirebaseTokenById(Long userId);
 }
