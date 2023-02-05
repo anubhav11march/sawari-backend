@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserPostLoginServiceImpl implements UserPostLoginService {
@@ -79,6 +81,37 @@ public class UserPostLoginServiceImpl implements UserPostLoginService {
         }
         log.info("Details Updated Successfully...{}", driverNewDetails);
         return handleFetchedFullUserDetails(driverNewDetails);
+    }
+
+    @Override
+    public Map<String, String> getImageByTypeNameAndId(String imageType, String option, Long userId) {
+        List<PersistentUserDetails> userProfile = userPostLoginRepository.getUserProfileAndEssentialDetailsById(userId);
+        PersistentUserDetails profileDetails = userProfile.stream().findFirst().get();
+        Map<String, String> namePathMap = new HashMap<>();
+        if (imageType.equalsIgnoreCase("profile")) {
+            namePathMap.put("name", profileDetails.getProfilePhotoName());
+            namePathMap.put("path", profileDetails.getProfilePhotoPath());
+        } else if (imageType.equalsIgnoreCase("aadhar")) {
+            if (option.equalsIgnoreCase("front")) {
+                namePathMap.put("name", profileDetails.getAadharFrontPhotoName());
+                namePathMap.put("path", profileDetails.getAadharFrontPhotoPath());
+            } else {
+                namePathMap.put("name", profileDetails.getAadharBackPhotoName());
+                namePathMap.put("path", profileDetails.getAadharBackPhotoPath());
+            }
+        } else if (imageType.equalsIgnoreCase("rickshaw")) {
+            if (option.equalsIgnoreCase("front")) {
+                namePathMap.put("name", profileDetails.getRickshawFrontPhotoName());
+                namePathMap.put("path", profileDetails.getRickshawFrontPhotoPath());
+            } else if (option.equalsIgnoreCase("back")) {
+                namePathMap.put("name", profileDetails.getRickshawBackPhotoName());
+                namePathMap.put("path", profileDetails.getRickshawBackPhotoPath());
+            } else {
+                namePathMap.put("name", profileDetails.getRickshawSidePhotoName());
+                namePathMap.put("path", profileDetails.getRickshawSidePhotoPath());
+            }
+        }
+        return namePathMap;
     }
 
     private boolean checkToUpdateRickshawDetails(PersistentUserDetails driverNewDetails, PersistentUserDetails driverOldDetails) {

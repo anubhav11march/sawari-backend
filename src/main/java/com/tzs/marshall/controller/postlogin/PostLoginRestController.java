@@ -1,10 +1,10 @@
 package com.tzs.marshall.controller.postlogin;
 
 import com.tzs.marshall.bean.AESHServicePlan;
+import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.PersistentUserDetails;
-import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.filesystem.FileHelper;
-import com.tzs.marshall.service.AESHSubscriptionService;
+import com.tzs.marshall.service.SubscriptionService;
 import com.tzs.marshall.service.UserPostLoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class PostLoginRestController {
     @Autowired
     private UserPostLoginService userPostLoginService;
     @Autowired
-    private AESHSubscriptionService aeshSubscriptionService;
+    private SubscriptionService subscriptionService;
     @Autowired
     private FileHelper fileHelper;
 
@@ -81,7 +80,7 @@ public class PostLoginRestController {
 
     @RequestMapping(value = "/plans", method = RequestMethod.GET)
     List<AESHServicePlan> getAllServicePlans() {
-        return aeshSubscriptionService.fetchAllServicePlans();
+        return subscriptionService.fetchAllServicePlans();
     }
 
     @RequestMapping(value = "/image/download", method = RequestMethod.GET)
@@ -93,10 +92,22 @@ public class PostLoginRestController {
                 .body(resource);
     }
 
-    @RequestMapping(value = "/qrCode", method = RequestMethod.GET)
-    public String getImagePath(@RequestParam("qrCodeType") String qrCodeType, HttpServletResponse response) {
-        String path = aeshSubscriptionService.fetchQrCode(qrCodeType);
-        path = path.replaceAll("\\\\", "/").replaceAll(Constants.BASE_PATH, "");
-        return Paths.get(path).toString();
+    @RequestMapping(value = "/image", method = RequestMethod.GET)
+    public void getImagePath(@RequestParam Map<String, String> allRequestParams,
+                             HttpServletResponse response,
+                             @AuthenticationPrincipal PersistentUserDetails userDetails) {
+        String dirPathI;
+        String imageName = allRequestParams.get("imageName");
+        String imageType = allRequestParams.get("imageType");
+        String option = allRequestParams.get("option");
+        if ("qrcode".equalsIgnoreCase(imageType))
+            dirPathI = DBProperties.properties.getProperty(imageName.toUpperCase());
+        else {
+            Map<String, String> imageByTypeNameAndId = userPostLoginService.getImageByTypeNameAndId(imageType, option, userDetails.getUserId());
+            imageName = imageByTypeNameAndId.get("name");
+            dirPathI = imageByTypeNameAndId.get("path");
+        }
+        log.info("Serving image to client");
+        fileHelper.serveImageInResponse(imageName, response, dirPathI);
     }
 }

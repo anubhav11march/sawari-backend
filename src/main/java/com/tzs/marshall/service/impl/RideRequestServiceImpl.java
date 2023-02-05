@@ -6,6 +6,7 @@ import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.Location;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
+import com.tzs.marshall.bean.distnaceMatrix.DistanceDuration;
 import com.tzs.marshall.bean.distnaceMatrix.DistanceMatrix;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
@@ -255,22 +256,27 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     private List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {
-        List<Long> nearestDriverIds = driverLocations.values().stream().filter(loc -> {
-            double driverCustomerDistance = calculateDriverAndCustomerDistance(rideRequest.getPickupLocation().getLatitude(), rideRequest.getPickupLocation().getLongitude(), loc.getLatitude(), loc.getLongitude());
-            return driverCustomerDistance < Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS"));
-        }).map(Location::getUserId).collect(Collectors.toList());
-        return nearestDriverIds;
+        Map<Long, DistanceDuration> userIdDistanceDurationMap = new HashMap<>();
+        double bookingRadius = Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS"));
+        List<Location> filteredDrivers = driverLocations.values().stream().filter(loc -> {
+            double driverCustomerDistance = calculateDriverAndCustomerDistance(userIdDistanceDurationMap, rideRequest.getPickupLocation().getLatitude(), rideRequest.getPickupLocation().getLongitude(), loc);
+            return driverCustomerDistance <= bookingRadius;
+        }).collect(Collectors.toList());
+        List<Map.Entry<Long, DistanceDuration>> driversSortedList = new ArrayList<>(userIdDistanceDurationMap.entrySet());
+        driversSortedList.sort(Comparator.comparingDouble((Map.Entry<Long, DistanceDuration> o) -> o.getValue().getDuration()).thenComparingDouble(o -> o.getValue().getDistance()));
+        List<Long> nearestAvailableDriver = driversSortedList.stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        return nearestAvailableDriver;
     }
 
-    private Double calculateDriverAndCustomerDistance(Double customerPickupLatitude, Double customerPickupLongitude, Double driverLatitude, Double driverLongitude) {
+    private Double calculateDriverAndCustomerDistance(Map<Long, DistanceDuration> distanceDurationMap, Double customerPickupLatitude, Double customerPickupLongitude, Location driverLocation) {
         //Google Maps Api Call to calculate distance between two points
         try {
             String baseURL = DBProperties.properties.getProperty("MAP_BASE_URL");
             String path = DBProperties.properties.getProperty("MAP_DISTANCE_PATH");
             String originLatitude = String.valueOf(customerPickupLatitude);
             String originLongitude = String.valueOf(customerPickupLongitude);
-            String destinationLatitude = String.valueOf(driverLatitude);
-            String destinationLongitude = String.valueOf(driverLongitude);
+            String destinationLatitude = String.valueOf(driverLocation.getLatitude());
+            String destinationLongitude = String.valueOf(driverLocation.getLongitude());
             String mapDelimiter = "%2C";
             String mapKey = DBProperties.properties.getProperty("MAP_KEY");
             String url = baseURL + path + "?origins=" + originLatitude + mapDelimiter + originLongitude + "&destinations=" + destinationLatitude + mapDelimiter + destinationLongitude + "&key=" + mapKey;
@@ -286,9 +292,12 @@ public class RideRequestServiceImpl implements RideRequestService {
                 log.error("Map API call failed with status code: {}", distanceMatrix.getStatus());
                 throw new ApiException("Map api call failed");
             }
-            AtomicReference<Double> dist = new AtomicReference<>();
-            distanceMatrix.getRows().forEach(r -> r.getElements().forEach(e -> dist.set((Double) e.getDistance().get("value"))));
-            return (dist.get() / 1000.0);
+            distanceMatrix.getRows().forEach(r -> r.getElements().forEach(e -> {
+                distanceDurationMap
+                        .put(driverLocation.getUserId(),
+                                new DistanceDuration((Double) e.getDistance().get("value"), (Double) e.getDuration().get("value")));
+            }));
+            return distanceDurationMap.get(driverLocation.getUserId()).getDistance();
         } catch (Exception e) {
             log.error("Unable to calculate distance.");
             throw new ApiException(MessageConstants.SOMETHING_WRONG);

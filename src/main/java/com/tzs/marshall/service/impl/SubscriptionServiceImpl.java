@@ -8,8 +8,8 @@ import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.mailsender.EmailBean;
 import com.tzs.marshall.mailsender.EmailService;
-import com.tzs.marshall.repo.AESHSubscriptionRepository;
-import com.tzs.marshall.service.AESHSubscriptionService;
+import com.tzs.marshall.repo.SubscriptionRepository;
+import com.tzs.marshall.service.SubscriptionService;
 import com.tzs.marshall.service.admin.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,21 +36,21 @@ import java.util.stream.Collectors;
 import static com.tzs.marshall.constants.Constants.*;
 
 @Service
-public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
+public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
-    private AESHSubscriptionRepository aeshSubscriptionRepository;
+    private SubscriptionRepository subscriptionRepository;
     @Autowired
     private EmailService emailService;
     @Autowired
     private AdminService adminService;
 
-    private static final Logger log = LoggerFactory.getLogger(AESHSubscriptionServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
 
     @Override
     public List<AESHServicePlan> fetchAllServicePlans() {
         log.info("Fetching All Available Service Plans Details for Author...");
-        List<AESHServicePlan> aeshServicePlans = aeshSubscriptionRepository.fetchAllServicePlansDetails();
+        List<AESHServicePlan> aeshServicePlans = subscriptionRepository.fetchAllServicePlansDetails();
         if (aeshServicePlans.size() == 0) {
             log.error("No Service Plans Found.");
             throw new ApiException(MessageConstants.NO_PLANS);
@@ -61,7 +61,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     @Override
     public List<OrderDetails> fetchOrderDetailsByAuthorIdAndFileId(long authorId, long fileId) {
         log.info(String.format("Fetching Existing Order Details from DB for authorId: %s and fileId: %s", authorId, fileId));
-        List<OrderDetails> orders = aeshSubscriptionRepository.getOrderDetailsByAuthorIdAndFileId(authorId, fileId);
+        List<OrderDetails> orders = subscriptionRepository.getOrderDetailsByAuthorIdAndFileId(authorId, fileId);
         orders = orders.stream().filter(od -> od.getIsActive() && od.getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now()))).collect(Collectors.toList());
         if (orders.size() == 0) {
             log.warn(String.format(String.format("No order details found for author: %s and fileId: %s", authorId, fileId)));
@@ -94,14 +94,20 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
         orderDetails.setPaid(Boolean.FALSE);
         if (orderDetails.getCurrency() == null)
             orderDetails.setCurrency("USD");
-        orderDetails.setEstimatedAmount(calculateEstimatedAmount(orderDetails.getSelectedServices(), orderDetails.getCurrency()));
+        Double price;
+        if ("Y".equalsIgnoreCase(DBProperties.properties.getProperty("GET_PRICE_BY_SERVICE", "N"))) {
+            price = calculateEstimatedAmount(orderDetails.getSelectedServices(), orderDetails.getCurrency());
+        } else {
+            price = orderDetails.getEstimatedAmount();
+        }
+        orderDetails.setEstimatedAmount(price);
         orderDetails.setStatus(Constants.CREATED);
 
         if (checkAndSendMailForAcademicIllustrationService(orderDetails, authorDetails))
             orderDetails.setStatus(Constants.PENDING);
 
         log.info("Saving Order Details in DB...");
-        Map<String, Object> orderMap = aeshSubscriptionRepository.saveOrUpdateOrderDetails(orderDetails);
+        Map<String, Object> orderMap = subscriptionRepository.saveOrUpdateOrderDetails(orderDetails);
         log.info("Order Saved to DB.");
         List<?> orderList = (List<?>) orderMap.get("orderDetails");
         Gson gson = new Gson();
@@ -116,7 +122,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllOrdersByAuthorId(long authorId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllOrdersByAuthorId(authorId);
+        List<OrderDetails> orders = subscriptionRepository.getAllOrdersByAuthorId(authorId);
         if (orders.size() == 0) {
             log.warn(String.format("No order Found for authorId: %s", authorId));
             throw new ApiException(MessageConstants.NO_ORDER);
@@ -126,7 +132,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public OrderDetails fetchOrdersByOrderId(long orderId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllOrdersByOrderId(orderId);
+        List<OrderDetails> orders = subscriptionRepository.getAllOrdersByOrderId(orderId);
         if (orders.size() == 0) {
             throw new ApiException(MessageConstants.NO_ORDER_BY_ID + orderId);
         }
@@ -135,7 +141,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchOrderDetailsByFileIdAndReportId(long fileId, long reportId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getOrderDetailsByFileIdAndReportId(fileId, reportId);
+        List<OrderDetails> orders = subscriptionRepository.getOrderDetailsByFileIdAndReportId(fileId, reportId);
         if (orders.size() == 0) {
             throw new ApiException(String.format(MessageConstants.NO_ORDER_BY_FILE_AND_REPORT, fileId, reportId));
         }
@@ -144,7 +150,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllOrdersByAdminId(long adminId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllOrdersByAdminId(adminId);
+        List<OrderDetails> orders = subscriptionRepository.getAllOrdersByAdminId(adminId);
         if (orders.size() == 0) {
             throw new ApiException(MessageConstants.NO_ORDER_BY_ADMIN_ID + adminId);
         }
@@ -153,7 +159,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllOrdersByReportId(long reportId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllOrdersByReportId(reportId);
+        List<OrderDetails> orders = subscriptionRepository.getAllOrdersByReportId(reportId);
         if (orders.size() == 0) {
             throw new ApiException(MessageConstants.NO_ORDER_BY_REPORT_ID + reportId);
         }
@@ -162,7 +168,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllUnPaidOrdersByAuthorId(long authorId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllUnPaidOrdersByAuthorId(authorId);
+        List<OrderDetails> orders = subscriptionRepository.getAllUnPaidOrdersByAuthorId(authorId);
         if (orders.size() == 0) {
             log.warn(MessageConstants.NO_ORDER_BY_AUTHOR_ID + authorId);
             throw new ApiException(MessageConstants.NO_ORDER_BY_AUTHOR_ID);
@@ -172,7 +178,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllPaidOrdersByAuthorId(long authorId) {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllPaidOrdersByAuthorId(authorId);
+        List<OrderDetails> orders = subscriptionRepository.getAllPaidOrdersByAuthorId(authorId);
         if (orders.size() == 0) {
             log.warn(MessageConstants.NO_ORDER_BY_AUTHOR_ID + authorId);
             throw new ApiException(MessageConstants.NO_ORDER_BY_AUTHOR_ID);
@@ -182,7 +188,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllUnPaidOrders() {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllUnPaidOrders();
+        List<OrderDetails> orders = subscriptionRepository.getAllUnPaidOrders();
         if (orders.size() == 0) {
             throw new ApiException(MessageConstants.NO_ORDER);
         }
@@ -191,7 +197,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public List<OrderDetails> fetchAllPaidOrders() {
-        List<OrderDetails> orders = aeshSubscriptionRepository.getAllPaidOrders();
+        List<OrderDetails> orders = subscriptionRepository.getAllPaidOrders();
         if (orders.size() == 0) {
             throw new ApiException(MessageConstants.NO_ORDER);
         }
@@ -199,14 +205,14 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     }
 
     @Override
-    public List<TransactionDetail> getTransactionDetailById(long id) {
+    public TransactionDetail getTransactionDetailByOrderId(long id) {
         log.info("fetching transaction details by id: " + id);
-        List<TransactionDetail> transactionDetailsById = aeshSubscriptionRepository.getTransactionDetailsById(id);
+        List<TransactionDetail> transactionDetailsById = subscriptionRepository.getTransactionDetailsById(id);
         if (transactionDetailsById.size() == 0) {
             log.error("No transaction details found.");
             throw new ApiException(MessageConstants.NO_TRANSACTION);
         }
-        return transactionDetailsById;
+        return transactionDetailsById.stream().findFirst().get();
     }
 
     @Override
@@ -235,10 +241,10 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
         if (transactionDetail.getCurrency() == null)
             transactionDetail.setCurrency("USD");
         log.info("Saving Transaction Details to DB...");
-        Map<String, Object> transactionMap = aeshSubscriptionRepository.saveOrUpdateTransactionDetails(transactionDetail);
+        Map<String, Object> transactionMap = subscriptionRepository.saveOrUpdateTransactionDetails(transactionDetail);
         log.info("Transaction Details Saved to DB.");
         updateOrderDetailsAfterPayment(transactionDetail.getOrderId());
-        List<?> transaction = (List<?>) transactionMap.get("transactionDetails");
+        List<TransactionDetail> transaction = (List<TransactionDetail>) transactionMap.get("transactionDetails");
         Gson gson = new Gson();
         JsonElement jsonElement = gson.toJsonTree(transaction.stream().findFirst().get());
         transactionDetail = gson.fromJson(jsonElement, TransactionDetail.class);
@@ -280,22 +286,23 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     }
 
     private void updateOrderDetailsAfterPayment(Long orderId) {
-        log.info("Updating Order Status...");
+        log.info("Updating Order Status for orderId: " + orderId);
         OrderDetails order = fetchOrdersByOrderId(orderId);
+        log.info("Order Found: " + order);
         order.setWarningDate(Timestamp.valueOf(LocalDateTime.now().plusDays(25L)));
         order.setExpiryDate(Timestamp.valueOf(LocalDateTime.now().plusDays(30L)));
         order.setModifyDate(Timestamp.valueOf(LocalDateTime.now()));
         order.setStatus(Constants.PAID);
         order.setPaid(Boolean.TRUE);
 
-        aeshSubscriptionRepository.updateOrderStatus(order);
-        log.info("Status Updated");
+        subscriptionRepository.updateOrderStatus(order);
+        log.info("Order Status Updated");
     }
 
     @Override
     public TransactionDetail updatePaymentStatusHandler(TransactionDetail transactionDetail) {
-        int i = aeshSubscriptionRepository.updatePaymentStatus(transactionDetail);
-        TransactionDetail transaction = aeshSubscriptionRepository.getTransactionDetailsById(transactionDetail.getBillingId()).stream().findAny().orElse(null);
+        int i = subscriptionRepository.updatePaymentStatus(transactionDetail);
+        TransactionDetail transaction = subscriptionRepository.getTransactionDetailsById(transactionDetail.getBillingId()).stream().findAny().orElse(null);
         if (transaction == null) {
             log.error("No Transaction Details found after update.");
             throw new ApiException(MessageConstants.NO_TRANSACTION);
@@ -307,7 +314,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     @Override
     public List<OrderDetails> getPendingOrderByAuthorId(long authorId) {
         log.info("fetching pending order for authorId: " + authorId);
-        List<OrderDetails> pendingOrderByAuthorId = aeshSubscriptionRepository.getPendingOrderByAuthorId(authorId);
+        List<OrderDetails> pendingOrderByAuthorId = subscriptionRepository.getPendingOrderByAuthorId(authorId);
         if (pendingOrderByAuthorId.size() == 0) {
             log.warn("No Pending order found for authorId: " + authorId);
             throw new ApiException(MessageConstants.NO_PENDING_ORDER);
@@ -318,7 +325,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     @Override
     public List<OrderDetails> getAllPendingOrders() {
         log.info("Fetching all pending orders");
-        List<OrderDetails> allPendingOrders = aeshSubscriptionRepository.getAllPendingOrders();
+        List<OrderDetails> allPendingOrders = subscriptionRepository.getAllPendingOrders();
         if (allPendingOrders.size() == 0) {
             log.warn("No Pending Order Found.");
             throw new ApiException(MessageConstants.NO_PENDING_ORDER);
@@ -329,7 +336,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     @Override
     public List<OrderDetails> getPendingOrderByAuthorIdAndFileId(long authorId, long fileId) {
         log.info(String.format("fetching pending order by fileId: %s and authordId: %s"));
-        List<OrderDetails> pendingOrderByAuthorIdAndFileId = aeshSubscriptionRepository.getPendingOrderByAuthorIdAndFileId(authorId, fileId);
+        List<OrderDetails> pendingOrderByAuthorIdAndFileId = subscriptionRepository.getPendingOrderByAuthorIdAndFileId(authorId, fileId);
         if (pendingOrderByAuthorIdAndFileId.size() == 0) {
             log.warn(String.format("No Pending Order found for authorId %s and fileId %s", authorId, fileId));
             throw new ApiException(MessageConstants.NO_PENDING_ORDER);
@@ -370,13 +377,13 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
     @Override
     public void uploadQR(String qrCodeName, String path) {
         log.info("Uploading QR Code to DB...");
-        aeshSubscriptionRepository.uploadQRCodeToDB(qrCodeName, path);
+        subscriptionRepository.uploadQRCodeToDB(qrCodeName, path);
     }
 
     @Override
     public void updateQR(String qrCodeName, String path) {
         log.info("Updating QR Code...");
-        aeshSubscriptionRepository.updateQRCode(qrCodeName, path);
+        subscriptionRepository.updateQRCode(qrCodeName, path);
         log.info("QR Code updated successfully.");
     }
 
@@ -472,7 +479,7 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
         log.info(String.format("Updating OrderDetails [%s]...", orderDetails));
         if (orderDetails != null && Constants.ORDER_STATUS.get(orderDetails.getStatus()) >= (Constants.ORDER_PRIORITY-1)
                 && orderDetails.getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now().plusDays(1L)))) {
-            int i = aeshSubscriptionRepository.updateOrder(orderDetails);
+            int i = subscriptionRepository.updateOrder(orderDetails);
             log.info(String.format("Order Updated [%s]", i));
             if (i >0) {
                 return fetchOrdersByOrderId(orderDetails.getOrderId());
@@ -484,12 +491,13 @@ public class AESHSubscriptionServiceImpl implements AESHSubscriptionService {
 
     @Override
     public String fetchQrCode(String qrCodeType) {
-        log.info(String.format("Fetching %s QR-Code", qrCodeType));
-        String path = aeshSubscriptionRepository.fetchQrCodeByName(qrCodeType);
+        log.info(String.format("Fetching %s QR-Code path", qrCodeType));
+        String path = subscriptionRepository.fetchQrCodeByName(qrCodeType);
         if (path == null) {
             log.error(String.format("No %s code present in db", qrCodeType));
             throw new ApiException(MessageConstants.NO_QR_CODE_FOUND);
         }
+        log.info(String.format("%s Path: ", path));
         return path;
     }
 }

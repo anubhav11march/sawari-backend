@@ -1,5 +1,7 @@
 package com.tzs.marshall.controller.postlogin;
 
+import com.tzs.marshall.InitProperties;
+import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.PersistentUserRights;
 import com.tzs.marshall.constants.Constants;
@@ -7,6 +9,7 @@ import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.filesystem.FileBean;
 import com.tzs.marshall.filesystem.FileService;
+import com.tzs.marshall.service.SubscriptionService;
 import com.tzs.marshall.service.UserPostLoginService;
 import com.tzs.marshall.service.admin.AdminService;
 import org.slf4j.Logger;
@@ -14,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +33,15 @@ public class AdminRestController {
     @Autowired
     private UserPostLoginService userPostLoginService;
     @Autowired
+    private SubscriptionService subscriptionService;
+    @Autowired
+    private InitProperties initProperties;
+    @Autowired
     private FileService fileService;
 
     private static final Logger log = LoggerFactory.getLogger(AdminRestController.class);
+    String errorMessage = "";
+    String successMessage = "";
 
     //Author's Rights
     @RequestMapping(value = "/users/rights", method = RequestMethod.GET)
@@ -44,21 +55,21 @@ public class AdminRestController {
     }
 
     @RequestMapping(value = "/user/rights", method = RequestMethod.PUT)
-    public PersistentUserDetails updateAuthorRights(@RequestBody PersistentUserRights authorRights,
+    public PersistentUserDetails updateAuthorRights(@RequestBody PersistentUserRights userRights,
                                                       @AuthenticationPrincipal PersistentUserDetails adminDetails) {
         adminService.checkAuthorizedAdmin(adminDetails.getUserId());
-        if (!Constants.ALLOWED_ROLES.contains(authorRights.getRoleName())) {
+        if (!Constants.ALLOWED_ROLES.contains(userRights.getRoleName())) {
             log.error("Unauthorized Operation to create a new Admin.");
             throw new ApiException(MessageConstants.NOT_AUTHORIZED + " You can not create a new Admin.");
         }
-        if ("TRUE".equalsIgnoreCase(authorRights.getIs_enable()))
-            authorRights.setEnable(Constants.isEnable);
-        else authorRights.setEnable(!Constants.isEnable);
-        if ("TRUE".equalsIgnoreCase(authorRights.getIs_deleted()))
-            authorRights.setDeleted(!Constants.isDeleted);
-        else authorRights.setDeleted(Constants.isDeleted);
+        if ("TRUE".equalsIgnoreCase(userRights.getIs_enable()))
+            userRights.setEnable(Constants.isEnable);
+        else userRights.setEnable(!Constants.isEnable);
+        if ("TRUE".equalsIgnoreCase(userRights.getIs_deleted()))
+            userRights.setDeleted(!Constants.isDeleted);
+        else userRights.setDeleted(Constants.isDeleted);
 
-        return adminService.updateAuthorRights(authorRights);
+        return adminService.updateAuthorRights(userRights);
     }
 
     //Authors' Profile
@@ -112,5 +123,39 @@ public class AdminRestController {
     @RequestMapping(value = "/user/reports", method = RequestMethod.GET)
     public List<FileBean> getEditorReportsForAuthor(@RequestParam Map<String, String> allRequestParams) {
         return fileService.findAllReportsForAuthor(Long.parseLong(allRequestParams.get("userId")));
+    }
+
+    @RequestMapping(value = "/qrcode/upload", method = RequestMethod.POST)
+    public void uploadQRCode(@RequestParam("name") String qrCodeName, @RequestParam("qrCode") MultipartFile qrCode,
+                                     @AuthenticationPrincipal PersistentUserDetails authorDetails) {
+        if (!Constants.ADMIN.equals(authorDetails.getRoleName()))
+            throw new ApiException(MessageConstants.NOT_AUTHORIZED);
+        adminService.checkAuthorizedAdmin(authorDetails.getUserId());
+        try {
+            String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
+            subscriptionService.uploadQR(qrCodeName, path);
+            successMessage = MessageConstants.QR_UPLOADED;
+        } catch (ApiException | IOException e) {
+            log.error(e.getLocalizedMessage() + e.getCause());
+            errorMessage = e.getMessage();
+        }
+        new DBProperties(initProperties.getDBProperties());
+    }
+
+    @RequestMapping(value = "/qrcode/update", method = RequestMethod.POST)
+    public void updateQRCode(@RequestParam("name") String qrCodeName, @RequestParam("qrCode") MultipartFile qrCode,
+                                     @AuthenticationPrincipal PersistentUserDetails authorDetails) {
+        if (!Constants.ADMIN.equals(authorDetails.getRoleName()))
+            throw new ApiException(MessageConstants.NOT_AUTHORIZED);
+        adminService.checkAuthorizedAdmin(authorDetails.getUserId());
+        try {
+            String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
+            subscriptionService.updateQR(qrCodeName, path);
+            successMessage = MessageConstants.QR_UPDATED;
+        } catch (ApiException | IOException e) {
+            log.error(e.getLocalizedMessage());
+            errorMessage = e.getMessage();
+        }
+        new DBProperties(initProperties.getDBProperties());
     }
 }
