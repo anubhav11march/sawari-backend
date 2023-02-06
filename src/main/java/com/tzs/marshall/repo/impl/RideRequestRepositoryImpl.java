@@ -68,7 +68,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         try {
             Number key = new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
                     .withTableName("ride_request")
-                    .usingColumns("customer_id", "mobile_no", "pickup_location_points", "drop_location_points",
+                    .usingColumns("customer_id", "customer_name", "mobile_no", "pickup_location_points", "drop_location_points",
                             "pickup_location_word", "drop_location_word", "passengers", "fare", "discount", "currency",
                             "distance", "otp", "booking_status", "payment_mode", "payment_status", "date")
                     .usingGeneratedKeyColumns("booking_request_id")
@@ -102,8 +102,9 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     public Map<String, Long> getExistingBookingStatusByUserId(Long userId) {
         try {
             Map<String, Long> statusIdMap = new HashMap<>();
-            String query = "SELECT booking_request_id, booking_status FROM marshall_service.ride_request WHERE customer_id=:userId ORDER BY date DESC LIMIT 1";
-            jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId),
+            String query = "SELECT booking_request_id, booking_status FROM marshall_service.ride_request WHERE customer_id=:userId AND date=:date ORDER BY modify_date DESC";
+            jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId)
+                    .addValue("date", Date.valueOf(LocalDate.now())),
                     (rs, rowNum) -> statusIdMap.put(rs.getString("booking_status"), rs.getLong("booking_request_id")));
             return statusIdMap;
         } catch (Exception e) {
@@ -116,6 +117,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     public void updateBookingRequest(RideRequest rideRequest, Long userId) {
         try {
             String query = "UPDATE marshall_service.ride_request SET " +
+                    "date=:date, customer_name=:customer_name, mobile_no=:mobile_no, " +
                     "pickup_location_points=:pickup_location_points, drop_location_points=:drop_location_points, " +
                     "pickup_location_word=:pickup_location_word, drop_location_word=:drop_location_word, " +
                     "passengers=:passengers, fare=:fare, discount=:discount, currency=:currency, distance=:distance, otp=:otp, " +
@@ -186,10 +188,11 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public void updateRideBookingRequestStatusByBookingId(Long bookingRequestId, String status) {
         try {
-            String query = "UPDATE marshall_service.ride_request SET booking_status=:booking_status, modify_date=:modify_date " +
+            String query = "UPDATE marshall_service.ride_request SET booking_status=:booking_status, date=:date, modify_date=:modify_date " +
                     "WHERE booking_request_id=:booking_request_id";
             jdbcTemplate.update(query, new MapSqlParameterSource().addValue("booking_request_id", bookingRequestId)
                     .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now()))
+                    .addValue("date", Date.valueOf(LocalDate.now()))
                     .addValue("booking_status", status));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -200,10 +203,11 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public void acceptRideBookingRequest(Long bookingRequestId, Long driverId, String status) {
         try {
-            String query = "UPDATE marshall_service.ride_request SET booking_status=:status, driver_id=:driverId, modify_date=:modify_date " +
+            String query = "UPDATE marshall_service.ride_request SET booking_status=:status, date=:date, driver_id=:driverId, modify_date=:modify_date " +
                     "WHERE booking_request_id=:bookingRequestId";
             jdbcTemplate.update(query, new MapSqlParameterSource().addValue("status", status)
                     .addValue("driverId", driverId)
+                    .addValue("date", Date.valueOf(LocalDate.now()))
                     .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now()))
                     .addValue("bookingRequestId", bookingRequestId));
         } catch (Exception e) {
@@ -263,10 +267,11 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public int updatePaymentStatusByRideBookingRequestId(Long bookingRequestId, String paymentStatus) {
         try {
-            String query = "UPDATE marshall_service.ride_request SET payment_status=:paymentStatus, modify_date=:modify_date " +
+            String query = "UPDATE marshall_service.ride_request SET payment_status=:paymentStatus, date=:date, modify_date=:modify_date " +
                     "WHERE booking_request_id=:bookingRequestId";
             int update = jdbcTemplate.update(query, new MapSqlParameterSource().addValue("paymentStatus", paymentStatus)
                     .addValue("bookingRequestId", bookingRequestId)
+                    .addValue("date", Date.valueOf(LocalDate.now()))
                     .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now())));
             return update;
         } catch (Exception e) {
@@ -321,6 +326,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("booking_request_id", rideRequest.getBookingRequestId());
         mapSqlParameterSource.addValue("customer_id", userId);
+        mapSqlParameterSource.addValue("customer_name", rideRequest.getCustomerName());
         mapSqlParameterSource.addValue("mobile_no", rideRequest.getMobileNo());
         mapSqlParameterSource.addValue("pickup_location_points", rideRequest.getPickupLocationPoints());
         mapSqlParameterSource.addValue("drop_location_points", rideRequest.getDropLocationPoints());

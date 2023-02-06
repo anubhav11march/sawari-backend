@@ -27,13 +27,21 @@ public class RideController {
     //book a new ride for customer
     @RequestMapping(value = "/ride/book/new", method = RequestMethod.POST)
     public PersistentUserDetails bookNewRideRequest(@RequestBody RideRequest rideRequest, @AuthenticationPrincipal PersistentUserDetails userDetails) {
-        return rideRequestService.openBookingRequest(rideRequest, userDetails.getUserId());
+        if (rideRequest.getMobileNo() == null) {
+            rideRequest.setMobileNo(userDetails.getMobile());
+        }
+        if (rideRequest.getCustomerName() == null) {
+            rideRequest.setCustomerName(userDetails.getFirstName().concat(" ").concat(userDetails.getLastName()));
+        }
+        Map<String, Object> responseMap = rideRequestService.openBookingRequest(rideRequest, userDetails.getUserId());
+        return (PersistentUserDetails) responseMap.get("driver");
     }
 
     //cancel the already booked or opened ride for customer
     @RequestMapping(value = "/ride/book/cancel", method = RequestMethod.POST)
-    public void cancelBookingRequestStatus(@RequestParam String bookingRequestId, @RequestParam String status) {
-        rideRequestService.updateRideBookingStatus(bookingRequestId, Constants.CANCEL);
+    public void cancelBookingRequestStatus(@RequestParam(required = false) String bookingRequestId, @RequestParam(required = false) String status,
+                                           @AuthenticationPrincipal PersistentUserDetails userDetails) {
+        rideRequestService.updateRideBookingStatus(bookingRequestId, Constants.CANCEL, userDetails.getUserId());
     }
 
     //accept the booking request for driver
@@ -62,8 +70,9 @@ public class RideController {
 
     //close the booking request after trip end for driver
     @RequestMapping(value = "/ride/book/close", method = RequestMethod.POST)
-    public void closeBookingRequestStatus(@RequestParam String bookingRequestId, @RequestParam String status) {
-        rideRequestService.updateRideBookingStatus(bookingRequestId, Constants.CLOSE);
+    public void closeBookingRequestStatus(@RequestParam String bookingRequestId, @RequestParam(required = false) String status,
+                                          @AuthenticationPrincipal PersistentUserDetails userDetails) {
+        rideRequestService.updateRideBookingStatus(bookingRequestId, Constants.CLOSE, userDetails.getUserId());
     }
 
 

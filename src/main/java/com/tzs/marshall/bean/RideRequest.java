@@ -14,6 +14,7 @@ import java.sql.Date;
 public class RideRequest extends Fare {
     private Long bookingRequestId;
     private Long customerId;
+    private String customerName;
     private String mobileNo;
     private Location pickupLocation;
     private String pickupLocationWord;

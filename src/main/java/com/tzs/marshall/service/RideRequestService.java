@@ -2,7 +2,6 @@ package com.tzs.marshall.service;
 
 import com.sun.istack.NotNull;
 import com.tzs.marshall.bean.Location;
-import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface RideRequestService {
 
     void handleRideRequest(@NotNull RideRequest rideRequest, String option);
 
-    PersistentUserDetails openBookingRequest(RideRequest rideRequest, Long userId);
+    Map<String, Object> openBookingRequest(RideRequest rideRequest, Long userId);
 
     List<RideRequest> fetchRideBookingRequestsForDriversByDBSAndDriverId(Long userId, String status);
 
@@ -22,7 +21,7 @@ public interface RideRequestService {
 
     void writeUserLocation(Location location);
 
-    void updateRideBookingStatus(@NotNull String rideRequest, String status);
+    void updateRideBookingStatus(@NotNull String rideRequest, String status, Long userId);
 
     RideRequest acceptRideBookingRequest(String bookingRequestId, Long userId);
 

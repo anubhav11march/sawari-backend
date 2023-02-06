@@ -183,4 +183,8 @@ CREATE TABLE `marshall_service`.`driver_firebase_token` (
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   UNIQUE INDEX `driver_id_UNIQUE` (`driver_id` ASC) VISIBLE);
 
+--add customer name
+ALTER TABLE `marshall_service`.`ride_request`
+ADD COLUMN `customer_name` VARCHAR(45) NULL AFTER `customer_id`;
+
   commit;
