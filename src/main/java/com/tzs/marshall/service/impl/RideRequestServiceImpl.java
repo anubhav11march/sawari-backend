@@ -42,14 +42,16 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     @Override
-    public PersistentUserDetails openBookingRequest(RideRequest rideRequest, Long userId) {
-        String driverStatus = ON_DUTY;
+    public Map<String, Object> openBookingRequest(RideRequest rideRequest, Long userId) {
+        log.info("New ride request received.");
+        Map<String, Object> responseMap = new HashMap<>();
         String bookingStatus = OPEN;
         Long bookingRequestId = null;
         int randomPin = (int) (Math.random() * 900000) + 100000;
         String otp = String.valueOf(randomPin);
         rideRequest.setBookingStatus(bookingStatus);
         rideRequest.setOtp(otp);
+        rideRequest.setPaymentStatus(PENDING);
         try {
             //fetch any existing booking status of the customer
             Map<String, Long> statusIdMap = rideRequestRepository.getExistingBookingStatusByUserId(userId);
@@ -64,7 +66,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             List<Long> nearestAvailableDrivers = new ArrayList<>();
             int count = 0;
             while (count < 3 && nearestAvailableDrivers.isEmpty()) {
-                Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(driverStatus);
+                Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(ON_DUTY);
                 nearestAvailableDrivers = findNearestAvailableDrivers(rideRequest, driverLocations);
                 if (!nearestAvailableDrivers.isEmpty()) {
                     break;
@@ -108,7 +110,9 @@ public class RideRequestServiceImpl implements RideRequestService {
             // and driver details to customer i.e. send profile pic, rickshaw pics as well
             if (!acceptedDriverId.isEmpty()) {
                 List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
-                return driverDetails.stream().findFirst().get();
+                PersistentUserDetails driver = driverDetails.stream().findFirst().get();
+                prepareResponse(responseMap, rideRequest, driver);
+                return responseMap;
             } else {
                 log.error("No driver has accepted the request");
                 throw new ApiException("No driver has accepted the request");
@@ -118,6 +122,21 @@ public class RideRequestServiceImpl implements RideRequestService {
             rollBack(rideRequest, bookingRequestId);
             throw new ApiException(e.getMessage());
         }
+    }
+
+    private void prepareResponse(Map<String, Object> responseMap, RideRequest rideRequest, PersistentUserDetails driver) {
+        rideRequest.setCustomerId(null);
+        rideRequest.setBookingRequestId(null);
+        rideRequest.setDriverId(null);
+        PersistentUserDetails driverResponse = new PersistentUserDetails();
+        driverResponse.setFirstName(driver.getFirstName());
+        driverResponse.setLastName(driver.getLastName());
+        driverResponse.setMobile(driver.getMobile());
+        driverResponse.setRickshawNumber(driver.getRickshawNumber());
+        driverResponse.setRoleName(driver.getRoleName());
+
+        responseMap.put("driver", driverResponse);
+        responseMap.put("ride", rideRequest);
     }
 
     @Override
@@ -145,7 +164,7 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     @Override
-    public void updateRideBookingStatus(String bookingRequestId, String status) {
+    public void updateRideBookingStatus(String bookingRequestId, String status, Long userId) {
         if (CLOSE.equalsIgnoreCase(status)) {
             List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
             RideRequest rideRequest = rideBookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
@@ -154,6 +173,10 @@ public class RideRequestServiceImpl implements RideRequestService {
             } else {
                 throw new ApiException(MessageConstants.PAYMENT_ERR);
             }
+        } else if (CANCEL.equalsIgnoreCase(status)) {
+            Map<String, Long> existingBookingStatusByUserId = rideRequestRepository.getExistingBookingStatusByUserId(userId);
+            Long id = existingBookingStatusByUserId.get(OPEN);
+            rideRequestRepository.updateRideBookingRequestStatusByBookingId(id, status.toUpperCase());
         } else {
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
         }
