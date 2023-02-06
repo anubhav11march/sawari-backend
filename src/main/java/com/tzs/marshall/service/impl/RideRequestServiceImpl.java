@@ -290,7 +290,7 @@ public class RideRequestServiceImpl implements RideRequestService {
                     .build();
             Response response = client.newCall(request).execute();
             DistanceMatrix distanceMatrix = new Gson().fromJson(Objects.requireNonNull(response.body()).string(), DistanceMatrix.class);
-            if (!Objects.equals(distanceMatrix.getStatus(), "200")) {
+            if (!Objects.equals(distanceMatrix.getStatus(), "OK")) {
                 log.error("Map API call failed with status code: {}", distanceMatrix.getStatus());
                 throw new ApiException("Map api call failed");
             }

@@ -22,12 +22,12 @@ public class FareCalculationServiceImpl implements FareCalculationService {
 
     private static Logger log = LoggerFactory.getLogger(FareCalculationServiceImpl.class);
     private static final List<String> DISTANCE_RANGE = DBProperties.splitString(DBProperties.properties.getProperty("DISTANCE_RANGE", "0-2,2.1-3.5,3.6-4.5,4.6-6.0,6.1-7"));
-    private static final double DISTANCE_THRESHOLD = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_THRESHOLD","6.1"));
-    private static final double MAX_DISTANCE = Double.parseDouble(DBProperties.properties.getProperty("MAX_DISTANCE", "7.0"));
+    private static final Double DISTANCE_THRESHOLD = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_THRESHOLD","6.1"));
+    private static final Double MAX_DISTANCE = Double.parseDouble(DBProperties.properties.getProperty("MAX_DISTANCE", "7.0"));
 
-    private static final double BASE_PRICE = Double.parseDouble(DBProperties.properties.getProperty("BASE_PRICE", "10"));
-    private static final double DISTANCE_FACTOR = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_FACTOR", "5"));
-    private static final double DISTANCE_SURCHARGE = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_SURCHARGE", "15"));
+    private static final Double BASE_PRICE = Double.parseDouble(DBProperties.properties.getProperty("BASE_PRICE", "10"));
+    private static final Double DISTANCE_FACTOR = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_FACTOR", "5"));
+    private static final Double DISTANCE_SURCHARGE = Double.parseDouble(DBProperties.properties.getProperty("DISTANCE_SURCHARGE", "15"));
 
     private static final double DISCOUNT_FARE_THRESHOLD = Double.parseDouble(DBProperties.properties.getProperty("DISCOUNT_FARE_THRESHOLD", "100"));
 
