@@ -318,6 +318,7 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource.addValue("name", qrCodeName).addValue("value", qrCodePath);
             new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
+                    .withCatalogName("marshall_service")
                     .withTableName("properties")
                     .usingColumns("name", "value")
                     .execute(mapSqlParameterSource);

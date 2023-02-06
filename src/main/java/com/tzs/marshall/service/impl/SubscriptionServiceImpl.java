@@ -345,7 +345,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public String qrCodeHelper(long id, String qrCodeName, MultipartFile qrCode) throws IOException {
+    public String qrCodeHelper(long id, String qrCodeName, MultipartFile qrCode) {
         log.info("Uploading QR Code to server for: " + qrCodeName);
         checkContentType(qrCode.getContentType());
         try {

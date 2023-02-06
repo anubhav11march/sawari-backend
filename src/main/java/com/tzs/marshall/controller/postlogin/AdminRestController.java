@@ -131,14 +131,9 @@ public class AdminRestController {
         if (!Constants.ADMIN.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         adminService.checkAuthorizedAdmin(authorDetails.getUserId());
-        try {
-            String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
-            subscriptionService.uploadQR(qrCodeName, path);
-            successMessage = MessageConstants.QR_UPLOADED;
-        } catch (ApiException | IOException e) {
-            log.error(e.getLocalizedMessage() + e.getCause());
-            errorMessage = e.getMessage();
-        }
+        String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
+        subscriptionService.uploadQR(qrCodeName, path);
+        successMessage = MessageConstants.QR_UPLOADED;
         new DBProperties(initProperties.getDBProperties());
     }
 
@@ -148,14 +143,9 @@ public class AdminRestController {
         if (!Constants.ADMIN.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         adminService.checkAuthorizedAdmin(authorDetails.getUserId());
-        try {
-            String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
-            subscriptionService.updateQR(qrCodeName, path);
-            successMessage = MessageConstants.QR_UPDATED;
-        } catch (ApiException | IOException e) {
-            log.error(e.getLocalizedMessage());
-            errorMessage = e.getMessage();
-        }
+        String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
+        subscriptionService.updateQR(qrCodeName, path);
+        successMessage = MessageConstants.QR_UPDATED;
         new DBProperties(initProperties.getDBProperties());
     }
 }
