@@ -80,11 +80,13 @@ public class RideRequestServiceImpl implements RideRequestService {
             List<RideRequest> persistentNearestDrivers = persistNearestAvailableDriverWithBookingId(bookingRequestId, nearestAvailableDrivers, bookingStatus);
             rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
             //broadcast ride requests
+            log.info("broadcasting ride requests");
             Response response = broadcastRideRequests(nearestAvailableDrivers, rideRequest);
             if (response.code() != 200) {
                 log.error("unable to broadcast the ride request due to status code: {}", response.code());
                 throw new ApiException("Unable to broadcast ride request");
             }
+            log.info("ride requests broadcast to drivers: {}", nearestAvailableDrivers);
 
             //wait for the driver to accept the request
             count = 0;
@@ -96,6 +98,7 @@ public class RideRequestServiceImpl implements RideRequestService {
                 //get the driver detail who has accepted the booking request
                 acceptedDriverId = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(bookingRequestId, ACCEPT);
                 if (!acceptedDriverId.isEmpty()) {
+                    log.info("{} driver has accepted the request", acceptedDriverId);
                     break;
                 }
                 count++;
@@ -159,7 +162,7 @@ public class RideRequestServiceImpl implements RideRequestService {
     @Override
     public RideRequest acceptRideBookingRequest(String bookingRequestId, Long driverId) {
         List<Integer> acceptedDrivers = rideRequestRepository.getDriverBookingRequestByStatusAndBookingId(Long.valueOf(bookingRequestId), ACCEPT);
-        if (acceptedDrivers != null || !acceptedDrivers.isEmpty()) {
+        if (acceptedDrivers.isEmpty()) {
             rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), null, CLOSE);
             rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), driverId, ACCEPT);
             rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
@@ -183,12 +186,15 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public RideRequest verifyOtpAndStartRide(String otp, String bookingRequestId) {
+        log.info("verifying OTP..");
         List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
         RideRequest rideRequest = rideBookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
         if (rideRequest.getOtp().equalsIgnoreCase(otp)) {
+            log.info("OTP verified, ride request set to Start");
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), START);
             rideRequest.setBookingStatus(START);
         } else {
+            log.error("Invalid OTP");
             throw new ApiException(MessageConstants.INVALID_TOKEN);
         }
         return rideRequest;
@@ -202,12 +208,15 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public Map<String, Object> getTotalEarningByDriver(Long userId) {
-
+        log.info("fetching all rides...");
         Map<String, Object> rideMap = new HashMap<>();
         List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
+        log.info("calculating total earnings..");
         getTotalEarning(allRideBookingRequestsByUserId, rideMap);
         List<RideRequest> closedRides = (List<RideRequest>) rideMap.get("totalRides");
+        log.info("calculating daily earnings...");
         getTotalEarningOfTheDay(closedRides, rideMap);
+        log.info("calculation complete");
         return rideMap;
     }
 
@@ -258,6 +267,7 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     private List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {
+        log.info("finding nearest available driver");
         Map<Long, DistanceDuration> userIdDistanceDurationMap = new HashMap<>();
         double bookingRadius = Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS"));
         List<Location> filteredDrivers = driverLocations.values().stream().filter(loc -> {
@@ -267,6 +277,7 @@ public class RideRequestServiceImpl implements RideRequestService {
         List<Map.Entry<Long, DistanceDuration>> driversSortedList = new ArrayList<>(userIdDistanceDurationMap.entrySet());
         driversSortedList.sort(Comparator.comparingDouble((Map.Entry<Long, DistanceDuration> o) -> o.getValue().getDuration()).thenComparingDouble(o -> o.getValue().getDistance()));
         List<Long> nearestAvailableDriver = driversSortedList.stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        log.info("nearest available drivers: {}", nearestAvailableDriver);
         return nearestAvailableDriver;
     }
 
@@ -310,6 +321,7 @@ public class RideRequestServiceImpl implements RideRequestService {
         rideRequest.setBookingStatus(NOT_SERVED);
         rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, rideRequest.getBookingStatus());
         rideRequestRepository.updateDriverBookingStatus(bookingRequestId, null, CLOSE);
+        log.info("ride request marked as NOT_SERVED");
     }
 
     private Response broadcastRideRequests(List<Long> nearestAvailableDrivers, RideRequest rideRequest) {
