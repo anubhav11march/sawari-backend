@@ -45,7 +45,7 @@ public interface SubscriptionService {
     List<OrderDetails> getAllPendingOrders();
     List<OrderDetails> getPendingOrderByAuthorIdAndFileId(long authorId, long fileId);
 
-    String qrCodeHelper(long id, String qrCodeName, MultipartFile qrCode) throws IOException;
+    String qrCodeHelper(long id, String qrCodeName, MultipartFile qrCode);
 
     void uploadQR(String qrCodeName, String path);
 
