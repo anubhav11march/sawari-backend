@@ -83,9 +83,9 @@ public class RideRequestServiceImpl implements RideRequestService {
             rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
             //broadcast ride requests
             log.info("broadcasting ride requests");
-            Response response = broadcastRideRequests(nearestAvailableDrivers, rideRequest);
-            if (response.code() != 200) {
-                log.error("unable to broadcast the ride request due to status code: {}", response.code());
+            int responseCode = broadcastRideRequests(nearestAvailableDrivers, rideRequest);
+            if (responseCode != 200) {
+                log.error("unable to broadcast the ride request due to status code: {}", responseCode);
                 throw new ApiException("Unable to broadcast ride request");
             }
             log.info("ride requests broadcast to drivers: {}", nearestAvailableDrivers);
@@ -306,6 +306,7 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     private Double calculateDriverAndCustomerDistance(Map<Long, DistanceDuration> distanceDurationMap, Double customerPickupLatitude, Double customerPickupLongitude, Location driverLocation) {
         //Google Maps Api Call to calculate distance between two points
+        Response response = null;
         try {
             String baseURL = DBProperties.properties.getProperty("MAP_BASE_URL");
             String path = DBProperties.properties.getProperty("MAP_DISTANCE_PATH");
@@ -322,7 +323,7 @@ public class RideRequestServiceImpl implements RideRequestService {
                     .url(url)
                     .get()
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             DistanceMatrix distanceMatrix = new Gson().fromJson(Objects.requireNonNull(response.body()).string(), DistanceMatrix.class);
             if (!Objects.equals(distanceMatrix.getStatus(), "OK")) {
                 log.error("Map API call failed with status code: {}", distanceMatrix.getStatus());
@@ -336,7 +337,10 @@ public class RideRequestServiceImpl implements RideRequestService {
             return distanceDurationMap.get(driverLocation.getUserId()).getDistance();
         } catch (Exception e) {
             log.error("Unable to calculate distance.");
-            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+            throw new ApiException("Unable to calculate distance.");
+        } finally {
+            assert response != null;
+            response.close();
         }
     }
 
@@ -347,7 +351,8 @@ public class RideRequestServiceImpl implements RideRequestService {
         log.info("ride request marked as NOT_SERVED");
     }
 
-    private Response broadcastRideRequests(List<Long> nearestAvailableDrivers, RideRequest rideRequest) {
+    private int broadcastRideRequests(List<Long> nearestAvailableDrivers, RideRequest rideRequest) {
+        Response response = null;
         try {
             //fetch firebase token for nearest available drivers
             Map<Long, String> firebaseTokenByDriverId = rideRequestRepository.getFirebaseTokenByDriverId(nearestAvailableDrivers);
@@ -369,11 +374,15 @@ public class RideRequestServiceImpl implements RideRequestService {
                     .addHeader("Authorization", "key=" + serverKey)
                     .method("POST", body)
                     .build();
-            Response response = client.newCall(request).execute();
-            return response;
+            response = client.newCall(request).execute();
+            int responseCode = response.code();
+            return responseCode;
         } catch (Exception e) {
             log.error("Unable to broadcast ride request to drivers.");
-            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+            throw new ApiException("Unable to broadcast ride request to drivers.");
+        } finally {
+            assert response != null;
+            response.close();
         }
     }
 

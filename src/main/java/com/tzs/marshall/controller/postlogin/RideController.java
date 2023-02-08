@@ -26,7 +26,7 @@ public class RideController {
 
     //book a new ride for customer
     @RequestMapping(value = "/ride/book/new", method = RequestMethod.POST)
-    public PersistentUserDetails bookNewRideRequest(@RequestBody RideRequest rideRequest, @AuthenticationPrincipal PersistentUserDetails userDetails) {
+    public Map<String, Object> bookNewRideRequest(@RequestBody RideRequest rideRequest, @AuthenticationPrincipal PersistentUserDetails userDetails) {
         if (rideRequest.getMobileNo() == null) {
             rideRequest.setMobileNo(userDetails.getMobile());
         }
@@ -34,7 +34,7 @@ public class RideController {
             rideRequest.setCustomerName(userDetails.getFirstName().concat(" ").concat(userDetails.getLastName()));
         }
         Map<String, Object> responseMap = rideRequestService.openBookingRequest(rideRequest, userDetails.getUserId());
-        return (PersistentUserDetails) responseMap.get("driver");
+        return responseMap;
     }
 
     //cancel the already booked or opened ride for customer
