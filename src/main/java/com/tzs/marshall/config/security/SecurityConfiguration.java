@@ -70,14 +70,14 @@ public class SecurityConfiguration {
 //                .loginPage("/login")
                 .successHandler(authenticationSuccessHandler())
 //                .defaultSuccessUrl("/home")
-                .failureUrl("/login?error=true")
+//                .failureUrl("/login?error=true")
                 .failureHandler(authenticationFailureHandler())
                 .usernameParameter("username")
                 .and()
                 .logout()
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler(logoutSuccessHandler())
-                .logoutSuccessUrl("/login?logout=true")
+//                .logoutSuccessUrl("/login?logout=true")
                 /*.and()
                 .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true")*/;
 
