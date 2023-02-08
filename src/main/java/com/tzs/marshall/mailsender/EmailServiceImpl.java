@@ -24,6 +24,10 @@ public class EmailServiceImpl implements EmailService {
     private final static Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final JavaMailSender mailSender;
+    private static final String SUPPORT_NUMBER = DBProperties.properties.getProperty(SUPPORT_MOBILE_NUMBER);
+    private static final String SID = DBProperties.properties.getProperty(TWILIO_ACCOUNT_SID);
+    private static final String AUTH_TOKEN = DBProperties.properties.getProperty(TWILIO_AUTH_TOKEN);
+    private static final String SUP_EMAIL = DBProperties.properties.getProperty(SUPPORT_EMAIL);
 
     public EmailServiceImpl(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -66,17 +70,17 @@ public class EmailServiceImpl implements EmailService {
         log.info(String.format("URL: %s, Dictionary: %s", url, requestTypeDictionary));
         String msgBody = buildEmail(requestTypeDictionary, token, url);
         EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
-        emailBean.setFrom(DBProperties.properties.getProperty(SUPPORT_EMAIL));
+        emailBean.setFrom(SUP_EMAIL);
         send(emailBean);
     }
 
     @Override
     public void sendOTPToMobile(String mobileNumber, String otp) {
-            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+            Twilio.init(SID, AUTH_TOKEN);
             Message message = Message.creator(
 //                            new com.twilio.type.PhoneNumber(mobileNumber), //TO
                             new com.twilio.type.PhoneNumber("+918826424940"), //TO
-                            new com.twilio.type.PhoneNumber(DBProperties.properties.getProperty(SUPPORT_MOBILE_NUMBER, "+19706609717")),//FROM
+                            new com.twilio.type.PhoneNumber(SUPPORT_NUMBER),//FROM
                             otp)
                     .create();
 
@@ -89,7 +93,7 @@ public class EmailServiceImpl implements EmailService {
         log.info("Preparing email to send...");
         String msgBody = "Your 6 digit OTP is: " + otp;
         EmailBean emailBean = new EmailBean(email, requestTypeDictionary.getMailSubject(), msgBody);
-        emailBean.setFrom(DBProperties.properties.getProperty(SUPPORT_EMAIL));
+        emailBean.setFrom(SUP_EMAIL);
         send(emailBean);
     }
 
