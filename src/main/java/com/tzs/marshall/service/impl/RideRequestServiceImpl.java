@@ -34,6 +34,8 @@ public class RideRequestServiceImpl implements RideRequestService {
     private RideRequestRepository rideRequestRepository;
     @Autowired
     private UserPostLoginRepository userPostLoginRepository;
+    @Autowired
+    private RideRequestHelper rideRequestHelper;
 
     private static Logger log = LoggerFactory.getLogger(RideRequestServiceImpl.class);
 
@@ -64,36 +66,24 @@ public class RideRequestServiceImpl implements RideRequestService {
                 bookingRequestId = rideRequestRepository.saveBookingRequest(rideRequest, userId);
             }
             List<Long> nearestAvailableDrivers = new ArrayList<>();
-            int count = 0;
-            while (count < 3 && nearestAvailableDrivers.isEmpty()) {
-                Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(ON_DUTY);
-                nearestAvailableDrivers = findNearestAvailableDrivers(rideRequest, driverLocations);
-                if (!nearestAvailableDrivers.isEmpty()) {
-                    break;
-                }
-                //TODO: ask driver to update their current location
-                Thread.sleep(5000);
-                count++;
-            }
+            log.info("Fetching ON_DUTY drivers");
+            Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(ON_DUTY);
+            nearestAvailableDrivers = rideRequestHelper.findNearestAvailableDrivers(rideRequest, driverLocations);
             if (nearestAvailableDrivers.isEmpty()) {
                 log.error("There is no nearest driver available.");
                 throw new ApiException("There is no available driver at this moment");
             }
-            List<RideRequest> persistentNearestDrivers = persistNearestAvailableDriverWithBookingId(bookingRequestId, nearestAvailableDrivers, bookingStatus);
+            List<RideRequest> persistentNearestDrivers = rideRequestHelper.persistNearestAvailableDriverWithBookingId(bookingRequestId, nearestAvailableDrivers, bookingStatus);
+            log.info("saving new requests in db for drivers to broadcast");
             rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
+
             //broadcast ride requests
-            log.info("broadcasting ride requests");
-            int responseCode = broadcastRideRequests(nearestAvailableDrivers, rideRequest);
-            if (responseCode != 200) {
-                log.error("unable to broadcast the ride request due to status code: {}", responseCode);
-                throw new ApiException("Unable to broadcast ride request");
-            }
-            log.info("ride requests broadcast to drivers: {}", nearestAvailableDrivers);
+            rideRequestHelper.broadcastRideRequests(nearestAvailableDrivers, rideRequest);
 
             //wait for the driver to accept the request
-            count = 0;
             List<Integer> acceptedDriverId = new ArrayList<>();
             long interval = Long.parseLong(DBProperties.properties.getProperty("REQUEST_ACCEPT_INTERVAL"));
+            int count = 0;
             while (count < 3 && acceptedDriverId.isEmpty()) {
                 log.info("Waiting for drivers to accept the request");
                 Thread.sleep(interval);
@@ -111,7 +101,8 @@ public class RideRequestServiceImpl implements RideRequestService {
             if (!acceptedDriverId.isEmpty()) {
                 List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
                 PersistentUserDetails driver = driverDetails.stream().findFirst().get();
-                prepareResponse(responseMap, rideRequest, driver);
+                rideRequestHelper.prepareResponse(responseMap, rideRequest, driver);
+                log.info("Request processing complete");
                 return responseMap;
             } else {
                 log.error("No driver has accepted the request");
@@ -119,24 +110,9 @@ public class RideRequestServiceImpl implements RideRequestService {
             }
         } catch (Exception e) {
             log.error("Something went wrong: {}", e.getMessage());
-            rollBack(rideRequest, bookingRequestId);
+            rideRequestHelper.rollBack(rideRequest, bookingRequestId);
             throw new ApiException(e.getMessage());
         }
-    }
-
-    private void prepareResponse(Map<String, Object> responseMap, RideRequest rideRequest, PersistentUserDetails driver) {
-        rideRequest.setCustomerId(null);
-        rideRequest.setBookingRequestId(null);
-        rideRequest.setDriverId(null);
-        PersistentUserDetails driverResponse = new PersistentUserDetails();
-        driverResponse.setFirstName(driver.getFirstName());
-        driverResponse.setLastName(driver.getLastName());
-        driverResponse.setMobile(driver.getMobile());
-        driverResponse.setRickshawNumber(driver.getRickshawNumber());
-        driverResponse.setRoleName(driver.getRoleName());
-
-        responseMap.put("driver", driverResponse);
-        responseMap.put("ride", rideRequest);
     }
 
     @Override
@@ -235,10 +211,10 @@ public class RideRequestServiceImpl implements RideRequestService {
         Map<String, Object> rideMap = new HashMap<>();
         List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
         log.info("calculating total earnings..");
-        getTotalEarning(allRideBookingRequestsByUserId, rideMap);
+        rideRequestHelper.getTotalEarning(allRideBookingRequestsByUserId, rideMap);
         List<RideRequest> closedRides = (List<RideRequest>) rideMap.get("totalRides");
         log.info("calculating daily earnings...");
-        getTotalEarningOfTheDay(closedRides, rideMap);
+        rideRequestHelper.getTotalEarningOfTheDay(closedRides, rideMap);
         log.info("calculation complete");
         return rideMap;
     }
@@ -254,145 +230,6 @@ public class RideRequestServiceImpl implements RideRequestService {
     public String getFirebaseTokenById(Long userId) {
         Map<Long, String> firebaseTokenByDriverId = rideRequestRepository.getFirebaseTokenByDriverId(List.of(userId));
         return firebaseTokenByDriverId.get(userId);
-    }
-
-    private void getTotalEarning(List<RideRequest> allRideBookingRequestsByUserId, Map<String, Object> rideMap) {
-        AtomicReference<Double> totalEarnings = new AtomicReference<>(0D);
-        List<RideRequest> closedRides = new ArrayList<>();
-        allRideBookingRequestsByUserId.stream().filter(ride -> CLOSE.equalsIgnoreCase(ride.getBookingStatus()))
-                .forEach(ride -> {
-                    totalEarnings.set(totalEarnings.get() + ride.getFare());
-                    closedRides.add(ride);
-                });
-        Double commission = ((Double.parseDouble(DBProperties.properties.getProperty("COMMISSION")) * totalEarnings.get()) / 100);
-        Double balance = totalEarnings.get() - commission;
-        rideMap.put("totalEarning", totalEarnings);
-        rideMap.put("totalRides", closedRides);
-        rideMap.put("totalCommission", commission);
-        rideMap.put("balance", balance);
-    }
-
-    private void getTotalEarningOfTheDay(List<RideRequest> closedRides, Map<String, Object> rideMap) {
-        AtomicReference<Double> totalEarningsOfTheDay = new AtomicReference<>(0D);
-        List<RideRequest> closedRidesOfTheDay = new ArrayList<>();
-        closedRides.stream().filter(ride -> ride.getDate().equals(Date.valueOf(LocalDate.now())))
-                .forEach(ride -> {
-                    totalEarningsOfTheDay.set(totalEarningsOfTheDay.get() + ride.getFare());
-                    closedRidesOfTheDay.add(ride);
-                });
-        Double totalCommissionOfTheDay = ((Double.parseDouble(DBProperties.properties.getProperty("COMMISSION")) * totalEarningsOfTheDay.get()) / 100);
-        Double balanceOfTheDay = totalEarningsOfTheDay.get() - totalCommissionOfTheDay;
-
-        rideMap.put("totalEarningOfTheDay", totalEarningsOfTheDay.get());
-        rideMap.put("totalRidesOfTheDay", closedRidesOfTheDay);
-        rideMap.put("totalCommissionOfTheDay", totalCommissionOfTheDay);
-        rideMap.put("balanceOfTheDay", balanceOfTheDay);
-    }
-
-    private List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {
-        log.info("finding nearest available driver");
-        Map<Long, DistanceDuration> userIdDistanceDurationMap = new HashMap<>();
-        double bookingRadius = Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS"));
-        List<Location> filteredDrivers = driverLocations.values().stream().filter(loc -> {
-            double driverCustomerDistance = calculateDriverAndCustomerDistance(userIdDistanceDurationMap, rideRequest.getPickupLocation().getLatitude(), rideRequest.getPickupLocation().getLongitude(), loc);
-            return driverCustomerDistance <= bookingRadius;
-        }).collect(Collectors.toList());
-        List<Map.Entry<Long, DistanceDuration>> driversSortedList = new ArrayList<>(userIdDistanceDurationMap.entrySet());
-        driversSortedList.sort(Comparator.comparingDouble((Map.Entry<Long, DistanceDuration> o) -> o.getValue().getDuration()).thenComparingDouble(o -> o.getValue().getDistance()));
-        List<Long> nearestAvailableDriver = driversSortedList.stream().map(Map.Entry::getKey).collect(Collectors.toList());
-        log.info("nearest available drivers: {}", nearestAvailableDriver);
-        return nearestAvailableDriver;
-    }
-
-    private Double calculateDriverAndCustomerDistance(Map<Long, DistanceDuration> distanceDurationMap, Double customerPickupLatitude, Double customerPickupLongitude, Location driverLocation) {
-        //Google Maps Api Call to calculate distance between two points
-        Response response = null;
-        try {
-            String baseURL = DBProperties.properties.getProperty("MAP_BASE_URL");
-            String path = DBProperties.properties.getProperty("MAP_DISTANCE_PATH");
-            String originLatitude = String.valueOf(customerPickupLatitude);
-            String originLongitude = String.valueOf(customerPickupLongitude);
-            String destinationLatitude = String.valueOf(driverLocation.getLatitude());
-            String destinationLongitude = String.valueOf(driverLocation.getLongitude());
-            String mapDelimiter = "%2C";
-            String mapKey = DBProperties.properties.getProperty("MAP_KEY");
-            String url = baseURL + path + "?origins=" + originLatitude + mapDelimiter + originLongitude + "&destinations=" + destinationLatitude + mapDelimiter + destinationLongitude + "&key=" + mapKey;
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-            response = client.newCall(request).execute();
-            DistanceMatrix distanceMatrix = new Gson().fromJson(Objects.requireNonNull(response.body()).string(), DistanceMatrix.class);
-            if (!Objects.equals(distanceMatrix.getStatus(), "OK")) {
-                log.error("Map API call failed with status code: {}", distanceMatrix.getStatus());
-                throw new ApiException("Map api call failed");
-            }
-            distanceMatrix.getRows().forEach(r -> r.getElements().forEach(e -> {
-                distanceDurationMap
-                        .put(driverLocation.getUserId(),
-                                new DistanceDuration((Double) e.getDistance().get("value"), (Double) e.getDuration().get("value")));
-            }));
-            return distanceDurationMap.get(driverLocation.getUserId()).getDistance();
-        } catch (Exception e) {
-            log.error("Unable to calculate distance.");
-            throw new ApiException("Unable to calculate distance.");
-        } finally {
-            assert response != null;
-            response.close();
-        }
-    }
-
-    private void rollBack(RideRequest rideRequest, Long bookingRequestId) {
-        rideRequest.setBookingStatus(NOT_SERVED);
-        rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, rideRequest.getBookingStatus());
-        rideRequestRepository.updateDriverBookingStatus(bookingRequestId, null, CLOSE);
-        log.info("ride request marked as NOT_SERVED");
-    }
-
-    private int broadcastRideRequests(List<Long> nearestAvailableDrivers, RideRequest rideRequest) {
-        Response response = null;
-        try {
-            //fetch firebase token for nearest available drivers
-            Map<Long, String> firebaseTokenByDriverId = rideRequestRepository.getFirebaseTokenByDriverId(nearestAvailableDrivers);
-            //broadcast the booking request to the nearest available drivers using firebase post api call
-            List<String> registrationIdList = new ArrayList<>(firebaseTokenByDriverId.values());
-//            List<String> registrationIdList = List.of("cmtZQwzPT0uNaLuAHc1uhY:APA91bG-_3A4TiX8aDvAESG_DhzTOJr63jMBSLIBQ7BQaI9ENGddxROTF5VD2tMrC4i9e2TBcq1vwCQ_hyD-DYGBFDgVJbuRbwZBoIEra1dgDuLmxV3nor19gpDkkXWOOxv7UBQLebyE", "c1Vxh7cJT0e0qTpanGqCAW:APA91bHRfo2gH9hJXkqqDTSFjGsVNIa9HCpeFjNUL8ZActJf5zsDmmRtbbo5rBSPRw42KNZjk_ZZOIVeZAJ-8Qun-iaTeicoA2V2MZZv3_RTIvFC6PIgLaqpaztPXtHMI8_ZvOQjnf0q", "cJjodo7cSZm50Kxa_2slLu:APA91bHoOOT41IcYvV8mFAwZJ_t3X-KrypTfBbZlePEYRiKq4KqXN698X7c7dVrSv9hWNDJKEZf-RP8oC5E-VokPk2trjcNkxEoEw5Vv7Xm2rsiGV_GI5R_8R3dwfaF6EwUJtHD3vuZn");
-            String registrationIds = registrationIdList.stream().collect(Collectors.joining("\",\"", "\"", "\""));
-
-            String baseURL = DBProperties.properties.getProperty("FIREBASE_URL");
-            String serverKey = DBProperties.properties.getProperty("FIREBASE_KEY");
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
-            MediaType mediaType = MediaType.parse("application/json");
-            String jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" " + rideRequest.getPassengers() + " \",\"Pickup Location\":\" " + rideRequest.getPickupLocationWord() + " \"}}}";
-            RequestBody body = RequestBody.create(jsonString, mediaType);
-            Request request = new Request.Builder()
-                    .url(baseURL)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Authorization", "key=" + serverKey)
-                    .method("POST", body)
-                    .build();
-            response = client.newCall(request).execute();
-            int responseCode = response.code();
-            return responseCode;
-        } catch (Exception e) {
-            log.error("Unable to broadcast ride request to drivers.");
-            throw new ApiException("Unable to broadcast ride request to drivers.");
-        } finally {
-            assert response != null;
-            response.close();
-        }
-    }
-
-    private List<RideRequest> persistNearestAvailableDriverWithBookingId(Long bookingRequestId, List<Long> nearestAvailableDrivers, String bookingStatus) {
-        List<RideRequest> persistentNearestAvailableDrivers = new ArrayList<>();
-        nearestAvailableDrivers.forEach(d -> {
-            RideRequest rideRequest = new RideRequest(bookingRequestId, d, bookingStatus);
-            persistentNearestAvailableDrivers.add(rideRequest);
-        });
-        return persistentNearestAvailableDrivers;
     }
 
 }
