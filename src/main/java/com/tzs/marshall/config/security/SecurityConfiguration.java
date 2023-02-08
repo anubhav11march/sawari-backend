@@ -67,7 +67,7 @@ public class SecurityConfiguration {
                 .and()
                 .addFilterAt(customAuthenticationFilter(http), UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
-                .loginPage("/login")
+//                .loginPage("/login")
                 .successHandler(authenticationSuccessHandler())
 //                .defaultSuccessUrl("/home")
                 .failureUrl("/login?error=true")
