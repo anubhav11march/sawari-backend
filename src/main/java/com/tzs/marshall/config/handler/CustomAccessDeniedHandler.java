@@ -1,5 +1,6 @@
 package com.tzs.marshall.config.handler;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Calendar;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
@@ -23,10 +25,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             log.warn("User: " + authentication.getName() + " attempted to access the protected URL: " + request.getRequestURI());
+            String jsonPayload = String.format("{\"User\" : \"%s\", \"timestamp\" : \"%s\"}", authentication.getName(), Calendar.getInstance().getTime());
+            response.setStatus(HttpStatus.SC_FORBIDDEN);
+            response.getWriter().append(jsonPayload);
+        } else {
+            log.warn("Unauthorized Acess: " + ex.getLocalizedMessage());
+            response.setStatus(HttpStatus.SC_FORBIDDEN);
+            response.getWriter().append("Unauthorized Access: ").append(ex.getLocalizedMessage());
+//        response.sendRedirect(request.getContextPath() + "/accessDenied");
         }
-        response.getOutputStream().print("Unauthorize Access: " + ex.getLocalizedMessage());
-        response.setStatus(403);
-        response.sendRedirect(request.getContextPath() + "/accessDenied");
     }
 }
 

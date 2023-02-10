@@ -1,8 +1,8 @@
 package com.tzs.marshall.config.handler;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
@@ -28,10 +28,12 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
         String jsonPayload = "{\"isLoggedOut\" : \"%s\", \"timestamp\" : \"%s\"}";
         if (authentication != null) {
             String successMessage = String.format(jsonPayload, authentication.isAuthenticated(), Calendar.getInstance().getTime());
-            response.setStatus(HttpStatus.OK.value());
+            response.setStatus(HttpStatus.SC_OK);
             response.getWriter().append(successMessage);
         } else {
-            response.sendError(HttpStatus.BAD_REQUEST.value());
+            jsonPayload = String.format(jsonPayload, false, Calendar.getInstance().getTime());
+            response.setStatus(HttpStatus.SC_BAD_GATEWAY);
+            response.getWriter().append(jsonPayload);
         }
 //        super.onLogoutSuccess(request, response, authentication);
     }

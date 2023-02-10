@@ -22,14 +22,14 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 import static com.tzs.marshall.constants.Constants.*;
-import static com.tzs.marshall.constants.MessageConstants.*;
+import static com.tzs.marshall.constants.MessageConstants.ACCOUNT_VERIFIED;
+import static com.tzs.marshall.constants.MessageConstants.TOKEN_VERIFIED;
 
 
 @RestController
@@ -145,7 +145,7 @@ public class PreLoginRestController {
             log.error(e.getMessage());
             session.setAttribute("errorMessage", e.getMessage());
             body = ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.BAD_GATEWAY)
                     .body(e.getMessage());
         }
         return body;
@@ -195,10 +195,9 @@ public class PreLoginRestController {
     }
 
     @RequestMapping(value = "/contact-us", method = RequestMethod.POST)
-    public ModelAndView sendContactUsMail(@RequestParam(value = "file", required = false) MultipartFile file, @ModelAttribute EmailBean emailBean,
-                                          HttpSession session) {
-        String errorMessage = null;
-        String successMessage = null;
+    public String sendContactUsMail(@RequestParam(value = "file", required = false) MultipartFile file, @ModelAttribute EmailBean emailBean,
+                                    HttpSession session) {
+        String responseMessage = null;
         try {
             if (file != null)
                 emailBean.setAttachment(file);
@@ -211,15 +210,11 @@ public class PreLoginRestController {
             emailBean.setSubject(subject);
             emailBean.setMessage(message);
             emailService.send(emailBean);
-            successMessage = MessageConstants.EMAIL_SENT;
+            responseMessage = MessageConstants.EMAIL_SENT;
         } catch (ApiException exception) {
-            errorMessage = MessageConstants.EMAIL_FAILED;
+            responseMessage = MessageConstants.EMAIL_FAILED;
         }
-        session.setAttribute("errorMessage", errorMessage);
-        session.setAttribute("successMessage", successMessage);
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/init/contact-us");
-        return modelAndView;
+        return responseMessage;
     }
 
     @RequestMapping(value = "/csrf", method = RequestMethod.GET)

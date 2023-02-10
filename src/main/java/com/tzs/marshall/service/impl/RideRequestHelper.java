@@ -140,7 +140,7 @@ public class RideRequestHelper {
             log.info("distance calculation complete");
             return distanceDurationMap;
         } catch (Exception e) {
-            log.error("Unable to calculate distance.");
+            log.error("Unable to calculate distance due to {}", e.getMessage());
             throw new ApiException("Unable to calculate distance.");
         } finally {
             assert response != null;

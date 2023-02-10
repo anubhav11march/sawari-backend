@@ -27,10 +27,10 @@ public class RideController {
     //book a new ride for customer
     @RequestMapping(value = "/ride/book/new", method = RequestMethod.POST)
     public Map<String, Object> bookNewRideRequest(@RequestBody RideRequest rideRequest, @AuthenticationPrincipal PersistentUserDetails userDetails) {
-        if (rideRequest.getMobileNo() == null) {
+        if (rideRequest.getMobileNo() == null || rideRequest.getMobileNo().isEmpty()) {
             rideRequest.setMobileNo(userDetails.getMobile());
         }
-        if (rideRequest.getCustomerName() == null) {
+        if (rideRequest.getCustomerName() == null || rideRequest.getCustomerName().isEmpty()) {
             rideRequest.setCustomerName(userDetails.getFirstName().concat(" ").concat(userDetails.getLastName()));
         }
         Map<String, Object> responseMap = rideRequestService.openBookingRequest(rideRequest, userDetails.getUserId());
