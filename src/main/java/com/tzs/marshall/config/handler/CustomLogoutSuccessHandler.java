@@ -32,7 +32,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
             response.getWriter().append(successMessage);
         } else {
             jsonPayload = String.format(jsonPayload, false, Calendar.getInstance().getTime());
-            response.setStatus(HttpStatus.SC_BAD_GATEWAY);
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
             response.getWriter().append(jsonPayload);
         }
 //        super.onLogoutSuccess(request, response, authentication);
