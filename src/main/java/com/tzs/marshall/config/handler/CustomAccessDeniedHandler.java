@@ -30,7 +30,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             response.getWriter().append(jsonPayload);
         } else {
             log.warn("Unauthorized Acess: " + ex.getLocalizedMessage());
-            response.setStatus(HttpStatus.SC_FORBIDDEN);
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
             response.getWriter().append("Unauthorized Access: ").append(ex.getLocalizedMessage());
 //        response.sendRedirect(request.getContextPath() + "/accessDenied");
         }
