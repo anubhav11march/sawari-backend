@@ -60,7 +60,7 @@ public class SecurityConfiguration {
                 .antMatchers("/admin/**").hasAnyAuthority(Constants.ADMIN)
                 .antMatchers("/driver/**").hasAnyAuthority(Constants.DRIVER)
                 .antMatchers("/user/**").hasAnyAuthority(Constants.USER)
-                .antMatchers("/", "/hnf/**", "/index.html", "/login", "/HTWF/**", "/images/**", "/pages/**", "/scripts/**", "/**/favicon.ico", "/skin.css", "/signup", "/init/**").permitAll()
+                .antMatchers("/", "/login","/**/favicon.ico", "/signup", "/init/**", "/css/**", "/images/**", "/js/**", "/webfonts/**", "/tnc.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
