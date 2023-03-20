@@ -65,4 +65,5 @@ public interface MessageConstants {
     String TOKEN_SENT = "Token sent to you email.";
     String PASSWORD_RESET_LINK_SUC = "Password Reset link has been sent to your email. Please Reset Your Password.";
     String BAD_CREDENTIALS = "Invalid Username or Password";
+    String NO_OPEN_RIDE_FOUND = "No open ride request found";
 }

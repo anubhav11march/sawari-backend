@@ -151,7 +151,9 @@ public class RideRequestServiceImpl implements RideRequestService {
             }
         } else if (CANCEL.equalsIgnoreCase(status)) {
             Map<String, Long> existingBookingStatusByUserId = rideRequestRepository.getExistingBookingStatusByUserId(userId);
-            Long id = existingBookingStatusByUserId.get(OPEN);
+            Long id = existingBookingStatusByUserId.get(OPEN) != null ? existingBookingStatusByUserId.get(OPEN) : existingBookingStatusByUserId.get(BOOK) ;
+            if (id == null)
+                throw new ApiException(MessageConstants.NO_OPEN_RIDE_FOUND);
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(id, status.toUpperCase());
         } else {
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
