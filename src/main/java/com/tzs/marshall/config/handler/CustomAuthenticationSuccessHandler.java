@@ -22,7 +22,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         log.info("Authentication Success: " + authentication.isAuthenticated());
         httpServletResponse.setStatus(HttpStatus.OK.value());
         PersistentUserDetails principal = (PersistentUserDetails) authentication.getPrincipal();
-        String fullName = principal.getFirstName().concat(" ").concat(String.valueOf(Objects.nonNull(principal.getLastName())));
+        String fullName = Objects.nonNull(principal.getLastName()) ? principal.getFirstName().concat(" ").concat(principal.getLastName()) : principal.getFirstName();
         String jsonPayload = "{\"fullName\" : \"%s\", \"isAuthenticated\" : \"%s\", \"timestamp\" : \"%s\", \"role\" : \"%s\", \"userName\" : \"%s\"}";
         String successMessage = String.format(jsonPayload, fullName, authentication.isAuthenticated(), Calendar.getInstance().getTime(),
                 authentication.getAuthorities().stream().findFirst().get(), authentication.getName());

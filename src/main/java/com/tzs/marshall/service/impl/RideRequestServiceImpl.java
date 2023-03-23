@@ -1,28 +1,21 @@
 package com.tzs.marshall.service.impl;
 
 import com.google.gson.Gson;
-import com.sun.istack.NotNull;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.Location;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
-import com.tzs.marshall.bean.distnaceMatrix.DistanceDuration;
-import com.tzs.marshall.bean.distnaceMatrix.DistanceMatrix;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.RideRequestRepository;
 import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.RideRequestService;
-import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.tzs.marshall.constants.Constants.*;
@@ -66,11 +59,12 @@ public class RideRequestServiceImpl implements RideRequestService {
                 bookingRequestId = rideRequestRepository.saveBookingRequest(rideRequest, userId);
             }
             List<Long> nearestAvailableDrivers = new ArrayList<>();
-            log.info("Fetching ON_DUTY drivers");
-            Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(ON_DUTY);
+            log.info("Fetching AVAILABLE drivers");
+            Map<Integer, Location> driverLocations = rideRequestRepository.fetchDriverLocationsAndIdsByStatus(AVAILABLE);
             nearestAvailableDrivers = rideRequestHelper.findNearestAvailableDrivers(rideRequest, driverLocations);
             if (nearestAvailableDrivers.isEmpty()) {
                 log.error("There is no nearest driver available.");
+                //TODO: check if exception is required
                 throw new ApiException("There is no available driver at this moment");
             }
             List<RideRequest> persistentNearestDrivers = rideRequestHelper.persistNearestAvailableDriverWithBookingId(bookingRequestId, nearestAvailableDrivers, bookingStatus);
@@ -102,6 +96,7 @@ public class RideRequestServiceImpl implements RideRequestService {
                 List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
                 PersistentUserDetails driver = driverDetails.stream().findFirst().get();
                 rideRequestHelper.prepareResponse(responseMap, rideRequest, driver);
+                rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, BOOK);
                 log.info("Request processing complete");
                 return responseMap;
             } else {
@@ -122,14 +117,19 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     @Override
-    public List<RideRequest> fetchRideBookingRequestsByUserId(Long userId) {
-        return rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
+    public List<RideRequest> fetchRideBookingRequestsByUserId(Long userId, String currentRide) {
+        List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
+        if (currentRide != null && currentRide.equalsIgnoreCase("Y")) {
+            List<String> status = List.of(OPEN, BOOK, START);
+            return allRideBookingRequestsByUserId.stream().filter(ride -> status.contains(ride.getBookingStatus())).collect(Collectors.toList());
+        }
+        return allRideBookingRequestsByUserId;
     }
 
     @Override
     public void updateDriverDutyStatus(Long userId, String status) {
-        if (!ON_DUTY.equalsIgnoreCase(status) && !OFF_DUTY.equalsIgnoreCase(status)) {
-            throw new ApiException(String.format("%s is not a valid status. Please use %s or %s", status, ON_DUTY, OFF_DUTY));
+        if (!AVAILABLE.equalsIgnoreCase(status) && !OFF_DUTY.equalsIgnoreCase(status)) {
+            throw new ApiException(String.format("%s is not a valid status. Please use %s or %s", status, AVAILABLE, OFF_DUTY));
         }
         rideRequestRepository.updateDriverDutyStatusById(userId, status.toUpperCase());
     }
@@ -142,19 +142,25 @@ public class RideRequestServiceImpl implements RideRequestService {
     @Override
     public void updateRideBookingStatus(String bookingRequestId, String status, Long userId) {
         if (CLOSE.equalsIgnoreCase(status)) {
+            //A trip can only be closed by driver
             List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
             RideRequest rideRequest = rideBookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
             if (PAID.equalsIgnoreCase(rideRequest.getPaymentStatus())) {
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
+                rideRequestRepository.updateDriverDutyStatusById(userId, AVAILABLE);
             } else {
                 throw new ApiException(MessageConstants.PAYMENT_ERR);
             }
         } else if (CANCEL.equalsIgnoreCase(status)) {
-            Map<String, Long> existingBookingStatusByUserId = rideRequestRepository.getExistingBookingStatusByUserId(userId);
-            Long id = existingBookingStatusByUserId.get(OPEN) != null ? existingBookingStatusByUserId.get(OPEN) : existingBookingStatusByUserId.get(BOOK) ;
-            if (id == null)
-                throw new ApiException(MessageConstants.NO_OPEN_RIDE_FOUND);
-            rideRequestRepository.updateRideBookingRequestStatusByBookingId(id, status.toUpperCase());
+            List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
+            List<String> statusList = List.of(OPEN, BOOK, START);
+            allRideBookingRequestsByUserId = allRideBookingRequestsByUserId.stream().filter(ride -> statusList.contains(ride.getBookingStatus())).collect(Collectors.toList());
+            if (!allRideBookingRequestsByUserId.isEmpty()) {
+                RideRequest rideRequest = allRideBookingRequestsByUserId.get(0);
+                rideRequestRepository.updateRideBookingRequestStatusByBookingId(rideRequest.getBookingRequestId(), status.toUpperCase());
+                if (rideRequest.getDriverId() != null)
+                    rideRequestRepository.updateDriverDutyStatusById(rideRequest.getDriverId(), AVAILABLE);
+            }
         } else {
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
         }
@@ -167,6 +173,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), null, CLOSE);
             rideRequestRepository.updateDriverBookingStatus(Long.valueOf(bookingRequestId), driverId, ACCEPT);
             rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
+            rideRequestRepository.updateDriverDutyStatusById(driverId, ON_DUTY);
             List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
             return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
         } else {

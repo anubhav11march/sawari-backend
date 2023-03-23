@@ -72,6 +72,9 @@ public class RideController {
     @RequestMapping(value = "/ride/book/close", method = RequestMethod.POST)
     public void closeBookingRequestStatus(@RequestParam String bookingRequestId, @RequestParam(required = false) String status,
                                           @AuthenticationPrincipal PersistentUserDetails userDetails) {
+        if (!userDetails.getRoleName().equalsIgnoreCase(DRIVER))
+            throw new ApiException(MessageConstants.NOT_AUTHORIZED);
+
         rideRequestService.updateRideBookingStatus(bookingRequestId, Constants.CLOSE, userDetails.getUserId());
     }
 
@@ -83,7 +86,7 @@ public class RideController {
 
     }
 
-    //update the driver duty status ie. status=ON_DUTY/OFF_DUTY
+    //update the driver duty status ie. status=AVAILABLE/OFF_DUTY
     @RequestMapping(value = "/duty/status", method = RequestMethod.POST)
     public void updateDriveStatus(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam String status) {
         rideRequestService.updateDriverDutyStatus(userDetails.getUserId(), status);
@@ -97,8 +100,8 @@ public class RideController {
 
     //get all the ride requests
     @RequestMapping(value = "/rides", method = RequestMethod.GET)
-    public List<RideRequest> getRidesRequests(@AuthenticationPrincipal PersistentUserDetails userDetails) {
-        return rideRequestService.fetchRideBookingRequestsByUserId(userDetails.getUserId());
+    public List<RideRequest> getRidesRequests(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam(required = false) String currentRide) {
+        return rideRequestService.fetchRideBookingRequestsByUserId(userDetails.getUserId(), currentRide);
 
     }
 

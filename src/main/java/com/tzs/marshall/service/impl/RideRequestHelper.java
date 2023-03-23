@@ -181,7 +181,7 @@ public class RideRequestHelper {
                     .build();
             response = client.newCall(request).execute();
             if (response.code() != 200) {
-                log.error("unable to broadcast the ride request due to status code: {}", response.code());
+                log.error("unable to broadcast the ride request: status code: {}, reason: {}", response.code(), response.body());
                 throw new ApiException("Unable to broadcast ride request");
             }
             log.info("ride requests broadcast to drivers: {}", nearestAvailableDrivers);
