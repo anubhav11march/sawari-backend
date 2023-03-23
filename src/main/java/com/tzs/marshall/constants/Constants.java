@@ -22,6 +22,7 @@ public interface Constants {
     String REJECT = "REJECT";
     String ACCEPT = "ACCEPT";
     String CLOSE = "CLOSE";
+    String AVAILABLE = "AVAILABLE";
     String ON_DUTY = "ON_DUTY";
     String OFF_DUTY = "OFF_DUTY";
     String NOT_SERVED = "NOT_SERVED";

@@ -188,11 +188,10 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public void updateRideBookingRequestStatusByBookingId(Long bookingRequestId, String status) {
         try {
-            String query = "UPDATE marshall_service.ride_request SET booking_status=:booking_status, date=:date, modify_date=:modify_date " +
+            String query = "UPDATE marshall_service.ride_request SET booking_status=:booking_status, modify_date=:modify_date " +
                     "WHERE booking_request_id=:booking_request_id";
             jdbcTemplate.update(query, new MapSqlParameterSource().addValue("booking_request_id", bookingRequestId)
                     .addValue("modify_date", Timestamp.valueOf(LocalDateTime.now()))
-                    .addValue("date", Date.valueOf(LocalDate.now()))
                     .addValue("booking_status", status));
         } catch (Exception e) {
             log.error(e.getMessage());

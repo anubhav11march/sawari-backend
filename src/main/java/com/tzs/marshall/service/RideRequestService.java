@@ -15,7 +15,7 @@ public interface RideRequestService {
 
     List<RideRequest> fetchRideBookingRequestsForDriversByDBSAndDriverId(Long userId, String status);
 
-    List<RideRequest> fetchRideBookingRequestsByUserId(Long userId);
+    List<RideRequest> fetchRideBookingRequestsByUserId(Long userId, String currentRide);
 
     void updateDriverDutyStatus(Long userId, String status);
 
