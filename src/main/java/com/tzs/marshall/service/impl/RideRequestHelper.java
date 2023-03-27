@@ -67,25 +67,27 @@ public class RideRequestHelper {
     }
 
     public List<Long> findNearestAvailableDrivers(RideRequest rideRequest, @NotNull Map<Integer, Location> driverLocations) {
-        log.info("finding nearest available driver");
-        double bookingRadius = Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS"));
-        String coordinateDelimiter = "%2C";
-        String locationDelimiter = "%7C";
-        String origins = rideRequest.getPickupLocation().getLatitude() + coordinateDelimiter + rideRequest.getPickupLocation().getLongitude();
-        StringBuilder destinationsBuilder = new StringBuilder();
-        TreeMap<Integer, Location> sortedMapById = new TreeMap<>(driverLocations);
-        sortedMapById.values().forEach(l -> destinationsBuilder.append(l.getLatitude()).append(coordinateDelimiter).append(l.getLongitude()).append(locationDelimiter));
-        String destinations = destinationsBuilder.substring(0, destinationsBuilder.lastIndexOf(locationDelimiter));
-        Map<Long, DistanceDuration> userIdDistanceDurationMap = calculateDriverAndCustomerDistance(origins, destinations, sortedMapById);
+        List<Long> nearestAvailableDriver = null;
+        if (driverLocations != null && !driverLocations.isEmpty()) {
+            log.info("finding nearest available driver");
+            double bookingRadius = Double.parseDouble(DBProperties.properties.getProperty("BOOKING_RADIUS"));
+            String coordinateDelimiter = "%2C";
+            String locationDelimiter = "%7C";
+            String origins = rideRequest.getPickupLocation().getLatitude() + coordinateDelimiter + rideRequest.getPickupLocation().getLongitude();
+            StringBuilder destinationsBuilder = new StringBuilder();
+            TreeMap<Integer, Location> sortedMapById = new TreeMap<>(driverLocations);
+            sortedMapById.values().forEach(l -> destinationsBuilder.append(l.getLatitude()).append(coordinateDelimiter).append(l.getLongitude()).append(locationDelimiter));
+            String destinations = destinationsBuilder.substring(0, destinationsBuilder.lastIndexOf(locationDelimiter));
+            Map<Long, DistanceDuration> userIdDistanceDurationMap = calculateDriverAndCustomerDistance(origins, destinations, sortedMapById);
 
-        log.info("Filtering driver for distance gt {}", bookingRadius);
-        //filter out those drivers whose distance is more than the booking radius.
-        List<Long> nearestAvailableDriver = userIdDistanceDurationMap.entrySet().stream()
-                .filter(distanceDuration -> distanceDuration.getValue().getDistance() <= bookingRadius)
-                .sorted(Comparator.comparingDouble((Map.Entry<Long, DistanceDuration> o) -> o.getValue().getDuration())
-                        .thenComparingDouble(o -> o.getValue().getDistance()))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+            log.info("Filtering driver for distance gt {}", bookingRadius);
+            //filter out those drivers whose distance is more than the booking radius.
+            nearestAvailableDriver = userIdDistanceDurationMap.entrySet().stream()
+                    .filter(distanceDuration -> distanceDuration.getValue().getDistance() <= bookingRadius)
+                    .sorted(Comparator.comparingDouble((Map.Entry<Long, DistanceDuration> o) -> o.getValue().getDuration())
+                            .thenComparingDouble(o -> o.getValue().getDistance()))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
 
  /*       List<Location> filteredDrivers = driverLocations.values().stream().filter(loc -> {
             double driverCustomerDistance = calculateDriverAndCustomerDistance(userIdDistanceDurationMap, rideRequest.getPickupLocation().getLatitude(), rideRequest.getPickupLocation().getLongitude(), loc);
@@ -93,8 +95,12 @@ public class RideRequestHelper {
         }).collect(Collectors.toList());
         List<Map.Entry<Long, DistanceDuration>> driversDistanceMatrixList = new ArrayList<>(userIdDistanceDurationMap.entrySet());
         List<Long> nearestAvailableDriver = driversDistanceMatrixList.stream().map(Map.Entry::getKey).collect(Collectors.toList());*/
-        log.info("nearest available drivers: {}", nearestAvailableDriver);
-        return nearestAvailableDriver;
+            log.info("nearest available drivers: {}", nearestAvailableDriver);
+            return nearestAvailableDriver;
+        }
+        else {
+            return nearestAvailableDriver;
+        }
     }
 
     public Map<Long, DistanceDuration> calculateDriverAndCustomerDistance(String origins, String destinations, TreeMap<Integer, Location> sortedMapById) {

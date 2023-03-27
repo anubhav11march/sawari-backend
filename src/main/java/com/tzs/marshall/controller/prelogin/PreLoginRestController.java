@@ -71,6 +71,7 @@ public class PreLoginRestController {
         profileDetails.setPassword(allRequestParams.get("password"));
         profileDetails.setMobile(allRequestParams.get("mobile"));
         profileDetails.setUserName(allRequestParams.get("username"));
+        profileDetails.setEmail(allRequestParams.get("email"));
         profileDetails.setRoleName(DRIVER);
         profileDetails.setTypeName(Constants.TYPE_REGISTERED);
         profileDetails = userRegistrationService.registerDriver(profileDetails);

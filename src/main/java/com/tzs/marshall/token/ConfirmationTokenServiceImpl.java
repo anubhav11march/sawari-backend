@@ -77,24 +77,23 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     @Override
     public String tokenHandler(String email, String reqType, String userType, String url) {
-        String flag = DBProperties.properties.getProperty("GENERATE_OTP", "Y");
+        String flag = DBProperties.properties.getProperty("SEND_OTP_TO_MOBILE", "Y");
         RequestTypeDictionary requestTypeDictionary = RequestTypeDictionary.getRequestTypeDictionary(reqType);
         String token = generateAndSaveToken(email, reqType, userType, flag);
         log.info("Token generated: " + token);
-        if ("Y".equalsIgnoreCase(flag)) {
-            if (Constants.DRIVER.equalsIgnoreCase(userType)) {
-                log.info("Sending 6 digit OTP to the driver...");
+
+        if (Constants.DRIVER.equalsIgnoreCase(userType)) {
+            log.info("Sending 6 digit OTP to the driver...");
+            if ("Y".equalsIgnoreCase(flag)) {
                 emailService.sendOTPToMobile(email, token);
-                log.info("6 digit OTP Send successfully.");
-            } else if (Constants.USER.equalsIgnoreCase(userType)) {
-                log.info("Sending 6 digit OTP to the user...");
-                emailService.sendOTPToEmail(email, token, requestTypeDictionary);
-                log.info("6 digit OTP Send successfully.");
             } else {
-                log.info("Sending confirmation link to the admin...");
-                emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
-                log.info(String.format("%s Request Email Send successfully.", requestTypeDictionary.getReqType()));
+                emailService.sendOTPToEmail(email, token, requestTypeDictionary);
             }
+            log.info("6 digit OTP Send successfully.");
+        } else if (Constants.USER.equalsIgnoreCase(userType)) {
+            log.info("Sending 6 digit OTP to the user...");
+            emailService.sendOTPToEmail(email, token, requestTypeDictionary);
+            log.info("6 digit OTP Send successfully.");
         } else {
             log.info("Sending confirmation link to the admin...");
             emailService.sendConfirmationEmail(email, token, url, requestTypeDictionary);
