@@ -97,7 +97,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         userDetails.setPassword(bCryptPasswordEncoders.encode(userDetails.getPassword()));
         //temp sol
-        userDetails.setEmail(userDetails.getMobile());
+        //change email to mobile if otp needs to be send on mobile
+        userDetails.setEmail(userDetails.getEmail());
         List<NewsLetterEmailSubs> newsLetterEmailSubs = checkAndSaveEmail(userDetails);
 
         PersistentUserDetails tempUserDetails = new PersistentUserDetails(null, userDetails.getEmail(), userDetails.getUserName(), userDetails.getMobile(), userDetails.getPaytmNumber());
@@ -117,7 +118,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 rideRequestRepository.updateDriverDutyStatusById(userId, OFF_DUTY);
             }
             log.info("Generating unique token...");
-            confirmationTokenService.tokenHandler(userDetails.getMobile(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), null);
+            //change email to mobile if otp needs to be send on mobile
+            confirmationTokenService.tokenHandler(userDetails.getEmail(), RequestTypeDictionary.ACCOUNT.getReqType(), userDetails.getRoleName(), null);
         } catch (Exception e) {
             log.warn(String.format("Unable to save user details, Rolling back the user details from db for [%s]", userDetails));
             userRegistrationRepository.rollbackRegistration(tempUserDetails);
