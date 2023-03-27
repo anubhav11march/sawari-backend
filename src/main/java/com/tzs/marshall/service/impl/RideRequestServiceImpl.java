@@ -175,11 +175,30 @@ public class RideRequestServiceImpl implements RideRequestService {
             rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
             rideRequestRepository.updateDriverDutyStatusById(driverId, ON_DUTY);
             List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
-            return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+            RideRequest acceptedRideRequest = bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+            String navigationLink = createNavigationLink(acceptedRideRequest, false);
+            acceptedRideRequest.setNavigationLink(navigationLink);
+            return acceptedRideRequest;
         } else {
             log.error("{} bookingRequest has already been accepted by driverId: {}", bookingRequestId, acceptedDrivers);
             throw new ApiException("This request is already accepted");
         }
+    }
+
+    private String createNavigationLink(RideRequest acceptedRideRequest, boolean fromPickupLocation) {
+        String url= DBProperties.properties.getProperty("BASE_NAVIGATION_URL", "https://www.google.com/maps/dir/?api=1");
+        String origin;
+        String destination;
+        if (fromPickupLocation) {
+            origin = acceptedRideRequest.getPickupLocationPoints();
+            destination = acceptedRideRequest.getDropLocationPoints();
+        } else {
+            Location userLocationById = rideRequestRepository.getUserLocationById(acceptedRideRequest.getDriverId());
+            origin = String.valueOf(userLocationById.getLatitude()).concat(",").concat(String.valueOf(userLocationById.getLongitude()));
+            destination = acceptedRideRequest.getPickupLocationPoints();
+        }
+        String filter = "&origin=".concat(origin).concat("&destination=").concat(destination).concat("&travelmode=driving&dir_action=navigate");
+        return url.concat(filter);
     }
 
     @Override
@@ -205,6 +224,8 @@ public class RideRequestServiceImpl implements RideRequestService {
             log.error("Invalid OTP");
             throw new ApiException(MessageConstants.INVALID_TOKEN);
         }
+        String navigationLink = createNavigationLink(rideRequest, true);
+        rideRequest.setNavigationLink(navigationLink);
         return rideRequest;
     }
 

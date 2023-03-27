@@ -3,6 +3,7 @@ package com.tzs.marshall.bean;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
+import java.beans.Transient;
 import java.sql.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -27,6 +28,7 @@ public class RideRequest extends Fare {
     private Long driverId;
     private Date modifyDate;
     private Date date;
+    private String navigationLink;
 
     public RideRequest(Long bookingRequestId, Long driverId, String bookingStatus) {
         this.bookingRequestId = bookingRequestId;
