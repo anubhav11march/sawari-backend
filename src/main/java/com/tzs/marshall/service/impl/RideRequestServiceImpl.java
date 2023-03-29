@@ -3,12 +3,10 @@ package com.tzs.marshall.service.impl;
 import com.google.gson.Gson;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.Location;
-import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.RideRequestRepository;
-import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.RideRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +23,6 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Autowired
     private RideRequestRepository rideRequestRepository;
-    @Autowired
-    private UserPostLoginRepository userPostLoginRepository;
     @Autowired
     private RideRequestHelper rideRequestHelper;
 
@@ -93,9 +89,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             //send customer/booking request details to driver : this has been handled while a driver accept the booking request
             // and driver details to customer i.e. send profile pic, rickshaw pics as well
             if (!acceptedDriverId.isEmpty()) {
-                List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
-                PersistentUserDetails driver = driverDetails.stream().findFirst().get();
-                rideRequestHelper.prepareResponse(responseMap, rideRequest, driver);
+                responseMap = rideRequestHelper.prepareRideAcceptResponseMap(rideRequest, (long) acceptedDriverId.stream().findFirst().get());
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, BOOK);
                 log.info("Request processing complete");
                 return responseMap;
@@ -117,13 +111,21 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     @Override
-    public List<RideRequest> fetchRideBookingRequestsByUserId(Long userId, String currentRide) {
+    public Map<String, Object> fetchRideBookingRequestsByUserId(Long userId, String currentRide) {
+        Map<String, Object> responseMap = new HashMap<>();
         List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
         if (currentRide != null && currentRide.equalsIgnoreCase("Y")) {
             List<String> status = List.of(OPEN, BOOK, START);
-            return allRideBookingRequestsByUserId.stream().filter(ride -> status.contains(ride.getBookingStatus())).collect(Collectors.toList());
+            List<RideRequest> filteredRides = allRideBookingRequestsByUserId.stream().filter(ride -> status.contains(ride.getBookingStatus())).collect(Collectors.toList());
+            if (!filteredRides.isEmpty()) {
+                filteredRides.sort(Comparator.comparing(RideRequest::getModifyDate).reversed());
+                RideRequest rideRequest = filteredRides.get(0);
+                responseMap = rideRequestHelper.prepareRideAcceptResponseMap(rideRequest, rideRequest.getDriverId());
+                return responseMap;
+            }
         }
-        return allRideBookingRequestsByUserId;
+        responseMap.put("allRides", allRideBookingRequestsByUserId);
+        return responseMap;
     }
 
     @Override
@@ -175,11 +177,30 @@ public class RideRequestServiceImpl implements RideRequestService {
             rideRequestRepository.acceptRideBookingRequest(Long.valueOf(bookingRequestId), driverId, BOOK);
             rideRequestRepository.updateDriverDutyStatusById(driverId, ON_DUTY);
             List<RideRequest> bookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
-            return bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+            RideRequest acceptedRideRequest = bookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
+            String navigationLink = createNavigationLink(acceptedRideRequest, false);
+            acceptedRideRequest.setNavigationLink(navigationLink);
+            return acceptedRideRequest;
         } else {
             log.error("{} bookingRequest has already been accepted by driverId: {}", bookingRequestId, acceptedDrivers);
             throw new ApiException("This request is already accepted");
         }
+    }
+
+    private String createNavigationLink(RideRequest acceptedRideRequest, boolean fromPickupLocation) {
+        String url= DBProperties.properties.getProperty("BASE_NAVIGATION_URL", "https://www.google.com/maps/dir/?api=1");
+        String origin;
+        String destination;
+        if (fromPickupLocation) {
+            origin = acceptedRideRequest.getPickupLocationPoints();
+            destination = acceptedRideRequest.getDropLocationPoints();
+        } else {
+            Location userLocationById = rideRequestRepository.getUserLocationById(acceptedRideRequest.getDriverId());
+            origin = String.valueOf(userLocationById.getLatitude()).concat(",").concat(String.valueOf(userLocationById.getLongitude()));
+            destination = acceptedRideRequest.getPickupLocationPoints();
+        }
+        String filter = "&origin=".concat(origin).concat("&destination=").concat(destination).concat("&travelmode=driving&dir_action=navigate");
+        return url.concat(filter);
     }
 
     @Override
@@ -205,6 +226,8 @@ public class RideRequestServiceImpl implements RideRequestService {
             log.error("Invalid OTP");
             throw new ApiException(MessageConstants.INVALID_TOKEN);
         }
+        String navigationLink = createNavigationLink(rideRequest, true);
+        rideRequest.setNavigationLink(navigationLink);
         return rideRequest;
     }
 

@@ -321,6 +321,19 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
         }
     }
 
+    @Override
+    public Location getUserLocationById(Long userId) {
+        try {
+            String query = "SELECT * FROM marshall_service.user_location WHERE user_id =:userId";
+            List<Location> locationL = jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId),
+                    (rs, rowNum) -> new Location(rs.getLong("user_id"), rs.getDouble("latitude"), rs.getDouble("longitude")));
+            return locationL.stream().findFirst().orElse(new Location());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
     private MapSqlParameterSource getMapSqlParameterSource(RideRequest rideRequest, Long userId) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("booking_request_id", rideRequest.getBookingRequestId());
