@@ -10,6 +10,7 @@ import com.tzs.marshall.bean.distnaceMatrix.DistanceDuration;
 import com.tzs.marshall.bean.distnaceMatrix.DistanceMatrix;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.RideRequestRepository;
+import com.tzs.marshall.repo.UserPostLoginRepository;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ public class RideRequestHelper {
 
     @Autowired
     private RideRequestRepository rideRequestRepository;
+    @Autowired
+    private UserPostLoginRepository userPostLoginRepository;
 
     private static Logger log = LoggerFactory.getLogger(RideRequestServiceImpl.class);
 
@@ -209,7 +212,10 @@ public class RideRequestHelper {
         return persistentNearestAvailableDrivers;
     }
 
-    public void prepareResponse(Map<String, Object> responseMap, RideRequest rideRequest, PersistentUserDetails driver) {
+    public Map<String, Object> prepareRideAcceptResponseMap(RideRequest rideRequest, long driverId) {
+        Map<String, Object> responseMap = new HashMap<>();
+        List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById(driverId);
+        PersistentUserDetails driver = driverDetails.stream().findFirst().get();
         rideRequest.setCustomerId(null);
         rideRequest.setBookingRequestId(null);
         rideRequest.setDriverId(null);
@@ -222,5 +228,6 @@ public class RideRequestHelper {
 
         responseMap.put("driver", driverResponse);
         responseMap.put("ride", rideRequest);
+        return responseMap;
     }
 }

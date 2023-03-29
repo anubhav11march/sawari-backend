@@ -100,7 +100,7 @@ public class RideController {
 
     //get all the ride requests
     @RequestMapping(value = "/rides", method = RequestMethod.GET)
-    public List<RideRequest> getRidesRequests(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam(required = false) String currentRide) {
+    public Map<String, Object> getRidesRequests(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam(required = false) String currentRide) {
         return rideRequestService.fetchRideBookingRequestsByUserId(userDetails.getUserId(), currentRide);
 
     }

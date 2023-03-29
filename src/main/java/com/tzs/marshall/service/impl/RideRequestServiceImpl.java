@@ -3,12 +3,10 @@ package com.tzs.marshall.service.impl;
 import com.google.gson.Gson;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.Location;
-import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.RideRequest;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.RideRequestRepository;
-import com.tzs.marshall.repo.UserPostLoginRepository;
 import com.tzs.marshall.service.RideRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +23,6 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Autowired
     private RideRequestRepository rideRequestRepository;
-    @Autowired
-    private UserPostLoginRepository userPostLoginRepository;
     @Autowired
     private RideRequestHelper rideRequestHelper;
 
@@ -93,9 +89,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             //send customer/booking request details to driver : this has been handled while a driver accept the booking request
             // and driver details to customer i.e. send profile pic, rickshaw pics as well
             if (!acceptedDriverId.isEmpty()) {
-                List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById((long) acceptedDriverId.stream().findFirst().get());
-                PersistentUserDetails driver = driverDetails.stream().findFirst().get();
-                rideRequestHelper.prepareResponse(responseMap, rideRequest, driver);
+                responseMap = rideRequestHelper.prepareRideAcceptResponseMap(rideRequest, (long) acceptedDriverId.stream().findFirst().get());
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(bookingRequestId, BOOK);
                 log.info("Request processing complete");
                 return responseMap;
@@ -117,13 +111,21 @@ public class RideRequestServiceImpl implements RideRequestService {
     }
 
     @Override
-    public List<RideRequest> fetchRideBookingRequestsByUserId(Long userId, String currentRide) {
+    public Map<String, Object> fetchRideBookingRequestsByUserId(Long userId, String currentRide) {
+        Map<String, Object> responseMap = new HashMap<>();
         List<RideRequest> allRideBookingRequestsByUserId = rideRequestRepository.getAllRideBookingRequestsByUserId(userId);
         if (currentRide != null && currentRide.equalsIgnoreCase("Y")) {
             List<String> status = List.of(OPEN, BOOK, START);
-            return allRideBookingRequestsByUserId.stream().filter(ride -> status.contains(ride.getBookingStatus())).collect(Collectors.toList());
+            List<RideRequest> filteredRides = allRideBookingRequestsByUserId.stream().filter(ride -> status.contains(ride.getBookingStatus())).collect(Collectors.toList());
+            if (!filteredRides.isEmpty()) {
+                filteredRides.sort(Comparator.comparing(RideRequest::getModifyDate).reversed());
+                RideRequest rideRequest = filteredRides.get(0);
+                responseMap = rideRequestHelper.prepareRideAcceptResponseMap(rideRequest, rideRequest.getDriverId());
+                return responseMap;
+            }
         }
-        return allRideBookingRequestsByUserId;
+        responseMap.put("allRides", allRideBookingRequestsByUserId);
+        return responseMap;
     }
 
     @Override
