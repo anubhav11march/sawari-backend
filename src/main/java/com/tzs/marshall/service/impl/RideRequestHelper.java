@@ -182,9 +182,9 @@ public class RideRequestHelper {
             MediaType mediaType = MediaType.parse("application/json");
             String jsonString;
             if (message == null) {
-                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" " + rideRequest.getPassengers() + " \",\"Pickup Location\":\" " + rideRequest.getPickupLocationWord() + " \"}}}";
+                jsonString = "{\"registration_ids\":["+registrationIds+"],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" "+rideRequest.getPassengers()+" \",\"Pickup Location\":\" "+rideRequest.getPickupLocationWord()+" \"}}, \"data\": {\"bookingRequestId\": \" "+rideRequest.getBookingRequestId()+" \", \"status\": \" "+rideRequest.getBookingRequestId()+" \"}}";
             } else {
-                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\" "+message.get("title")+" \",\"body\":\" " + message.get("body") + " \"}}";
+                jsonString = "{\"registration_ids\":["+registrationIds+"],\"notification\":{\"title\":\" "+message.get("title")+" \",\"body\":\" "+message.get("body")+" \"}, \"data\": {\"bookingRequestId\": \" "+rideRequest.getBookingRequestId()+" \", \"status\": \" "+rideRequest.getBookingRequestId()+" \"}}";
             }
             RequestBody body = RequestBody.create(jsonString, mediaType);
             Request request = new Request.Builder()
