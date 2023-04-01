@@ -46,7 +46,7 @@ public interface RideRequestRepository {
 
     void insertOrUpdateFirebaseTokenById(Long userId, String token);
 
-    Map<Long, String> getFirebaseTokenByDriverId(List<Long> userId);
+    Map<Long, String> getFirebaseTokenByUserId(List<Long> userId);
 
     Location getUserLocationById(Long driverId);
 }

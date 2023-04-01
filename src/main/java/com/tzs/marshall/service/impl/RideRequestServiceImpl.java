@@ -68,7 +68,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
 
             //broadcast ride requests
-            rideRequestHelper.broadcastNotificationToDrivers(nearestAvailableDrivers, rideRequest, null);
+            rideRequestHelper.broadcastNotificationToUsers(nearestAvailableDrivers, rideRequest, null);
 
             //wait for the driver to accept the request
             List<Integer> acceptedDriverId = new ArrayList<>();
@@ -143,6 +143,7 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public void updateRideBookingStatus(String bookingRequestId, String status, Long userId) {
+        Map<String, String> message = new HashMap<>();
         if (CLOSE.equalsIgnoreCase(status)) {
             //A trip can only be closed by driver
             List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
@@ -150,6 +151,9 @@ public class RideRequestServiceImpl implements RideRequestService {
             if (PAID.equalsIgnoreCase(rideRequest.getPaymentStatus())) {
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
                 rideRequestRepository.updateDriverDutyStatusById(userId, AVAILABLE);
+                message.put("title", "Ride End");
+                message.put("body", "This ride has been end successfully. Thank You for choosing Sawari.");
+                rideRequestHelper.broadcastNotificationToUsers(List.of(rideRequest.getCustomerId(), rideRequest.getDriverId()), rideRequest, message);
             } else {
                 throw new ApiException(MessageConstants.PAYMENT_ERR);
             }
@@ -165,8 +169,9 @@ public class RideRequestServiceImpl implements RideRequestService {
                 }
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(rideRequest.getBookingRequestId(), status.toUpperCase());
                 if (rideRequest.getDriverId() != null) {
-                    String message = "This ride has been cancelled by customer";
-                    rideRequestHelper.broadcastNotificationToDrivers(List.of(rideRequest.getDriverId()), rideRequest, message);
+                    message.put("title", "Ride Cancelled");
+                    message.put("body", "This ride has been cancelled by customer");
+                    rideRequestHelper.broadcastNotificationToUsers(List.of(rideRequest.getDriverId()), rideRequest, message);
                     rideRequestRepository.updateDriverDutyStatusById(rideRequest.getDriverId(), AVAILABLE);
                 }
             }
@@ -267,7 +272,7 @@ public class RideRequestServiceImpl implements RideRequestService {
 
     @Override
     public String getFirebaseTokenById(Long userId) {
-        Map<Long, String> firebaseTokenByDriverId = rideRequestRepository.getFirebaseTokenByDriverId(List.of(userId));
+        Map<Long, String> firebaseTokenByDriverId = rideRequestRepository.getFirebaseTokenByUserId(List.of(userId));
         return firebaseTokenByDriverId.get(userId);
     }
 
