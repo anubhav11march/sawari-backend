@@ -77,14 +77,14 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     @Override
     public String tokenHandler(String email, String reqType, String userType, String url) {
-        String flag = DBProperties.properties.getProperty("SEND_OTP_TO_MOBILE", "Y");
+        String sendOtpToMobile = DBProperties.properties.getProperty("SEND_OTP_TO_MOBILE", "N");
         RequestTypeDictionary requestTypeDictionary = RequestTypeDictionary.getRequestTypeDictionary(reqType);
-        String token = generateAndSaveToken(email, reqType, userType, flag);
+        String token = generateAndSaveToken(email, reqType, userType);
         log.info("Token generated: " + token);
 
         if (Constants.DRIVER.equalsIgnoreCase(userType)) {
             log.info("Sending 6 digit OTP to the driver...");
-            if ("Y".equalsIgnoreCase(flag)) {
+            if ("Y".equalsIgnoreCase(sendOtpToMobile)) {
                 emailService.sendOTPToMobile(email, token);
             } else {
                 emailService.sendOTPToEmail(email, token, requestTypeDictionary);
@@ -115,10 +115,11 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         return newToken;
     }
 
-    private String generateAndSaveToken(String email, String reqType, String userType, String flag) {
+    private String generateAndSaveToken(String email, String reqType, String userType) {
         log.info("Generating Random Token String...");
         String token = "";
-        if ("Y".equalsIgnoreCase(flag)) {
+        String generateOtp = DBProperties.properties.getProperty("GENERATE_OTP", "Y");
+        if ("Y".equalsIgnoreCase(generateOtp)) {
             int randomPin = (int) (Math.random() * 900000) + 100000;
             token = String.valueOf(randomPin);
         } else {
