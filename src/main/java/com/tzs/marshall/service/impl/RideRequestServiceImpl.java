@@ -68,7 +68,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             rideRequestRepository.insertNewRequestForNearestAvailableDrivers(persistentNearestDrivers);
 
             //broadcast ride requests
-            rideRequestHelper.broadcastRideRequests(nearestAvailableDrivers, rideRequest);
+            rideRequestHelper.broadcastNotificationToDrivers(nearestAvailableDrivers, rideRequest, null);
 
             //wait for the driver to accept the request
             List<Integer> acceptedDriverId = new ArrayList<>();
@@ -160,8 +160,11 @@ public class RideRequestServiceImpl implements RideRequestService {
             if (!allRideBookingRequestsByUserId.isEmpty()) {
                 RideRequest rideRequest = allRideBookingRequestsByUserId.get(0);
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(rideRequest.getBookingRequestId(), status.toUpperCase());
-                if (rideRequest.getDriverId() != null)
+                if (rideRequest.getDriverId() != null) {
+                    String message = "This ride has been canceled by customer";
+                    rideRequestHelper.broadcastNotificationToDrivers(List.of(rideRequest.getDriverId()), rideRequest, message);
                     rideRequestRepository.updateDriverDutyStatusById(rideRequest.getDriverId(), AVAILABLE);
+                }
             }
         } else {
             rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
