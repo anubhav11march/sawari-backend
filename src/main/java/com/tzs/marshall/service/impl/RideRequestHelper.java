@@ -184,7 +184,7 @@ public class RideRequestHelper {
             if (message == null) {
                 jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" " + rideRequest.getPassengers() + " \",\"Pickup Location\":\" " + rideRequest.getPickupLocationWord() + " \"}}}";
             } else {
-                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"Ride Canceled\",\"body\":\" " + message + " \"}}";
+                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"Ride Cancelled\",\"body\":\" " + message + " \"}}";
             }
             RequestBody body = RequestBody.create(jsonString, mediaType);
             Request request = new Request.Builder()

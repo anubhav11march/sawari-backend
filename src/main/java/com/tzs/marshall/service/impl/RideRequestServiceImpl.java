@@ -159,9 +159,13 @@ public class RideRequestServiceImpl implements RideRequestService {
             allRideBookingRequestsByUserId = allRideBookingRequestsByUserId.stream().filter(ride -> statusList.contains(ride.getBookingStatus())).collect(Collectors.toList());
             if (!allRideBookingRequestsByUserId.isEmpty()) {
                 RideRequest rideRequest = allRideBookingRequestsByUserId.get(0);
+                if (rideRequest.getBookingStatus().equalsIgnoreCase(START)) {
+                    log.info("Already started ride cannot be cancelled");
+                    throw new RuntimeException("Already started ride cannot be cancelled");
+                }
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(rideRequest.getBookingRequestId(), status.toUpperCase());
                 if (rideRequest.getDriverId() != null) {
-                    String message = "This ride has been canceled by customer";
+                    String message = "This ride has been cancelled by customer";
                     rideRequestHelper.broadcastNotificationToDrivers(List.of(rideRequest.getDriverId()), rideRequest, message);
                     rideRequestRepository.updateDriverDutyStatusById(rideRequest.getDriverId(), AVAILABLE);
                 }
