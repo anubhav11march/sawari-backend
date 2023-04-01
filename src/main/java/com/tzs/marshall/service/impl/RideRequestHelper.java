@@ -164,14 +164,14 @@ public class RideRequestHelper {
         log.info("ride request marked as NOT_SERVED");
     }
 
-    public void broadcastNotificationToDrivers(List<Long> nearestAvailableDrivers, RideRequest rideRequest, String message) {
-        log.info("broadcasting message to drivers");
+    public void broadcastNotificationToUsers(List<Long> userIds, RideRequest rideRequest, Map<String, String> message) {
+        log.info("broadcasting message to users");
         Response response = null;
         try {
             //fetch firebase token for nearest available drivers
-            Map<Long, String> firebaseTokenByDriverId = rideRequestRepository.getFirebaseTokenByDriverId(nearestAvailableDrivers);
+            Map<Long, String> firebaseTokenByUserId = rideRequestRepository.getFirebaseTokenByUserId(userIds);
             //broadcast the booking request to the nearest available drivers using firebase post api call
-            List<String> registrationIdList = new ArrayList<>(firebaseTokenByDriverId.values());
+            List<String> registrationIdList = new ArrayList<>(firebaseTokenByUserId.values());
 //            List<String> registrationIdList = List.of("cmtZQwzPT0uNaLuAHc1uhY:APA91bG-_3A4TiX8aDvAESG_DhzTOJr63jMBSLIBQ7BQaI9ENGddxROTF5VD2tMrC4i9e2TBcq1vwCQ_hyD-DYGBFDgVJbuRbwZBoIEra1dgDuLmxV3nor19gpDkkXWOOxv7UBQLebyE", "c1Vxh7cJT0e0qTpanGqCAW:APA91bHRfo2gH9hJXkqqDTSFjGsVNIa9HCpeFjNUL8ZActJf5zsDmmRtbbo5rBSPRw42KNZjk_ZZOIVeZAJ-8Qun-iaTeicoA2V2MZZv3_RTIvFC6PIgLaqpaztPXtHMI8_ZvOQjnf0q", "cJjodo7cSZm50Kxa_2slLu:APA91bHoOOT41IcYvV8mFAwZJ_t3X-KrypTfBbZlePEYRiKq4KqXN698X7c7dVrSv9hWNDJKEZf-RP8oC5E-VokPk2trjcNkxEoEw5Vv7Xm2rsiGV_GI5R_8R3dwfaF6EwUJtHD3vuZn");
             String registrationIds = registrationIdList.stream().collect(Collectors.joining("\",\"", "\"", "\""));
 
@@ -184,7 +184,7 @@ public class RideRequestHelper {
             if (message == null) {
                 jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" " + rideRequest.getPassengers() + " \",\"Pickup Location\":\" " + rideRequest.getPickupLocationWord() + " \"}}}";
             } else {
-                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"Ride Cancelled\",\"body\":\" " + message + " \"}}";
+                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\" "+message.get("title")+" \",\"body\":\" " + message.get("body") + " \"}}";
             }
             RequestBody body = RequestBody.create(jsonString, mediaType);
             Request request = new Request.Builder()
@@ -198,10 +198,10 @@ public class RideRequestHelper {
                 log.error("unable to broadcast message: status code: {}, reason: {}", response.code(), response.body());
                 throw new ApiException("Unable to broadcast message");
             }
-            log.info("message has been broadcasted to drivers: {} successfully", nearestAvailableDrivers);
+            log.info("message has been broadcasted to users: {} successfully", userIds);
         } catch (Exception e) {
-            log.error("Unable to broadcast message to drivers.");
-            throw new ApiException("Unable to broadcast message to drivers.");
+            log.error("Unable to broadcast message to users.");
+            throw new ApiException("Unable to broadcast message to users.");
         } finally {
             assert response != null;
             response.close();

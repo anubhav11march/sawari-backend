@@ -175,13 +175,13 @@ ADD COLUMN `modify_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `driver_
 CHANGE COLUMN `date` `date` DATE NULL FIRST;
 
 --firebase
-CREATE TABLE `marshall_service`.`driver_firebase_token` (
+CREATE TABLE `marshall_service`.`firebase_token` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `driver_id` INT NULL,
+  `user_id` INT NULL,
   `token` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  UNIQUE INDEX `driver_id_UNIQUE` (`driver_id` ASC) VISIBLE);
+  UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE);
 
 --add customer name
 ALTER TABLE `marshall_service`.`ride_request`

@@ -297,7 +297,7 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     @Override
     public void insertOrUpdateFirebaseTokenById(Long userId, String token) {
         try{
-            String query = "INSERT INTO marshall_service.driver_firebase_token (driver_id, token) VALUES (:userId, :token)" +
+            String query = "INSERT INTO marshall_service.firebase_token (user_id, token) VALUES (:userId, :token)" +
                     "ON DUPLICATE KEY UPDATE " +
                     "token=:token";
             jdbcTemplate.update(query, new MapSqlParameterSource().addValue("userId", userId).addValue("token", token));
@@ -308,13 +308,13 @@ public class RideRequestRepositoryImpl implements RideRequestRepository {
     }
 
     @Override
-    public Map<Long, String> getFirebaseTokenByDriverId(List<Long> userId) {
+    public Map<Long, String> getFirebaseTokenByUserId(List<Long> userId) {
         try {
-            Map<Long, String> driverTokenMap = new HashMap<>();
-            String query = "SELECT driver_id, token FROM marshall_service.driver_firebase_token WHERE driver_id IN (:userId)";
+            Map<Long, String> userTokenMap = new HashMap<>();
+            String query = "SELECT user_id, token FROM marshall_service.firebase_token WHERE user_id IN (:userId)";
             jdbcTemplate.query(query, new MapSqlParameterSource().addValue("userId", userId),
-                    (rs, rowNum) -> driverTokenMap.put((long) rs.getInt("driver_id"), rs.getString("token")));
-            return driverTokenMap;
+                    (rs, rowNum) -> userTokenMap.put((long) rs.getInt("user_id"), rs.getString("token")));
+            return userTokenMap;
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
