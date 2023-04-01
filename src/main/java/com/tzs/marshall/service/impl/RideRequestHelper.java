@@ -222,7 +222,7 @@ public class RideRequestHelper {
         List<PersistentUserDetails> driverDetails = userPostLoginRepository.getUserProfileAndEssentialDetailsById(driverId);
         PersistentUserDetails driver = driverDetails.stream().findFirst().get();
         rideRequest.setCustomerId(null);
-        rideRequest.setBookingRequestId(null);
+//        rideRequest.setBookingRequestId(null);
         rideRequest.setDriverId(null);
         PersistentUserDetails driverResponse = new PersistentUserDetails();
         driverResponse.setFirstName(driver.getFirstName());
