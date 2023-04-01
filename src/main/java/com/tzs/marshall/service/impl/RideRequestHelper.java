@@ -164,8 +164,8 @@ public class RideRequestHelper {
         log.info("ride request marked as NOT_SERVED");
     }
 
-    public void broadcastRideRequests(List<Long> nearestAvailableDrivers, RideRequest rideRequest) {
-        log.info("broadcasting ride requests");
+    public void broadcastNotificationToDrivers(List<Long> nearestAvailableDrivers, RideRequest rideRequest, String message) {
+        log.info("broadcasting message to drivers");
         Response response = null;
         try {
             //fetch firebase token for nearest available drivers
@@ -180,7 +180,12 @@ public class RideRequestHelper {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
-            String jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" " + rideRequest.getPassengers() + " \",\"Pickup Location\":\" " + rideRequest.getPickupLocationWord() + " \"}}}";
+            String jsonString;
+            if (message == null) {
+                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"New Ride Request\",\"body\":{\"Number of Passengers\":\" " + rideRequest.getPassengers() + " \",\"Pickup Location\":\" " + rideRequest.getPickupLocationWord() + " \"}}}";
+            } else {
+                jsonString = "{\"registration_ids\":[" + registrationIds + "],\"notification\":{\"title\":\"Ride Canceled\",\"body\":{"+message+"}}}";
+            }
             RequestBody body = RequestBody.create(jsonString, mediaType);
             Request request = new Request.Builder()
                     .url(baseURL)
@@ -190,13 +195,13 @@ public class RideRequestHelper {
                     .build();
             response = client.newCall(request).execute();
             if (response.code() != 200) {
-                log.error("unable to broadcast the ride request: status code: {}, reason: {}", response.code(), response.body());
-                throw new ApiException("Unable to broadcast ride request");
+                log.error("unable to broadcast message: status code: {}, reason: {}", response.code(), response.body());
+                throw new ApiException("Unable to broadcast message");
             }
-            log.info("ride requests broadcast to drivers: {}", nearestAvailableDrivers);
+            log.info("message has been broadcasted to drivers: {} successfully", nearestAvailableDrivers);
         } catch (Exception e) {
-            log.error("Unable to broadcast ride request to drivers.");
-            throw new ApiException("Unable to broadcast ride request to drivers.");
+            log.error("Unable to broadcast message to drivers.");
+            throw new ApiException("Unable to broadcast message to drivers.");
         } finally {
             assert response != null;
             response.close();
