@@ -149,6 +149,7 @@ public class RideRequestServiceImpl implements RideRequestService {
             List<RideRequest> rideBookingRequestByBookingId = rideRequestRepository.getRideBookingRequestByBookingId(Long.valueOf(bookingRequestId));
             RideRequest rideRequest = rideBookingRequestByBookingId.stream().findFirst().orElse(new RideRequest());
             if (PAID.equalsIgnoreCase(rideRequest.getPaymentStatus())) {
+                rideRequest.setBookingStatus(status.toUpperCase());
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(Long.valueOf(bookingRequestId), status.toUpperCase());
                 rideRequestRepository.updateDriverDutyStatusById(userId, AVAILABLE);
                 message.put("title", "Ride End");
@@ -167,6 +168,7 @@ public class RideRequestServiceImpl implements RideRequestService {
                     log.info("Already started ride cannot be cancelled");
                     throw new RuntimeException("Already started ride cannot be cancelled");
                 }
+                rideRequest.setBookingStatus(status.toUpperCase());
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(rideRequest.getBookingRequestId(), status.toUpperCase());
                 if (rideRequest.getDriverId() != null) {
                     message.put("title", "Ride Cancelled");
