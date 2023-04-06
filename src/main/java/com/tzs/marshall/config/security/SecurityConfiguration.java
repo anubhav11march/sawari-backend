@@ -53,6 +53,8 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeRequests()
                 .and()
+                .cors()
+                .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)
                 .and()
