@@ -138,11 +138,11 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://192.168.1.9:3000"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
         //the below three lines will add the relevant CORS response headers
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://192.168.1.9:3000");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
