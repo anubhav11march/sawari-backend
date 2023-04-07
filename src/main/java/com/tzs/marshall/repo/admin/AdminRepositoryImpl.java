@@ -28,7 +28,7 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllAuthorRights() {
+    public List<PersistentUserDetails> getAllUserRights() {
         try {
             String query = "SELECT * FROM marshall_service.view_user_rights WHERE role_name=:roleName";
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
@@ -41,7 +41,7 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getAuthorRightsById(Long userId) {
+    public List<PersistentUserDetails> getUserRightsById(Long userId) {
         try {
             String query = "SELECT * FROM marshall_service.view_user_rights WHERE user_id=:userId";
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
@@ -54,7 +54,7 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public Map<String, Object> updateAuthorRights(PersistentUserRights authorRights) {
+    public Map<String, Object> updateUserRights(PersistentUserRights authorRights) {
         try {
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             mapSqlParameterSource.addValue("userId", authorRights.getUserId())
@@ -76,10 +76,12 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllAuthors(String role) {
+    public List<PersistentUserDetails> getAllUsers(String role, int after, int limit) {
         try {
-            String query = "SELECT * FROM marshall_service.view_user_details WHERE role_name=:roleName";
-            return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("roleName", role),
+            String query = "SELECT * FROM marshall_service.view_user_details vsd, marshall_service.profile_contents pc " +
+                    "WHERE vsd.user_id=pc.profile_user_id and vsd.role_name=:roleName and vsd.user_id>:after order by vsd.user_id limit :limit";
+            return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("roleName", role).addValue("after", after)
+                            .addValue("limit", limit),
                     BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -88,10 +90,12 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllIncompleteProfileAuthorsDetails(String role) {
+    public List<PersistentUserDetails> getAllIncompleteProfileUsersDetails(String role, int after, int limit) {
         try {
-            String query = "SELECT * FROM marshall_service.view_incomplete_user_details WHERE role_name=:roleName";
-            return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("roleName", role),
+            String query = "SELECT * FROM marshall_service.view_incomplete_user_details vsd, marshall_service.profile_contents pc " +
+                    "WHERE vsd.user_id=pc.profile_user_id and vsd.role_name=:roleName and vsd.user_id>:after order by vsd.user_id limit :limit";
+            return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("roleName", role).addValue("after", after)
+                            .addValue("limit", limit),
                     BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -100,9 +104,9 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getCompleteAuthorProfileDetailsById(Long userId) {
+    public List<PersistentUserDetails> getCompleteUserProfileDetailsById(Long userId) {
         try {
-            String query = "SELECT * FROM marshall_service.view_user_details WHERE user_id=:userId";
+            String query = "SELECT * FROM marshall_service.view_user_details vsd, marshall_service.profile_contents pc where vsd.user_id=pc.profile_user_id and vsd.user_id=:userId";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("userId", userId),
                     BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
@@ -113,11 +117,38 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getAuthorProfileDetailsById(Long userId) {
+    public List<PersistentUserDetails> getUserProfileDetailsById(Long userId) {
         try {
-            String query = "SELECT * FROM marshall_service.view_incomplete_user_details WHERE user_id=:userId";
+            String query = "SELECT user_id, first_name, middle_name, last_name, user_name, phone, mobile, email, alternate_email, role_name, type_name, permission_name, join_date, vsd.is_deleted, is_enable, " +
+                    "profile_photo_name, profile_photo_path, profile_photo_size, aadhar_number, paytm_number, aadhar_back_photo_name, aadhar_back_photo_path, aadhar_back_photo_size, " +
+                    "aadhar_front_photo_name, aadhar_front_photo_path, aadhar_front_photo_size, rickshaw_number, rickshaw_front_photo_name, rickshaw_front_photo_path, " +
+                    "rickshaw_front_photo_size, rickshaw_back_photo_name, rickshaw_back_photo_path, rickshaw_back_photo_size, rickshaw_side_photo_name, rickshaw_side_photo_path, " +
+                    "rickshaw_side_photo_size, upload_date, modify_date " +
+                    "FROM marshall_service.view_incomplete_user_details vsd " +
+                    "LEFT OUTER JOIN " +
+                    "marshall_service.profile_contents pc on vsd.user_id=pc.profile_user_id WHERE vsd.user_id=:userId";
             return jdbcTemplate.query(query, new MapSqlParameterSource()
                             .addValue("userId", userId),
+                    BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public List<PersistentUserDetails> getAllUsersProfile(String role, int after, int limit) {
+        try {
+            String query = "SELECT user_id, first_name, middle_name, last_name, user_name, phone, mobile, email, alternate_email, role_name, type_name, permission_name, join_date, vsd.is_deleted, is_enable, " +
+                    "profile_photo_name, profile_photo_path, profile_photo_size, aadhar_number, paytm_number, aadhar_back_photo_name, aadhar_back_photo_path, aadhar_back_photo_size, " +
+                    "aadhar_front_photo_name, aadhar_front_photo_path, aadhar_front_photo_size, rickshaw_number, rickshaw_front_photo_name, rickshaw_front_photo_path, " +
+                    "rickshaw_front_photo_size, rickshaw_back_photo_name, rickshaw_back_photo_path, rickshaw_back_photo_size, rickshaw_side_photo_name, rickshaw_side_photo_path, " +
+                    "rickshaw_side_photo_size, upload_date, modify_date " +
+                    "FROM marshall_service.view_incomplete_user_details vsd " +
+                    "LEFT OUTER JOIN " +
+                    "marshall_service.profile_contents pc on vsd.user_id=pc.profile_user_id WHERE vsd.user_id>:after and vsd.role_name=:roleName order by vsd.user_id limit :limit";
+            return jdbcTemplate.query(query, new MapSqlParameterSource().addValue("roleName", role).addValue("after", after)
+                            .addValue("limit", limit),
                     BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
         } catch (Exception e) {
             log.error(e.getMessage());

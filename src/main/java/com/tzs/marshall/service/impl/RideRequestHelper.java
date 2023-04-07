@@ -46,7 +46,7 @@ public class RideRequestHelper {
                 });
         Double commission = ((Double.parseDouble(DBProperties.properties.getProperty("COMMISSION")) * totalEarnings.get()) / 100);
         Double balance = totalEarnings.get() - commission;
-        rideMap.put("totalEarning", totalEarnings);
+        rideMap.put("totalEarning", totalEarnings.get());
         rideMap.put("totalRides", closedRides);
         rideMap.put("totalCommission", commission);
         rideMap.put("balance", balance);
