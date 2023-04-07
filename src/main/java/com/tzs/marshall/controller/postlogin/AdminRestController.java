@@ -4,10 +4,10 @@ import com.tzs.marshall.InitProperties;
 import com.tzs.marshall.bean.DBProperties;
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.PersistentUserRights;
+import com.tzs.marshall.bean.UserRideEarnings;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.filesystem.FileBean;
 import com.tzs.marshall.filesystem.FileService;
 import com.tzs.marshall.service.SubscriptionService;
 import com.tzs.marshall.service.UserPostLoginService;
@@ -19,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,17 +44,17 @@ public class AdminRestController {
 
     //Author's Rights
     @RequestMapping(value = "/users/rights", method = RequestMethod.GET)
-    public List<PersistentUserDetails> getAuthorsRights() {
-        return adminService.getAuthorsRights();
+    public List<PersistentUserDetails> getUsersRights() {
+        return adminService.getUsersRights();
     }
 
     @RequestMapping(value = "/user/rights", method = RequestMethod.GET)
-    public PersistentUserDetails getAuthorRights(@RequestParam("userId") String userId) {
-        return adminService.getAuthorRightsById(Long.parseLong(userId));
+    public PersistentUserDetails getUserRights(@RequestParam("userId") String userId) {
+        return adminService.getUserRightsById(Long.parseLong(userId));
     }
 
     @RequestMapping(value = "/user/rights", method = RequestMethod.PUT)
-    public PersistentUserDetails updateAuthorRights(@RequestBody PersistentUserRights userRights,
+    public PersistentUserDetails updateUserRights(@RequestBody PersistentUserRights userRights,
                                                       @AuthenticationPrincipal PersistentUserDetails adminDetails) {
         adminService.checkAuthorizedAdmin(adminDetails.getUserId());
         if (!Constants.ALLOWED_ROLES.contains(userRights.getRoleName())) {
@@ -69,60 +68,37 @@ public class AdminRestController {
             userRights.setDeleted(!Constants.isDeleted);
         else userRights.setDeleted(Constants.isDeleted);
 
-        return adminService.updateAuthorRights(userRights);
+        return adminService.updateUserRights(userRights);
     }
 
-    //Authors' Profile
-    //complete
+    //All Users' Profile
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<PersistentUserDetails> getAllUsers(@RequestParam("role") String role) {
-        return adminService.getAllCompleteProfileUsersByRole(role);
+    public List<PersistentUserDetails> getAllUsers(@RequestParam Map<String, String> allRequestParams) {
+        String role = allRequestParams.get("role");
+        int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
+        int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
+        return adminService.getAllUsersByRole(role, after, limit);
     }
 
-    //Single Author Profile Details
+    //Single User Profile Details
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public PersistentUserDetails getUserDetails(@RequestParam("userId") String userId) {
-        return adminService.getAuthorDetailsById(Long.parseLong(userId));
+        return adminService.getUserDetailsById(Long.parseLong(userId));
     }
 
-    //Incomplete
-    @RequestMapping(value = "/incomplete/users", method = RequestMethod.GET)
-    public List<PersistentUserDetails> getUsers(@RequestParam("role") String role) {
-        return adminService.getAllIncompleteProfileUsersByRole(role);
+    //driver's details -> id, name, phone, vehicle no, today earning, today commission -> personal info, vehicle info, total earning
+    //customer's details -> id, name, phone, email
+    @RequestMapping(value = "/users-rides", method = RequestMethod.GET)
+    public List<UserRideEarnings> getAllUsersAndRides(@RequestParam Map<String, String> allRequestParams) {
+        String role = allRequestParams.get("role");
+        int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
+        int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
+        return adminService.getAllUsersAndRidesByRole(role, after, limit);
     }
 
-    //Authors' Files
-    @RequestMapping(value = "/users/files", method = RequestMethod.GET)
-    public List<FileBean> getAllFiles(@RequestParam("role") String role) {
-        return fileService.fetchAllFilesByUser(role);
-    }
-
-    @RequestMapping(value = "/user/files", method = RequestMethod.GET)
-    public List<FileBean> getAllFilesByUser(@RequestParam("userId") String userId,
-                                            @RequestParam("role") String role) {
-        return fileService.findFilesHandler(Long.parseLong(userId), role);
-    }
-
-    @RequestMapping(value = "/user/file", method = RequestMethod.GET)
-    public FileBean getAuthorFile(@RequestParam Map<String, String> allRequestParams) {
-        return fileService.findFileByIdAndRole(Long.parseLong(allRequestParams.get("userId")), Long.parseLong(allRequestParams.get("fileId")), allRequestParams.get("role"));
-    }
-
-    //Admin-Report for Authors
-    @RequestMapping(value = "/user/file/reports", method = RequestMethod.GET)
-    public List<FileBean> getEditorReportsForFile(@RequestParam Map<String, String> allRequestParams) {
-        return fileService.findReportsForAuthorFile(Long.parseLong(allRequestParams.get("userId")), Long.parseLong(allRequestParams.get("fileId")));
-    }
-
-    @RequestMapping(value = "/user/file/report", method = RequestMethod.GET)
-    public FileBean getEditorReportForFile(@RequestParam Map<String, String> allRequestParams) {
-        return fileService.findReportForAuthorFile(Long.parseLong(allRequestParams.get("userId")),
-                Long.parseLong(allRequestParams.get("fileId")), Long.parseLong(allRequestParams.get("reportId")));
-    }
-
-    @RequestMapping(value = "/user/reports", method = RequestMethod.GET)
-    public List<FileBean> getEditorReportsForAuthor(@RequestParam Map<String, String> allRequestParams) {
-        return fileService.findAllReportsForAuthor(Long.parseLong(allRequestParams.get("userId")));
+    @RequestMapping(value = "/user-ride", method = RequestMethod.GET)
+    public UserRideEarnings getUserAndRideById(@RequestParam("userId") String userId) {
+        return adminService.getUserAndRideById(userId);
     }
 
     @RequestMapping(value = "/qrcode/upload", method = RequestMethod.POST)

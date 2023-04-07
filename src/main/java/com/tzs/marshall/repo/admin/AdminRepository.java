@@ -7,17 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 public interface AdminRepository {
-    List<PersistentUserDetails> getAllAuthorRights();
+    List<PersistentUserDetails> getAllUserRights();
 
-    List<PersistentUserDetails> getAuthorRightsById(Long userId);
+    List<PersistentUserDetails> getUserRightsById(Long userId);
 
-    Map<String, Object> updateAuthorRights(PersistentUserRights authorRights);
+    Map<String, Object> updateUserRights(PersistentUserRights authorRights);
 
-    List<PersistentUserDetails> getAllAuthors(String role);
+    List<PersistentUserDetails> getAllUsers(String role, int after, int limit);
 
-    List<PersistentUserDetails> getAllIncompleteProfileAuthorsDetails(String role);
+    List<PersistentUserDetails> getAllIncompleteProfileUsersDetails(String role, int after, int limit);
 
-    List<PersistentUserDetails> getCompleteAuthorProfileDetailsById(Long userId);
+    List<PersistentUserDetails> getCompleteUserProfileDetailsById(Long userId);
 
-    List<PersistentUserDetails> getAuthorProfileDetailsById(Long userId);
+    List<PersistentUserDetails> getUserProfileDetailsById(Long userId);
+
+    List<PersistentUserDetails> getAllUsersProfile(String role, int after, int limit);
 }

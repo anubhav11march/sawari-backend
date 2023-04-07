@@ -454,7 +454,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     private boolean sendPaymentConfirmationMailForAuthor(TransactionDetail transaction) {
-        PersistentUserDetails authorDetails = adminService.getAuthorDetailsById(transaction.getUserBillingId());
+        PersistentUserDetails authorDetails = adminService.getUserDetailsById(transaction.getUserBillingId());
         log.info("Sending Confirmation Email to Author...");
         log.info("Preparing to send an email to the Admin...");
         EmailBean emailBean = new EmailBean();

@@ -2,21 +2,27 @@ package com.tzs.marshall.service.admin;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.PersistentUserRights;
+import com.tzs.marshall.bean.UserRideEarnings;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AdminService {
-    List<PersistentUserDetails> getAuthorsRights();
+    List<PersistentUserDetails> getUsersRights();
 
-    PersistentUserDetails getAuthorRightsById(Long userId);
+    PersistentUserDetails getUserRightsById(Long userId);
 
-    PersistentUserDetails updateAuthorRights(PersistentUserRights authorRights);
+    PersistentUserDetails updateUserRights(PersistentUserRights authorRights);
 
-    List<PersistentUserDetails> getAllCompleteProfileUsersByRole(String role);
+    List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit);
 
-    List<PersistentUserDetails> getAllIncompleteProfileUsersByRole(String role);
+    List<PersistentUserDetails> getAllIncompleteProfileUsersByRole(String role, int after, int limit);
 
-    PersistentUserDetails getAuthorDetailsById(Long authorId);
+    PersistentUserDetails getUserDetailsById(Long authorId);
 
     void checkAuthorizedAdmin(Long userId);
+
+    List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit);
+
+    UserRideEarnings getUserAndRideById(String userId);
 }
