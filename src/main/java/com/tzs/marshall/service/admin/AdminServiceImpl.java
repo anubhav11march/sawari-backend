@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,9 +65,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit) {
-        log.info("Fetching All Completed Profiles Users Details...");
-        List<PersistentUserDetails> allUsers = adminRepository.getAllUsersProfile(role.toUpperCase(), after, limit);
+    public List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit, Map filters) {
+        log.info("Fetching All Completed Profiles Users Details with filters {}", filters);
+        List<PersistentUserDetails> allUsers = adminRepository.getAllUsersProfile(role.toUpperCase(), after, limit, filters);
         log.info("Records Found: {}", allUsers);
         return allUsers;
     }
@@ -111,8 +110,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit) {
-        List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, after, limit);
+    public List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit, Map filters) {
+        List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, after, limit, filters);
         List<UserRideEarnings> userRideEarningsList = new ArrayList<>();
         allUsersByRole.forEach(user -> {
             Map<String, Object> totalEarningById = rideRequestService.getTotalEarningByDriver(user.getUserId());

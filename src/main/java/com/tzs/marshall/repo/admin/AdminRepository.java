@@ -21,5 +21,5 @@ public interface AdminRepository {
 
     List<PersistentUserDetails> getUserProfileDetailsById(Long userId);
 
-    List<PersistentUserDetails> getAllUsersProfile(String role, int after, int limit);
+    List<PersistentUserDetails> getAllUsersProfile(String role, int after, int limit, Map filters);
 }
