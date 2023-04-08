@@ -14,7 +14,7 @@ public interface AdminService {
 
     PersistentUserDetails updateUserRights(PersistentUserRights authorRights);
 
-    List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit);
+    List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit, Map filters);
 
     List<PersistentUserDetails> getAllIncompleteProfileUsersByRole(String role, int after, int limit);
 
@@ -22,7 +22,7 @@ public interface AdminService {
 
     void checkAuthorizedAdmin(Long userId);
 
-    List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit);
+    List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit, Map filters);
 
     UserRideEarnings getUserAndRideById(String userId);
 }

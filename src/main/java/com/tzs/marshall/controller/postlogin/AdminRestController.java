@@ -72,12 +72,12 @@ public class AdminRestController {
     }
 
     //All Users' Profile
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<PersistentUserDetails> getAllUsers(@RequestParam Map<String, String> allRequestParams) {
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public List<PersistentUserDetails> getAllUsers(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
         String role = allRequestParams.get("role");
         int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
         int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
-        return adminService.getAllUsersByRole(role, after, limit);
+        return adminService.getAllUsersByRole(role, after, limit, filters);
     }
 
     //Single User Profile Details
@@ -88,12 +88,12 @@ public class AdminRestController {
 
     //driver's details -> id, name, phone, vehicle no, today earning, today commission -> personal info, vehicle info, total earning
     //customer's details -> id, name, phone, email
-    @RequestMapping(value = "/users-rides", method = RequestMethod.GET)
-    public List<UserRideEarnings> getAllUsersAndRides(@RequestParam Map<String, String> allRequestParams) {
+    @RequestMapping(value = "/users-rides", method = RequestMethod.POST)
+    public List<UserRideEarnings> getAllUsersAndRides(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
         String role = allRequestParams.get("role");
         int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
         int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
-        return adminService.getAllUsersAndRidesByRole(role, after, limit);
+        return adminService.getAllUsersAndRidesByRole(role, after, limit, filters);
     }
 
     @RequestMapping(value = "/user-ride", method = RequestMethod.GET)
