@@ -2,6 +2,7 @@ package com.tzs.marshall.service.admin;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.PersistentUserRights;
+import com.tzs.marshall.bean.RideRequest;
 import com.tzs.marshall.bean.UserRideEarnings;
 
 import java.util.List;
@@ -22,7 +23,13 @@ public interface AdminService {
 
     void checkAuthorizedAdmin(Long userId);
 
-    List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit, Map filters);
+    List<UserRideEarnings> getAllUsersAndEarningsByRole(String role, int after, int limit, Map filters);
 
-    UserRideEarnings getUserAndRideById(String userId);
+    UserRideEarnings getUserAndEarningById(String userId);
+
+    List<RideRequest> getAllUsersAndRidesByRole(int after, int limit, Map filters);
+
+    List<RideRequest> getUserAndRideById(String userId);
+
+    Map<String, String> updateDBProperties(Map<String, String> properties);
 }

@@ -1,10 +1,7 @@
 package com.tzs.marshall.controller.postlogin;
 
 import com.tzs.marshall.InitProperties;
-import com.tzs.marshall.bean.DBProperties;
-import com.tzs.marshall.bean.PersistentUserDetails;
-import com.tzs.marshall.bean.PersistentUserRights;
-import com.tzs.marshall.bean.UserRideEarnings;
+import com.tzs.marshall.bean.*;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
@@ -21,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
-
 
 @RestController
 @RequestMapping("/admin")
@@ -88,17 +84,37 @@ public class AdminRestController {
 
     //driver's details -> id, name, phone, vehicle no, today earning, today commission -> personal info, vehicle info, total earning
     //customer's details -> id, name, phone, email
-    @RequestMapping(value = "/users-rides", method = RequestMethod.POST)
-    public List<UserRideEarnings> getAllUsersAndRides(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
+    @RequestMapping(value = "/users-earnings", method = RequestMethod.POST)
+    public List<UserRideEarnings> getAllUsersAndEarnings(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
         String role = allRequestParams.get("role");
         int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
         int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
-        return adminService.getAllUsersAndRidesByRole(role, after, limit, filters);
+        return adminService.getAllUsersAndEarningsByRole(role, after, limit, filters);
+    }
+
+    @RequestMapping(value = "/user-earning", method = RequestMethod.GET)
+    public UserRideEarnings getUserAndEarningById(@RequestParam("userId") String userId) {
+        return adminService.getUserAndEarningById(userId);
+    }
+
+    //rides -> id, customerName, driverName, vehicleNo, source, destination, fare, date, status
+    @RequestMapping(value = "/users-rides", method = RequestMethod.POST)
+    public List<RideRequest> getAllRides(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
+//        String role = allRequestParams.get("role");
+        int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
+        int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
+        return adminService.getAllUsersAndRidesByRole(after, limit, filters);
     }
 
     @RequestMapping(value = "/user-ride", method = RequestMethod.GET)
-    public UserRideEarnings getUserAndRideById(@RequestParam("userId") String userId) {
+    public List<RideRequest> getRideById(@RequestParam("userId") String userId) {
         return adminService.getUserAndRideById(userId);
+    }
+
+    //api to update properties
+    @RequestMapping(value = "/properties", method = RequestMethod.POST)
+    public Map<String, String> updateDBProperties(@RequestBody Map<String, String> properties) {
+        return adminService.updateDBProperties(properties);
     }
 
     @RequestMapping(value = "/qrcode/upload", method = RequestMethod.POST)

@@ -1,9 +1,6 @@
 package com.tzs.marshall.service.admin;
 
-import com.tzs.marshall.bean.DBProperties;
-import com.tzs.marshall.bean.PersistentUserDetails;
-import com.tzs.marshall.bean.PersistentUserRights;
-import com.tzs.marshall.bean.UserRideEarnings;
+import com.tzs.marshall.bean.*;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.admin.AdminRepository;
@@ -110,7 +107,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserRideEarnings> getAllUsersAndRidesByRole(String role, int after, int limit, Map filters) {
+    public List<UserRideEarnings> getAllUsersAndEarningsByRole(String role, int after, int limit, Map filters) {
         List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, after, limit, filters);
         List<UserRideEarnings> userRideEarningsList = new ArrayList<>();
         allUsersByRole.forEach(user -> {
@@ -122,10 +119,26 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public UserRideEarnings getUserAndRideById(String userId) {
+    public UserRideEarnings getUserAndEarningById(String userId) {
         PersistentUserDetails user = getUserDetailsById(Long.valueOf(userId));
         Map<String, Object> totalEarningById = rideRequestService.getTotalEarningByDriver(user.getUserId());
         UserRideEarnings userRideEarnings = new UserRideEarnings(user, totalEarningById);
         return userRideEarnings;
+    }
+
+    @Override
+    public List<RideRequest> getAllUsersAndRidesByRole(int after, int limit, Map filters) {
+        return adminRepository.getAllUsersRides(after, limit, filters);
+    }
+
+    @Override
+    public List<RideRequest> getUserAndRideById(String userId) {
+        return adminRepository.getAllUsersRidesById(Long.valueOf(userId));
+    }
+
+    @Override
+    public Map<String, String> updateDBProperties(Map<String, String> properties) {
+        adminRepository.updateDBProperties(properties);
+        return null;
     }
 }

@@ -100,9 +100,14 @@ public class RideController {
 
     //get all the ride requests
     @RequestMapping(value = "/rides", method = RequestMethod.GET)
-    public Map<String, Object> getRidesRequests(@AuthenticationPrincipal PersistentUserDetails userDetails, @RequestParam(required = false) String currentRide) {
-        return rideRequestService.fetchRideBookingRequestsByUserId(userDetails.getUserId(), currentRide);
-
+    public Map<String, Object> getRidesRequests(@AuthenticationPrincipal PersistentUserDetails userDetails,
+                                                @RequestParam(required = false) String userId,
+                                                @RequestParam(required = false) String currentRide) {
+        if (ADMIN.equalsIgnoreCase(userDetails.getRoleName())) {
+            return rideRequestService.fetchRideBookingRequestsByUserId(Long.valueOf(userId), currentRide);
+        } else {
+            return rideRequestService.fetchRideBookingRequestsByUserId(userDetails.getUserId(), currentRide);
+        }
     }
 
     //write user current location

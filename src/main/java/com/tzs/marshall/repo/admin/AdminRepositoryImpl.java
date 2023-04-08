@@ -2,6 +2,7 @@ package com.tzs.marshall.repo.admin;
 
 import com.tzs.marshall.bean.PersistentUserDetails;
 import com.tzs.marshall.bean.PersistentUserRights;
+import com.tzs.marshall.bean.RideRequest;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
@@ -10,13 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class AdminRepositoryImpl implements AdminRepository {
@@ -161,9 +160,75 @@ public class AdminRepositoryImpl implements AdminRepository {
         }
     }
 
+    @Override
+    public List<RideRequest> getAllUsersRides(int after, int limit, Map filters) {
+        try {
+            StringBuilder query = new StringBuilder();
+            String sql;
+            query.append("SELECT * FROM ")
+                    .append("(SELECT " +
+                            "  concat(uc.first_name, ' ', uc.last_name) AS customer_name, " +
+                            "  concat(ud.first_name, ' ', ud.last_name) AS driver_name, " +
+                            "  date, booking_request_id, customer_id, mobile_no, pickup_location_points, pickup_location_word, drop_location_points, drop_location_word, passengers, distance, fare, discount, currency, otp, booking_status, payment_mode, payment_status, driver_id, modify_date " +
+                            "FROM " +
+                            "  marshall_service.ride_request r " +
+                            "  LEFT JOIN marshall_service.view_incomplete_user_details uc ON r.customer_id = uc.user_id " +
+                            "  LEFT JOIN marshall_service.view_incomplete_user_details ud ON r.driver_id = ud.user_id " +
+                            "  WHERE r.booking_request_id>:after ORDER BY r.booking_request_id LIMIT :limit) upd ");
+            sql = applyFilters(filters, query).concat(" ORDER BY date DESC ");
+            return jdbcTemplate.query(sql, new MapSqlParameterSource().addValue("after", after)
+                            .addValue("limit", limit),
+                    BeanPropertyRowMapper.newInstance(RideRequest.class));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public List<RideRequest> getAllUsersRidesById(Long userId) {
+        try {
+            StringBuilder query = new StringBuilder();
+            String sql;
+            query.append("SELECT * FROM ")
+                    .append("(SELECT " +
+                            "  concat(uc.first_name, ' ', uc.last_name) AS customer_name, " +
+                            "  concat(ud.first_name, ' ', ud.last_name) AS driver_name, " +
+                            "  date, booking_request_id, customer_id, mobile_no, pickup_location_points, pickup_location_word, drop_location_points, drop_location_word, passengers, distance, fare, discount, currency, otp, booking_status, payment_mode, payment_status, driver_id, modify_date " +
+                            "FROM " +
+                            "  marshall_service.ride_request r " +
+                            "  LEFT JOIN marshall_service.view_incomplete_user_details uc ON r.customer_id = uc.user_id " +
+                            "  LEFT JOIN marshall_service.view_incomplete_user_details ud ON r.driver_id = ud.user_id " +
+                            "  WHERE r.customer_id=:userId OR r.driver_id=:userId) upd " +
+                            "  ORDER BY date DESC ");
+            sql = query.toString();
+            return jdbcTemplate.query(sql, new MapSqlParameterSource().addValue("userId", userId),
+                    BeanPropertyRowMapper.newInstance(RideRequest.class));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public void updateDBProperties(Map<String, String> properties) {
+        try {
+            String query = "UPDATE marshall_service.properties SET value=? WHERE name=?";
+            List<Object[]> params = new ArrayList<>();
+
+            properties.entrySet().forEach(e -> {
+                params.add(new Object[] {e.getValue(), e.getKey()});
+            });
+            jdbcTemplate.getJdbcOperations().batchUpdate(query, params);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
     private String applyFilters(Map filters, StringBuilder query) {
         String sql;
-        if (filters != null || !filters.isEmpty()) {
+        if (filters != null && !filters.isEmpty()) {
             query.append("WHERE ");
             HashMap<String, String> filter = (HashMap<String, String>) filters;
             filter.entrySet().stream().forEach(e -> {
