@@ -4,6 +4,7 @@ import com.tzs.marshall.bean.*;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.admin.AdminRepository;
+import com.tzs.marshall.service.FareCalculationService;
 import com.tzs.marshall.service.RideRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ public class AdminServiceImpl implements AdminService {
     private AdminRepository adminRepository;
     @Autowired
     private RideRequestService rideRequestService;
+    @Autowired
+    private FareCalculationService fareCalculationService;
 
     private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
 
@@ -140,5 +143,21 @@ public class AdminServiceImpl implements AdminService {
     public Map<String, String> updateDBProperties(Map<String, String> properties) {
         adminRepository.updateDBProperties(properties);
         return null;
+    }
+
+    @Override
+    public Fare calculateEstimatedPrice(Map<String, String> priceProperties) {
+        return fareCalculationService.getEstimatedFareForPreview(priceProperties);
+    }
+
+    @Override
+    public DiscountConfig[] getDiscountConfig() {
+        return fareCalculationService.getDiscountConfig();
+    }
+
+    @Override
+    public DiscountConfig[] updateDiscountConfig(DiscountConfig[] discountConfig) {
+        fareCalculationService.updateDiscountConfig(discountConfig);
+        return new DiscountConfig[0];
     }
 }

@@ -117,6 +117,23 @@ public class AdminRestController {
         return adminService.updateDBProperties(properties);
     }
 
+    //price modification -> preview to calculate price and submit to update db properties
+    @RequestMapping(value = "/price-preview", method = RequestMethod.POST)
+    public Fare previewPriceChange(@RequestBody Map<String, String> priceProperties) {
+        return adminService.calculateEstimatedPrice(priceProperties);
+    }
+
+    //discount modification -> update json file
+    @RequestMapping(value = "/discount-config", method = RequestMethod.GET)
+    public DiscountConfig[] getDiscountConfig() {
+        return adminService.getDiscountConfig();
+    }
+
+    @RequestMapping(value = "/discount-config/update", method = RequestMethod.POST)
+    public DiscountConfig[] updateDiscountConfig(@RequestBody DiscountConfig[] discountConfig) {
+        return adminService.updateDiscountConfig(discountConfig);
+    }
+
     @RequestMapping(value = "/qrcode/upload", method = RequestMethod.POST)
     public void uploadQRCode(@RequestParam("name") String qrCodeName, @RequestParam("qrCode") MultipartFile qrCode,
                                      @AuthenticationPrincipal PersistentUserDetails authorDetails) {
