@@ -24,15 +24,6 @@ public class InitProperties {
         log.info("Fetching Properties from DB");
         Properties dbProperties = getDBProperties();
         new DBProperties(dbProperties);
-        Constants.ORDER_STATUS.put(Constants.INITIATED, 1);
-        Constants.ORDER_STATUS.put(Constants.CREATED, 2);
-        Constants.ORDER_STATUS.put(Constants.PENDING, 3);
-        Constants.ORDER_STATUS.put(Constants.PLACED, 4);
-        Constants.ORDER_STATUS.put(Constants.PAID, 5);
-        Constants.ORDER_STATUS.put(Constants.APPROVED, 6);
-        Constants.ORDER_STATUS.put(Constants.REJECTED, 7);
-        Constants.ORDER_STATUS.put(Constants.CANCELLED, 8);
-        Constants.ORDER_STATUS.put(Constants.EXPIRED, 9);
     }
 
     public Properties getDBProperties() {

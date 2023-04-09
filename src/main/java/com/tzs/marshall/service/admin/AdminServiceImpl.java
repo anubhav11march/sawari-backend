@@ -1,6 +1,7 @@
 package com.tzs.marshall.service.admin;
 
 import com.tzs.marshall.bean.*;
+import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
 import com.tzs.marshall.repo.admin.AdminRepository;
@@ -10,10 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.tzs.marshall.constants.Constants.*;
 
@@ -78,7 +86,7 @@ public class AdminServiceImpl implements AdminService {
         List<PersistentUserDetails> allIncompleteProfileUsersDetails = adminRepository.getAllIncompleteProfileUsersDetails(role.toUpperCase(), after, limit);
         if (allIncompleteProfileUsersDetails.size() == 0) {
             log.error("No User Found...{}", allIncompleteProfileUsersDetails);
-            throw new ApiException(MessageConstants.NO_AUTHOR_REGISTER);
+            throw new ApiException(MessageConstants.NO_USER_REGISTER);
         }
         log.info("Records Found: {}", allIncompleteProfileUsersDetails);
         return allIncompleteProfileUsersDetails;
@@ -96,7 +104,7 @@ public class AdminServiceImpl implements AdminService {
         userDetails = adminRepository.getUserProfileDetailsById(userId);
         if (userDetails.size() == 0) {
             log.error("No User Found...{}", userId);
-            throw new ApiException(MessageConstants.NO_AUTHOR_REGISTER + userId);
+            throw new ApiException(MessageConstants.NO_USER_REGISTER + userId);
         }
         return userDetails.stream().findAny().get();
     }
@@ -159,5 +167,55 @@ public class AdminServiceImpl implements AdminService {
     public DiscountConfig[] updateDiscountConfig(DiscountConfig[] discountConfig) {
         fareCalculationService.updateDiscountConfig(discountConfig);
         return new DiscountConfig[0];
+    }
+
+    @Override
+    public String qrCodeHelper(long id, String qrCodeName, MultipartFile qrCode) {
+        log.info("Uploading QR Code to server for: " + qrCodeName);
+        checkContentType(qrCode.getContentType());
+        try {
+            String fileName = Objects.requireNonNull(qrCode.getOriginalFilename()).trim().replaceAll(" ","_");
+            String pathString = Constants.BASE_PATH + File.separator + Constants.QRCODE_DIR + File.separator
+                    + qrCodeName;
+            Path qrPath = Paths.get(pathString);
+            if (new File(String.valueOf(qrPath)).exists() && Files.deleteIfExists(Objects.requireNonNull(Files.list(qrPath).findAny().orElse(null)))) {
+                log.warn(String.format("Old QR-Code deleted from: %s", qrPath));
+            }
+            Path path = Paths.get(pathString + File.separator + fileName);
+            log.info(String.format("Path: %s", path));
+            File contentSaveDir = new File(String.valueOf(path));
+            if (!contentSaveDir.exists()) {
+                log.info("Creating Directories...");
+                boolean mkdirs = contentSaveDir.mkdirs();
+                if (!mkdirs) log.error("Cannot Create Directories. Please Check.");
+            }
+            Files.copy(qrCode.getInputStream(),
+                    path,
+                    StandardCopyOption.REPLACE_EXISTING);
+            return path.toString();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.UNABLE_TO_SAVE_FILE);
+        }
+    }
+
+    @Override
+    public void uploadQR(String qrCodeName, String path) {
+        log.info("Uploading QR Code to DB...");
+        adminRepository.uploadQRCodeToDB(qrCodeName, path);
+    }
+
+    @Override
+    public void updateQR(String qrCodeName, String path) {
+        log.info("Updating QR Code...");
+        adminRepository.updateQRCode(qrCodeName, path);
+        log.info("QR Code updated successfully.");
+    }
+
+    private void checkContentType(String contentType) {
+        if (!Constants.IMAGE_TYPE.contains(Objects.requireNonNull(contentType))) {
+            log.info(contentType + " is not valid");
+            throw new ApiException(MessageConstants.IMAGE_UPLOAD);
+        }
     }
 }
