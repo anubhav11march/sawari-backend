@@ -1,9 +1,6 @@
 package com.tzs.marshall.service.admin;
 
-import com.tzs.marshall.bean.PersistentUserDetails;
-import com.tzs.marshall.bean.PersistentUserRights;
-import com.tzs.marshall.bean.RideRequest;
-import com.tzs.marshall.bean.UserRideEarnings;
+import com.tzs.marshall.bean.*;
 
 import java.util.List;
 import java.util.Map;
@@ -32,4 +29,10 @@ public interface AdminService {
     List<RideRequest> getUserAndRideById(String userId);
 
     Map<String, String> updateDBProperties(Map<String, String> properties);
+
+    Fare calculateEstimatedPrice(Map<String, String> priceProperties);
+
+    DiscountConfig[] getDiscountConfig();
+
+    DiscountConfig[] updateDiscountConfig(DiscountConfig[] discountConfig);
 }

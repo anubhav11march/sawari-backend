@@ -22,9 +22,9 @@ public class FareCalculationController {
 
     @RequestMapping(value = "/fare", method = RequestMethod.POST)
     public Fare getEstimatedFare(@RequestBody Fare fare) {
-        Double distnace = fare.getDistance();
+        Double distance = fare.getDistance();
         Integer passenger = fare.getPassengers();
-        return fareCalculationService.getEstimatedFareByPassengerAndDistance(passenger, distnace);
+        return fareCalculationService.getEstimatedFareByPassengerAndDistance(passenger, distance);
 
     }
 }
