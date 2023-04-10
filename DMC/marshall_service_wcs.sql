@@ -34,7 +34,7 @@ CREATE TABLE `confirmation_token` (
                                       PRIMARY KEY (`id`),
                                       UNIQUE KEY `id_UNIQUE` (`id`),
                                       UNIQUE KEY `token_UNIQUE` (`token`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `confirmation_token` (
 
 LOCK TABLES `confirmation_token` WRITE;
 /*!40000 ALTER TABLE `confirmation_token` DISABLE KEYS */;
-INSERT INTO `confirmation_token` VALUES (5,'1183bea3-0c00-4a0c-b751-bbb869fc56f3','enableAccount',NULL,'zaif99@gmail.com','2022-09-12 21:22:30','2022-09-12 21:37:30',NULL),(17,'e5950f04-adef-41b4-9165-9d8cd57107b5','resetPassword',NULL,'zaif99@gmail.com','2022-08-27 20:41:56','2022-08-27 20:56:56','2022-08-27 20:42:16'),(24,'67e12cb4-d129-4478-bab9-c5438e470bf3','enableAccount',NULL,'zafaralways@gmail.com','2021-12-28 19:21:23','2021-12-28 19:36:23','2021-12-28 19:22:01'),(25,'05e2e669-47c3-42bb-a964-919044940897','resetPassword',NULL,'zafaralways@gmail.com','2021-12-28 19:24:15','2021-12-28 19:39:15','2021-12-28 19:24:50'),(26,'81752d2d-6b47-45ad-8b21-91797f4e49e7','enableAccount',NULL,'thedarkthrister@gmail.com','2022-02-11 20:41:50','2022-02-11 20:56:50',NULL),(27,'281694','enableAccount','USER','zaif99@gmail.com','2022-09-13 09:46:44','2022-09-13 10:01:44','2022-09-13 09:48:14'),(28,'968331','resetPassword','USER','zaif99@gmail.com','2022-09-14 09:46:59','2022-09-14 10:01:59',NULL);
+INSERT INTO `confirmation_token` VALUES (31,'964623','enableAccount','USER','khalidsaif9045@gmail.com','2022-10-26 21:34:23','2022-10-26 21:49:23','2022-10-26 21:35:08'),(32,'435580','enableAccount','USER','talal.wasif19@gmail.com','2022-10-26 21:37:51','2022-10-26 21:52:51','2022-10-26 21:38:17'),(33,'461308','enableAccount','USER','zafaralways@gmail.com','2022-10-26 21:39:05','2022-10-26 21:54:05','2022-10-26 21:39:26'),(34,'612149','enableAccount','DRIVER','8826424940','2022-10-26 21:55:54','2022-10-26 22:10:54','2022-10-26 21:56:53'),(35,'139140','enableAccount','USER','that@tha.tha','2022-10-28 23:57:42','2022-10-29 00:12:42',NULL);
 /*!40000 ALTER TABLE `confirmation_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,7 +86,6 @@ CREATE TABLE `content` (
 
 LOCK TABLES `content` WRITE;
 /*!40000 ALTER TABLE `content` DISABLE KEYS */;
-INSERT INTO `content` VALUES (1,83,'Worker Profile QRG for Employees.pdf','application/pdf','Topic 3','Category 1','safd','ENGLISH',NULL,NULL,NULL,'Uploaded','C:\\Users\\zafar.siddiqui\\usr\\author\\83\\application\\pdf\\83_3851_2021-12-30_Worker Profile QRG for Employees.pdf',255897,NULL,'2021-12-30',NULL,0),(2,83,'83_9239_2021-12-30_Worker Profile QRG for Employees.pdf','application/pdf','Topic 3','Category 1','safd','ENGLISH',NULL,NULL,NULL,'Uploaded','C:\\Users\\zafar.siddiqui\\usr\\author\\83\\application\\pdf\\83_9239_2021-12-30_Worker Profile QRG for Employees.pdf',255897,NULL,'2021-12-30',NULL,0),(3,83,'83_4391_2021-12-30_Worker Profile QRG for Employees.pdf','application/pdf','Topic 3','Category 1','safd','ENGLISH',NULL,NULL,NULL,'Uploaded','C:\\Users\\zafar.siddiqui\\usr\\author\\83\\application\\pdf\\83_4391_2021-12-30_Worker Profile QRG for Employees.pdf',255897,NULL,'2021-12-30',NULL,0),(4,83,'83_7715_2021-12-30_Worker Profile QRG for Employees.pdf','application/pdf','Topic 3','Category 1','safd','ENGLISH',NULL,NULL,NULL,'Uploaded','C:\\Users\\zafar.siddiqui\\usr\\author\\83\\application\\pdf\\83_7715_2021-12-30_Worker Profile QRG for Employees.pdf',255897,NULL,'2021-12-30',NULL,0),(5,83,'83_7055_2021-12-30_Worker Profile QRG for Employees.pdf','application/pdf','Topic 3','Category 1','safd','ENGLISH',NULL,NULL,NULL,'Uploaded','C:\\Users\\zafar.siddiqui\\usr\\author\\83\\application\\pdf\\83_7055_2021-12-30_Worker Profile QRG for Employees.pdf',255897,'2021-12-18 23:03:39','2021-12-30',NULL,0),(6,83,'8347862021-12-30-Website_Improved.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 3','Category 1','safd',NULL,NULL,NULL,NULL,NULL,'C:\\Users\\zafar.siddiqui\\var\\aesh\\contents\\author\\83\\.xlsx\\8347862021-12-30-Website_Improved.xlsx',14425,'2021-12-26 21:02:14','2021-12-30',NULL,0),(7,83,'8371082021-12-30-Some opinions.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','Topic 45','Category 1d','safdd',NULL,NULL,NULL,NULL,NULL,'C:\\Users\\zafar.siddiqui\\var\\aesh\\contents\\author\\83\\.docx\\8371082021-12-30-Some opinions.docx',18789,'2021-12-26 21:10:07','2021-12-30',NULL,0),(8,83,'8337862021-12-30-WIN_20211110_18_35_30_Pro.jpg','image/jpeg','Topic 450','Category 1d0','safddkk',NULL,NULL,NULL,NULL,NULL,'\\var\\aesh\\contents\\author\\83\\.jpg\\8337862021-12-30-WIN_20211110_18_35_30_Pro.jpg',101204,'2021-12-26 21:16:15','2021-12-30',NULL,0),(9,97,'97578920211228-WIN_20211110_18_35_30_Pro.jpg','image/jpeg','Topic 13 update','Category 1','safd','English',NULL,NULL,NULL,'Uploaded','\\var\\aesh\\contents\\author\\97\\.jpg\\97578920211228-WIN_20211110_18_35_30_Pro.jpg',101204,'2021-12-30 09:34:21','2021-12-28','2021-12-30 11:05:02',0),(10,97,'97365320211231-WIN_20211110_18_35_12_Pro.jpg','image/jpeg','Topic 3','Category 13','author','English',NULL,NULL,NULL,'Uploaded','\\var\\aesh\\contents\\author\\97\\.jpg\\97365320211231-WIN_20211110_18_35_12_Pro.jpg',99472,'2021-12-30 10:09:25','2021-12-31',NULL,0),(11,97,'97537620220112-Some opinions.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','Topic 13','Public','were','Chinese','4543','','Only,Scientific','Uploaded','\\var\\aesh\\contents\\author\\97\\.docx\\97537620220112-Some opinions.docx',19332,'2022-01-08 06:51:50','2022-01-12','2022-01-08 06:51:50',0),(12,97,'97834020220111-Website.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 13','Public','1word 2word, 1comma\r\n2  lines','Arabic','4543','','Only,Only','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97834020220111-Website.xlsx',12299,'2022-01-08 07:02:36','2022-01-11','2022-01-08 07:02:36',0),(13,97,'97945120220111-Website_Improved.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 13','[Ljava.lang.String;@38d8964d','1word 2word, 1comma\r\n2  lines','Japanese','4543','','Scientific,Figure','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97945120220111-Website_Improved.xlsx',14425,'2022-01-08 07:05:15','2022-01-11','2022-01-08 07:05:15',0),(14,97,'97275220220122-some suggestions.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','AdminTopic 13','[Ljava.lang.String;@5ae6d143','ret ertbert\r\nt8iu','English','4543','','Scientific,Figure','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97275220220122-some suggestions.xlsx',6625,'2022-01-08 07:22:41','2022-01-22','2022-01-08 07:22:41',0),(15,97,'97659120220121-Website_Improved.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 450','Clinical','adc v\r\ndsf\r\ndsf','Chinese','4543','5','Figure,Journal','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97659120220121-Website_Improved.xlsx',14425,'2022-01-08 07:29:52','2022-01-21','2022-01-08 07:29:52',0),(16,97,'97206020220121-Website_Improved.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 450','Clinical','adc v\r\ndsf\r\ndsf','Arabic','4543','5','Scientific,Journal','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97206020220121-Website_Improved.xlsx',14425,'2022-01-08 07:32:13','2022-01-21','2022-01-08 07:32:13',0),(17,97,'97570720220121-Website_Improved.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 450','Molecular Biology','adc v\r\ndsf\r\ndsf','Arabic','4543','5','Only Manuscript Formatting','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97570720220121-Website_Improved.xlsx',14425,'2022-01-08 07:33:24','2022-02-23','2022-02-12 21:54:53',0),(18,97,'97689920220121-Website_Improved.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Topic 450','Public','adc v\r\ndsf\r\ndsf','Arabic','4543','5','Scientific,Journal','Uploaded','\\var\\aesh\\contents\\author\\97\\.xlsx\\97689920220121-Website_Improved.xlsx',14425,'2022-01-08 07:36:28','2022-01-21','2022-01-08 07:36:28',0),(19,97,'97425920220127-Some opinions.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','Topic 450','Public Health','','Chinese','4543','4','Manuscript Formatting','Uploaded','\\var\\aesh\\contents\\author\\97\\.docx\\97425920220127-Some opinions.docx',19332,'2022-01-08 15:34:55','2022-01-27','2022-01-11 15:01:00',0),(20,97,'97822220220121-Some opinions.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','Topic 450','Public Health','SC','Chinese','4543','1','Only English Editing,Journal Recommendation','Uploaded','\\var\\aesh\\contents\\author\\97\\.docx\\97822220220121-Some opinions.docx',19332,'2022-01-09 00:05:28','2022-02-28','2022-02-12 21:53:42',0),(21,97,'97971120220228-Account summary and transactions - Jul21-Dec21.pdf','application/pdf','AdminTopic 13','Clinical Medicine','','English','4543','','Journal Recommendation','Review Initiated','\\var\\aesh\\contents\\author\\97\\.pdf\\97971120220228-Account summary and transactions - Jul21-Dec21.pdf',758257,'2022-02-12 21:55:39','2022-02-28','2022-02-12 22:00:33',0),(22,99,'99701520220228-1636881840454_809016_IC_979_VCVB60MJ.pdf','application/pdf','zaif999','Clinical Medicine','zaif99','Arabic','4543','','Only English Editing','Uploaded','\\var\\aesh\\contents\\author\\99\\.pdf\\99701520220228-1636881840454_809016_IC_979_VCVB60MJ.pdf',1469278,'2022-02-21 09:09:13','2022-02-28','2022-02-21 09:09:13',0),(23,105,'105380120220315-epfo.pdf','application/pdf','Topic 3','Public Health','test redirect','Arabic','4543','','Only English Editing','Uploaded','\\var\\aesh\\contents\\author\\105\\.pdf\\105380120220315-epfo.pdf',187529,'2022-03-06 18:59:13','2022-03-15','2022-03-06 18:59:13',0),(24,105,'105684620220315-Gmail - Laptop Submission.pdf','application/pdf','Topic 13','Microbiology','test decription','Arabic','4543','','Only Manuscript Formatting','Uploaded','\\var\\aesh\\contents\\author\\105\\.pdf\\105684620220315-Gmail - Laptop Submission.pdf',1070018,'2022-03-06 19:05:43','2022-03-15','2022-03-06 19:05:43',0),(25,105,'105434520220323-My opinions (1).pdf','application/pdf','AdminTopic 13','Public Health','test','English','4543','','Only English Editing','Uploaded','\\var\\aesh\\contents\\author\\105\\.pdf\\105434520220323-My opinions (1).pdf',49655,'2022-03-12 15:51:30','2022-03-23','2022-03-12 15:51:30',0),(26,105,'105354120220429-202200070873_TAZNL_VROV4_202200070873_.pdf','application/pdf','AdminTopic 13','Public Health','test','Chinese','4543','','Scientific Editing','Uploaded','\\var\\aesh\\contents\\author\\105\\.pdf\\105354120220429-202200070873_TAZNL_VROV4_202200070873_.pdf',48578,'2022-03-31 19:54:17','2022-04-29','2022-03-31 19:54:17',0),(27,97,'97979420220622-certificate- business code of conduct.pdf','application/pdf','Topic 3','Microbiology','tesy','Arabic','4543','','Only English Editing','Preliminary-Report Submitted','\\var\\aesh\\contents\\author\\97\\.pdf\\97979420220622-certificate- business code of conduct.pdf',24825,'2022-06-06 15:18:34','2022-06-22','2022-06-06 15:20:52',0),(28,97,'97860420220818-SO2.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','new order','Microbiology','new order','English','4543','','Only English Editing','Final-Report Submitted','\\var\\aesh\\contents\\author\\97\\.docx\\97860420220818-SO2.docx',12255,'2022-08-11 15:16:11','2022-08-18','2022-08-11 15:27:33',0);
 /*!40000 ALTER TABLE `content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,8 +130,60 @@ CREATE TABLE `content_report` (
 
 LOCK TABLES `content_report` WRITE;
 /*!40000 ALTER TABLE `content_report` DISABLE KEYS */;
-INSERT INTO `content_report` VALUES (1,83,9,97,'83282520211229-WIN_20211110_18_35_12_Pro.jpg','image/jpeg','preliminaryReport','AdminTopic 13','Admin Category 1d0','Admin FIle','English',NULL,'\\var\\aesh\\contents\\author\\83\\.jpg\\83282520211229-WIN_20211110_18_35_12_Pro.jpg',99472,'2021-12-30 09:51:24',NULL,0),(2,83,9,97,'83282520211229-WIN_20211110_18_35_12_Pro.jpg','image/jpeg','preliminaryReport','AdminTopic 13','Admin Category 1d0','Admin FIle','English','','varaeshcontentsauthor83.jpg83282520211229-WIN_20211110_18_35_12_Pro.jpg',99472,'2021-12-30 09:51:24','2021-12-30 09:51:24',0),(3,68,19,97,'83833520220202-Ertiga_Brand_Brochure.pdf','application/pdf','preliminaryReport','AdminTopic 13','Public Health','','Arabic','Scientific Editing','\\var\\aesh\\contents\\author\\83\\.pdf\\83833520220202-Ertiga_Brand_Brochure.pdf',7881042,'2022-02-02 04:39:32','2022-02-02 04:39:32',0),(4,68,20,97,'83988120220209-Ertiga_Brand_Brochure.pdf','application/pdf','preliminaryReport','Transaction Test','Public Health','TT','Chinese','Only English Editing,Journal Recommendation','\\var\\aesh\\contents\\author\\83\\.pdf\\83988120220209-Ertiga_Brand_Brochure.pdf',7881042,'2022-02-08 18:55:58','2022-02-08 18:55:58',0),(5,42,21,97,'83433620220213-Advance Receipt Voucher .pdf','application/pdf','preliminaryReport','AdminTopic 13','Molecular Biology','','English','Journal Recommendation','\\var\\aesh\\contents\\author\\83\\.pdf\\83433620220213-Advance Receipt Voucher .pdf',23324,'2022-02-12 22:01:31','2022-02-12 22:01:50',0),(6,68,22,99,'83720320220221-262757.FY21YECOMP (2).pdf','application/pdf','preliminaryReport','AdminTopic zaif99','Clinical Medicine','zaif999 report','Arabic','Only English Editing','\\var\\aesh\\contents\\author\\83\\.FY21YECOMP (2).pdf\\83720320220221-262757.FY21YECOMP (2).pdf',328282,'2022-02-21 09:11:07','2022-02-21 09:11:07',0),(7,42,25,105,'83135820220312-My opinions (1).pdf','application/pdf','preliminaryReport','AdminTopic 13','Public Health','test','English','Only English Editing,Figure Formatting','\\var\\aesh\\contents\\author\\83\\.pdf\\83135820220312-My opinions (1).pdf',49655,'2022-03-12 15:54:51','2022-03-12 15:54:51',0),(8,42,27,97,'83817820220606-Certificate- Commitment to an Environment of Equality and Respect.pdf','application/pdf','preliminaryReport','Topic 3','Microbiology','test','Arabic','Only English Editing','\\var\\aesh\\contents\\author\\83\\.pdf\\83817820220606-Certificate- Commitment to an Environment of Equality and Respect.pdf',25795,'2022-06-06 15:21:15','2022-06-06 15:21:15',0),(9,67,28,97,'83247520220811-97698620220818-SO2.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','preliminaryReport','new order report','Microbiology','new order preliminary report','English','Only English Editing,Figure Formatting','\\var\\aesh\\contents\\author\\83\\.docx\\83247520220811-97698620220818-SO2.docx',12255,'2022-08-11 15:19:24','2022-08-11 15:19:24',0),(10,67,28,97,'83502520220811-83853520220811-97698620220818-SO2.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document','finalReport','final report','Microbiology','final report','English',NULL,'\\var\\aesh\\contents\\author\\83\\.docx\\83502520220811-83853520220811-97698620220818-SO2.docx',12255,'2022-08-11 15:27:07','2022-08-11 15:27:07',0);
 /*!40000 ALTER TABLE `content_report` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `driver_booking_status`
+--
+
+DROP TABLE IF EXISTS `driver_booking_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `driver_booking_status` (
+                                         `id` int NOT NULL AUTO_INCREMENT,
+                                         `booking_request_id` int DEFAULT NULL,
+                                         `driver_id` int DEFAULT NULL,
+                                         `booking_status` varchar(10) DEFAULT NULL,
+                                         PRIMARY KEY (`id`),
+                                         UNIQUE KEY `id_UNIQUE` (`id`),
+                                         UNIQUE KEY `booking_UNIQUE` (`booking_request_id`,`driver_id`,`booking_status`)
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `driver_booking_status`
+--
+
+LOCK TABLES `driver_booking_status` WRITE;
+/*!40000 ALTER TABLE `driver_booking_status` DISABLE KEYS */;
+INSERT INTO `driver_booking_status` VALUES (1,22,124,'ACCEPT'),(4,22,125,'CLOSE'),(9,23,124,'OPEN'),(10,23,125,'OPEN'),(11,24,124,'OPEN'),(12,24,125,'OPEN'),(15,26,124,'OPEN'),(16,26,125,'OPEN'),(19,27,124,'ACCEPT'),(20,27,125,'CLOSE'),(21,28,124,'OPEN'),(22,28,125,'OPEN'),(23,29,124,'CLOSE'),(24,29,125,'CLOSE'),(25,30,124,'OPEN'),(26,30,125,'OPEN'),(27,31,124,'CLOSE'),(28,31,125,'CLOSE'),(29,32,124,'CLOSE'),(30,32,125,'CLOSE'),(31,33,124,'ACCEPT'),(32,33,125,'CLOSE'),(33,37,124,'ACCEPT'),(34,37,125,'CLOSE'),(35,38,124,'ACCEPT'),(37,38,124,'OPEN'),(36,38,125,'OPEN'),(39,39,124,'ACCEPT'),(41,39,124,'OPEN'),(40,39,125,'OPEN'),(43,41,124,'ACCEPT'),(44,41,125,'CLOSE'),(45,43,124,'ACCEPT'),(46,44,124,'ACCEPT');
+/*!40000 ALTER TABLE `driver_booking_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `driver_status`
+--
+
+DROP TABLE IF EXISTS `driver_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `driver_status` (
+                                 `driver_id` int NOT NULL,
+                                 `status` varchar(10) NOT NULL,
+                                 PRIMARY KEY (`driver_id`),
+                                 UNIQUE KEY `id_UNIQUE` (`driver_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `driver_status`
+--
+
+LOCK TABLES `driver_status` WRITE;
+/*!40000 ALTER TABLE `driver_status` DISABLE KEYS */;
+INSERT INTO `driver_status` VALUES (124,'ON_DUTY'),(125,'ON_DUTY');
+/*!40000 ALTER TABLE `driver_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -161,7 +212,6 @@ CREATE TABLE `email_otp` (
 
 LOCK TABLES `email_otp` WRITE;
 /*!40000 ALTER TABLE `email_otp` DISABLE KEYS */;
-INSERT INTO `email_otp` VALUES (1,'abc@123.xy','854715','2021-12-08 16:20:52','2021-12-08 16:35:50',NULL),(2,'zaif99@gmail.com','881188','2021-12-08 18:43:47','2021-12-08 19:00:48',NULL);
 /*!40000 ALTER TABLE `email_otp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -193,6 +243,33 @@ CREATE TABLE `feedback_response` (
 LOCK TABLES `feedback_response` WRITE;
 /*!40000 ALTER TABLE `feedback_response` DISABLE KEYS */;
 /*!40000 ALTER TABLE `feedback_response` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `firebase_token`
+--
+
+DROP TABLE IF EXISTS `firebase_token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `firebase_token` (
+                                  `id` int NOT NULL AUTO_INCREMENT,
+                                  `user_id` int DEFAULT NULL,
+                                  `token` varchar(255) DEFAULT NULL,
+                                  PRIMARY KEY (`id`),
+                                  UNIQUE KEY `id_UNIQUE` (`id`),
+                                  UNIQUE KEY `driver_id_UNIQUE` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `firebase_token`
+--
+
+LOCK TABLES `firebase_token` WRITE;
+/*!40000 ALTER TABLE `firebase_token` DISABLE KEYS */;
+INSERT INTO `firebase_token` VALUES (1,124,'firebaseToken12334');
+/*!40000 ALTER TABLE `firebase_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -239,7 +316,6 @@ CREATE TABLE `order_details` (
 
 LOCK TABLES `order_details` WRITE;
 /*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
-INSERT INTO `order_details` VALUES (35,97,19,68,3,'Scientific Editing',1000,'USD','2022-02-03 04:32:14','2022-02-18 04:32:14','2022-02-13 04:32:14','2022-02-03 04:34:22','test3','PLACED',1,0),(40,97,20,68,4,'Only English Editing,Journal Recommendation',250,'USD','2022-02-08 18:57:04','2022-03-11 19:14:44','2022-03-06 19:14:44','2022-02-09 19:14:44','payment test','PLACED',1,0),(44,97,21,68,5,'Journal Recommendation',50,'USD','2022-02-12 22:02:45','2022-03-14 22:27:46','2022-03-09 22:27:46','2022-02-14 13:54:58','','PLACED',1,0),(55,99,22,68,6,'Only English Editing',200,'USD','2022-02-21 09:12:00','2022-03-08 09:12:00','2022-03-03 09:12:00','2022-02-21 10:01:33','','PLACED',1,0),(59,105,25,68,7,'Only English Editing,Figure Formatting',250,'USD','2022-03-12 15:57:02','2022-03-27 15:57:02','2022-03-22 15:57:02','2022-03-12 15:57:02','','PLACED',1,0),(60,97,27,68,8,'Only English Editing',200,'USD','2022-08-03 10:56:37','2022-08-18 10:56:37','2022-08-13 10:56:37','2022-08-03 19:19:39','','PLACED',1,0),(67,97,28,67,9,'Only English Editing',200,'USD','2022-08-11 15:22:19','2022-09-10 15:23:09','2022-09-05 15:23:09','2022-08-11 15:26:03','new order remark','APPROVED',1,1);
 /*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,12 +352,13 @@ DROP TABLE IF EXISTS `profile_contents`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `profile_contents` (
-                                    `content_id` bigint NOT NULL AUTO_INCREMENT,
-                                    `content_user_id` int NOT NULL,
+                                    `profile_id` bigint NOT NULL AUTO_INCREMENT,
+                                    `profile_user_id` int NOT NULL,
                                     `profile_photo_name` varchar(100) DEFAULT NULL,
                                     `profile_photo_path` varchar(100) DEFAULT NULL,
                                     `profile_photo_size` int DEFAULT NULL,
                                     `aadhar_number` varchar(12) DEFAULT NULL,
+                                    `paytm_number` varchar(10) DEFAULT NULL,
                                     `aadhar_back_photo_name` varchar(100) DEFAULT NULL,
                                     `aadhar_back_photo_path` varchar(100) DEFAULT NULL,
                                     `aadhar_back_photo_size` int DEFAULT NULL,
@@ -289,14 +366,25 @@ CREATE TABLE `profile_contents` (
                                     `aadhar_front_photo_path` varchar(100) DEFAULT NULL,
                                     `aadhar_front_photo_size` int DEFAULT NULL,
                                     `rickshaw_number` varchar(20) DEFAULT NULL,
-                                    `rickshaw_photo_name` varchar(100) DEFAULT NULL,
-                                    `rickshaw_photo_path` varchar(100) DEFAULT NULL,
-                                    `rickshaw_photo_size` int DEFAULT NULL,
+                                    `rickshaw_front_photo_name` varchar(100) DEFAULT NULL,
+                                    `rickshaw_front_photo_path` varchar(100) DEFAULT NULL,
+                                    `rickshaw_front_photo_size` int DEFAULT NULL,
+                                    `rickshaw_back_photo_name` varchar(100) DEFAULT NULL,
+                                    `rickshaw_back_photo_path` varchar(100) DEFAULT NULL,
+                                    `rickshaw_back_photo_size` int DEFAULT NULL,
+                                    `rickshaw_side_photo_name` varchar(100) DEFAULT NULL,
+                                    `rickshaw_side_photo_path` varchar(100) DEFAULT NULL,
+                                    `rickshaw_side_photo_size` int DEFAULT NULL,
                                     `upload_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                                     `modify_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                                     `is_deleted` tinyint DEFAULT '0',
-                                    PRIMARY KEY (`content_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                                    PRIMARY KEY (`profile_id`),
+                                    UNIQUE KEY `paytm_number_UNIQUE` (`paytm_number`),
+                                    UNIQUE KEY `aadhar_number_UNIQUE` (`aadhar_number`),
+                                    UNIQUE KEY `rickshaw_number_UNIQUE` (`rickshaw_number`),
+                                    KEY `profile_user_id_idx` (`profile_user_id`),
+                                    CONSTRAINT `profile_user_id` FOREIGN KEY (`profile_user_id`) REFERENCES `user_registration` (`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -305,7 +393,7 @@ CREATE TABLE `profile_contents` (
 
 LOCK TABLES `profile_contents` WRITE;
 /*!40000 ALTER TABLE `profile_contents` DISABLE KEYS */;
-INSERT INTO `profile_contents` VALUES (1,97,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-09-12 14:42:22','2022-09-12 14:42:22',0),(2,109,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-09-12 14:45:29','2022-09-12 14:45:29',0);
+INSERT INTO `profile_contents` VALUES (3,124,NULL,NULL,NULL,'904500784045','8826424940','124-4368-Screenshot (1).png','\\var\\marshall\\docs\\driver\\124\\124-4368-Screenshot (1).png',495880,'124-1795-Screenshot (2).png','\\var\\marshall\\docs\\driver\\124\\124-1795-Screenshot (2).png',491321,'1234',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-10-26 21:55:47','2022-10-26 23:27:37',0),(4,118,'118-3835-Screenshot (1).png','\\var\\marshall\\docs\\driver\\118\\118-3835-Screenshot (1).png',495880,NULL,'456',NULL,NULL,NULL,NULL,NULL,NULL,'123',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-10-28 18:59:15','2022-10-28 20:58:38',0);
 /*!40000 ALTER TABLE `profile_contents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -323,7 +411,7 @@ CREATE TABLE `properties` (
                               PRIMARY KEY (`id`),
                               UNIQUE KEY `id_UNIQUE` (`id`),
                               UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -332,8 +420,51 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
-INSERT INTO `properties` VALUES (1,'name_prefix','Dr.,Prof.,Mr.,Ms.,Mrs.,MD.,PD.'),(2,'category','List,Microbiology,Public Health,Nursing,Clinical Medicine,Molecular Biology,Bioinformatics,Meta-Analysis,Others'),(3,'allowed_file_formats','application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/postscript,image/jpeg,image/png,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.rar,image/tiff,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/zip'),(4,'topics','Manuscript,Figure Only,Poster,Thesis,Grant'),(5,'language','Arabic,Chinese,English,Japanese,Spanish'),(6,'support_email','alphaeditorialsciencehub@gmail.com'),(7,'support_email_password','mtomkzslidyfiyns'),(8,'password_regex','(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&-+=()])(?=.*[A-Z]).{8,16}'),(9,'password_reset_link','/init/reset-password?reqType=resetPassword&token='),(10,'password_subject','Request Reset Password'),(11,'password_mail_body','Please click on the below link to reset your password:'),(12,'email_regex','^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$'),(13,'email_confirmation_link','/init/enable-account?reqType=enableAccount&token='),(14,'email_subject','Please Verify Your Email'),(15,'email_mail_body','Thank you for registering with us. Please click on the below link to activate your account:'),(16,'upload_directory','/var/marshall/docs/driver/'),(17,'status','Uploaded,Downloaded,Review Initiated,Review Pending,Review Complete,Preliminary-Report Submitted,Final-Report Pending,Final-Report Submitted,Close'),(18,'admin_email','alphaeditorialsciencehub@gmail.com'),(19,'alipay_qr','src\\main\\resources\\static\\images\\qrcodes\\ALIPAY_QR\\Screenshot_(1).png'),(20,'wechat_qr','src\\main\\resources\\static\\images\\qrcodes\\WECHAT_QR\\Screenshot_(2).png'),(24,'qrcode_uploader','83'),(27,'QRCODE_NAMES','ALIPAY_QR,WECHAT_QR'),(28,'admin_email_password','mtomkzslidyfiyns'),(29,'contact_us_email','alphaeditorialsciencehub@gmail.com');
+INSERT INTO `properties` VALUES (32,'allowed_file_formats','application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/postscript,image/jpeg,image/png,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.rar,image/tiff,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/zip'),(35,'support_email','sawaricabs5@gmail.com'),(36,'support_email_password','dcmomkukxhwizrgv'),(37,'password_regex','(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&-+=()])(?=.*[A-Z]).{8,16}'),(38,'password_reset_link','/init/reset-password?reqType=resetPassword&token='),(39,'password_subject','Request Reset Password'),(40,'password_mail_body','Please click on the below link to reset your password:'),(41,'email_regex','^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$'),(42,'email_confirmation_link','/init/enable-account?reqType=enableAccount&token='),(43,'email_subject','Please Verify Your Email'),(44,'email_mail_body','Thank you for registering with us. Please click on the below link to activate your account:'),(45,'upload_directory','/var/marshall/docs/'),(47,'admin_email','sawaricabs5@gmail.com'),(48,'alipay_qr','\\var\\marshall\\docs\\images\\qrcodes\\ALIPAY_QR\\qrcode.jpg'),(49,'wechat_qr','src\\main\\resources\\static\\images\\qrcodes\\WECHAT_QR\\Screenshot_(2).png'),(50,'qrcode_uploader','119'),(51,'QRCODE_NAMES','ALIPAY_QR,WECHAT_QR'),(52,'admin_email_password','dcmomkukxhwizrgv'),(53,'contact_us_email','sawaricabs5@gmail.com'),(54,'DISTANCE_RANGE','0-2,2.1-3.5,3.6-4.5,4.6-6,6.1-7'),(55,'DISTANCE_THRESHOLD','6.1'),(56,'MAX_DISTANCE','7.0'),(57,'BASE_PRICE','10'),(58,'DISTANCE_FACTOR','5'),(59,'DISTANCE_SURCHARGE','15'),(60,'DISCOUNT_FARE_THRESHOLD','100'),(61,'COMMISSION','15'),(62,'WRITE_LOCATION_INTERVAL','900000'),(63,'REQUEST_ACCEPT_INTERVAL','20000'),(64,'BOOKING_RADIUS','3000'),(65,'MAP_BASE_URL','https://maps.googleapis.com/maps/api'),(66,'MAP_DISTANCE_PATH','/distancematrix/json'),(67,'MAP_KEY','AIzaSyANybxLdy_U-1VYJdrh7XBzHqePU1CQ-8c'),(68,'FIREBASE_URL','https://fcm.googleapis.com/fcm/send'),(69,'FIREBASE_KEY','AAAATM9x-Vk:APA91bGds48ddhXCfGjmCHWUkMeKAVDM7EJ_3Fy7DDkMud2U1LnJVec7aL87lVFTOJIQcCBOwLnoN8w4rBc_qf3IAaNEYZQ8XY1pTya4AGkGesKx5S-Nu42A0--G7xJVG2A2HnCz-8Ux'),(73,'TWILIO_ACCOUNT_SID','AC79a60feb6f43005ee7105255e50de90d'),(74,'TWILIO_AUTH_TOKEN','d0a99cda610153ac52f359029ffc1f9c'),(75,'SUPPORT_MOBILE_NUMBER','+16292586574');
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ride_request`
+--
+
+DROP TABLE IF EXISTS `ride_request`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ride_request` (
+                                `date` date DEFAULT NULL,
+                                `booking_request_id` int NOT NULL AUTO_INCREMENT,
+                                `customer_id` int DEFAULT NULL,
+                                `customer_name` varchar(45) DEFAULT NULL,
+                                `mobile_no` varchar(10) DEFAULT NULL,
+                                `pickup_location_points` varchar(45) DEFAULT NULL,
+                                `pickup_location_word` varchar(155) DEFAULT NULL,
+                                `drop_location_points` varchar(45) DEFAULT NULL,
+                                `drop_location_word` varchar(155) DEFAULT NULL,
+                                `passengers` varchar(1) DEFAULT NULL,
+                                `distance` decimal(4,2) DEFAULT NULL,
+                                `fare` decimal(6,3) DEFAULT NULL,
+                                `discount` decimal(6,3) DEFAULT NULL,
+                                `currency` varchar(3) DEFAULT 'INR',
+                                `otp` varchar(10) DEFAULT NULL,
+                                `booking_status` varchar(10) DEFAULT NULL,
+                                `payment_mode` varchar(10) DEFAULT NULL,
+                                `payment_status` varchar(10) DEFAULT 'UNPAID',
+                                `driver_id` int DEFAULT NULL,
+                                `modify_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                PRIMARY KEY (`booking_request_id`),
+                                UNIQUE KEY `request_id_UNIQUE` (`booking_request_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ride_request`
+--
+
+LOCK TABLES `ride_request` WRITE;
+/*!40000 ALTER TABLE `ride_request` DISABLE KEYS */;
+INSERT INTO `ride_request` VALUES ('2023-02-01',22,117,NULL,NULL,'126.03,122.03','Thokar no 3, Near Al-shifa Hospital, Abul Fazal Enclave Part 1, Jamia Nagar, New Delhi-110025','136.03,132.03','Gate No. 3, Jamia Millia Islamia University, Jamia Nagar, New Delhi-110025','1',1.10,30.000,NULL,NULL,'299033','CLOSE','Cash','PAID',124,'2023-03-23 20:14:55'),('2023-02-01',23,117,NULL,'8826424940','126.03,122.03','Thokar no 3, Near Al-shifa Hospital, Abul Fazal Enclave Part 1, Jamia Nagar, New Delhi-110025','136.03,132.03','Gate No. 3, Jamia Millia Islamia University, Jamia Nagar, New Delhi-110025','1',1.10,30.000,NULL,NULL,'475811','CANCEL','Cash',NULL,NULL,'2023-03-23 20:15:09'),('2023-02-04',24,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'112388','NOT_SERVED','Cash',NULL,NULL,'2023-02-03 19:24:46'),('2023-02-04',25,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'236562','NOT_SERVED','Cash',NULL,NULL,'2023-02-03 19:26:45'),('2023-02-04',26,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'343242','NOT_SERVED','Cash',NULL,NULL,'2023-02-03 20:27:52'),('2023-02-04',27,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'504499','CANCEL','Cash',NULL,124,'2023-03-23 20:15:10'),('2023-02-04',28,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'843230','NOT_SERVED','Cash',NULL,NULL,'2023-02-03 21:03:35'),('2023-02-04',29,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'533666','CANCEL','Cash',NULL,124,'2023-03-23 20:15:11'),('2023-02-04',30,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'962260','NOT_SERVED','Cash',NULL,NULL,'2023-02-03 21:07:11'),('2023-02-04',31,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'339259','NOT_SERVED','Cash',NULL,124,'2023-02-03 21:11:41'),('2023-02-04',32,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'820198','NOT_SERVED','Cash',NULL,124,'2023-02-03 21:16:17'),('2023-02-04',33,117,NULL,'7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'575346','CLOSE','Cash','PAID',124,'2023-03-23 20:15:12'),('2023-02-07',34,117,'User 1 khalid','7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'578505','NOT_SERVED','Cash','PENDING',NULL,'2023-02-06 22:03:22'),('2023-02-07',35,117,'User 1 khalid','7777777777','28.0300273,79.1220946',NULL,'28.0306261,79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'341082','CANCEL','Cash','PENDING',NULL,'2023-02-06 22:06:45'),('2023-02-07',36,117,'User 1 khalid','7777777777','28.0300273,-79.1220946',NULL,'28.0306261,-79.1278998',NULL,'1',4.90,60.000,NULL,NULL,'789741','NOT_SERVED','Cash','PENDING',NULL,'2023-02-06 22:07:52'),('2023-02-07',37,117,'User 1 khalid','7777777777','40.6655101,-73.89188969999998',NULL,'40.598566,-73.7527626',NULL,'1',4.90,60.000,NULL,NULL,'688245','NOT_SERVED','Cash','PENDING',NULL,'2023-02-06 22:13:08'),('2023-02-07',38,117,'User 1 khalid','7777777777','40.6655101,-73.89188969999998',NULL,'40.598566,-73.7527626',NULL,'1',4.90,60.000,NULL,NULL,'326549','NOT_SERVED','Cash','PENDING',NULL,'2023-02-06 22:16:18'),('2023-02-07',39,117,'User 1 khalid','7777777777','40.6655101,-73.89188969999998',NULL,'40.598566,-73.7527626',NULL,'1',4.90,60.000,NULL,NULL,'947932','CANCEL','Cash','PENDING',NULL,'2023-03-23 20:15:14'),('2023-02-10',40,117,'User 1 khalid','','28.5571183,77.2929675','Alshifa Multispeciality Hospital, Abul Fazal Enclave Part 1, Abul Fazal Enclave, Jamia Nagar, Okhla, New Delhi, Delhi, India','28.5623169,77.2803832','Jamia Millia Islamia, Jamia Millia Islamia, Jamia Nagar, Okhla, New Delhi, Delhi, India','1',2.00,30.000,NULL,'INR','874509','NOT_SERVED','Cash','PENDING',NULL,'2023-02-09 19:55:22'),('2023-02-10',41,117,'User 1 khalid','','28.5571183,77.2929675','Alshifa Multispeciality Hospital, Abul Fazal Enclave Part 1, Abul Fazal Enclave, Jamia Nagar, Okhla, New Delhi, Delhi, India','28.5623169,77.2803832','Jamia Millia Islamia, Jamia Millia Islamia, Jamia Nagar, Okhla, New Delhi, Delhi, India','1',2.00,30.000,NULL,'INR','826624','CLOSE','Cash','PAID',124,'2023-03-23 20:15:15'),('2023-02-11',42,117,'User 1 khalid','','28.5571183,77.2929675','Alshifa Multispeciality Hospital, Abul Fazal Enclave Part 1, Abul Fazal Enclave, Jamia Nagar, Okhla, New Delhi, Delhi, India','28.5623169,77.2803832','Jamia Millia Islamia, Jamia Millia Islamia, Jamia Nagar, Okhla, New Delhi, Delhi, India','1',2.00,30.000,NULL,'INR','173866','CANCEL','Cash','PENDING',NULL,'2023-03-23 20:15:16'),('2023-03-28',43,117,'User 1 khalid','9077051653','28.5571183,77.2929675','Alshifa Multispeciality Hospital, Abul Fazal Enclave Part 1, Abul Fazal Enclave, Jamia Nagar, Okhla, New Delhi, Delhi, India','28.5623169,77.2803832','Jamia Millia Islamia, Jamia Millia Islamia, Jamia Nagar, Okhla, New Delhi, Delhi, India','1',2.00,30.000,NULL,'INR','928742','CANCEL','Cash','PENDING',124,'2023-03-27 19:23:08'),('2023-03-28',44,117,'User 1 khalid','9077051653','28.5571183,77.2929675','Alshifa Multispeciality Hospital, Abul Fazal Enclave Part 1, Abul Fazal Enclave, Jamia Nagar, Okhla, New Delhi, Delhi, India','28.5623169,77.2803832','Jamia Millia Islamia, Jamia Millia Islamia, Jamia Nagar, Okhla, New Delhi, Delhi, India','1',2.00,30.000,NULL,'INR','195198','CLOSE','Cash','PAID',124,'2023-03-27 19:25:22');
+/*!40000 ALTER TABLE `ride_request` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -348,7 +479,7 @@ CREATE TABLE `role` (
                         `role_name` varchar(45) NOT NULL DEFAULT 'Role',
                         PRIMARY KEY (`role_id`),
                         UNIQUE KEY `role_id_UNIQUE` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +488,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'USER'),(2,'SP-USER'),(3,'DRIVER'),(4,'ADMIN');
+INSERT INTO `role` VALUES (5,'USER'),(6,'SP-USER'),(7,'DRIVER'),(8,'ADMIN');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -386,7 +517,6 @@ CREATE TABLE `service_plans` (
 
 LOCK TABLES `service_plans` WRITE;
 /*!40000 ALTER TABLE `service_plans` DISABLE KEYS */;
-INSERT INTO `service_plans` VALUES (1,'Only English Editing','Only English Editing',200,'USD',30),(2,'Scientific Editing','Scientific Editing',1000,'USD',30),(3,'Only Manuscript Formatting','Only Manuscript Formatting',100,'USD',30),(4,'Figure Formatting','Figure Formatting',50,'USD',30),(5,'Journal Recommendation','Journal Recommendation',50,'USD',30),(6,'Manuscript Formatting','Manuscript Formatting',150,'USD',30),(7,'Academic Illustration','Academic Illustration',0,'USD',30);
 /*!40000 ALTER TABLE `service_plans` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -404,7 +534,7 @@ CREATE TABLE `subscribe_by_email` (
                                       PRIMARY KEY (`subs_id`),
                                       UNIQUE KEY `subs_id_UNIQUE` (`subs_id`),
                                       UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -413,7 +543,7 @@ CREATE TABLE `subscribe_by_email` (
 
 LOCK TABLES `subscribe_by_email` WRITE;
 /*!40000 ALTER TABLE `subscribe_by_email` DISABLE KEYS */;
-INSERT INTO `subscribe_by_email` VALUES (7,'test@foreign.com',NULL),(10,'test4@login.com',NULL),(11,'test2@sha.com',NULL),(12,'test3@trigger.com',NULL),(13,'test2@trigger.com',NULL),(14,'test5@trigger.com',NULL),(15,'blank@bl.com',NULL),(16,'test7@trigger.com',NULL),(17,'Student@test.com',NULL),(18,'faculty@test.com',NULL),(19,'student@test2.com',NULL),(20,'student@test3.com',NULL),(21,'student@test4.com',NULL),(22,'faculty@test4.com',NULL),(23,'faculty@test5.com',NULL),(24,'student@test6.com',NULL),(25,'student@test7.com',NULL),(26,'faculty@test7.com',NULL),(27,'studentview2@test9.com',NULL),(28,'studentTest11@test.com',NULL),(29,'faculty@test11.com',NULL),(30,'student@test12',NULL),(31,'student@test12.com',NULL),(32,'studentdemo@test.com',NULL),(33,'studentdemo@test2.com',NULL),(35,'smtkmr89@gmail.com',NULL),(37,'sumit@uptimusdata.com',NULL),(38,'sumit@myezeepay.co.in',NULL),(39,'message@test.com',NULL),(40,'message2@test.com',NULL),(41,'message3@test.com',NULL),(42,'message4@test.com',NULL),(43,'message5@test.com',NULL),(44,'message6@test.com',NULL),(45,'message7@test.com',NULL),(46,'message@test8.com',NULL),(47,'zaid@myezeepay.co.in',NULL),(48,'zafar00always@gmail.com',NULL),(49,'abc@webservlet.test',NULL),(50,'terjg@nghcf.vkm',NULL),(51,'JHON11E00SS@GMAIL.COM',NULL),(52,'facultyNew@test.com',NULL),(53,'facultyNew@test2.com',NULL),(54,'abc@jll.clm',NULL),(55,'abjc@jll.clm',NULL),(56,'abjdc@jll.clm',NULL),(57,'abdc@jll.cl',NULL),(58,'ab3dc@jll.cl',NULL),(60,'ab3785dc@jll.cl',NULL),(61,'khalid900045@gmail.com',NULL),(62,'aswed@sedf.dg',NULL),(63,'asd@dsf.com',NULL),(64,'test1995@gmail.com',NULL),(65,'zaif9449@gmail.com',NULL),(66,'zaif9999@gmail.com',NULL),(67,'zaif9059@gmail.com',NULL),(68,'zaif909@gmail.com',NULL),(69,'thedarkthris00ter@gmail.com',NULL),(70,'zaif9009@gmail.com',NULL),(71,'zaif979@gmail.com',NULL),(72,'zaif499@gmail.com',NULL),(73,'zafaralway21s@gmail.com',NULL),(74,'zafaralway11s@gmail.com',NULL),(75,'zafaralwa11ys@gmail.com',NULL),(76,'zafaralwa14ys@gmail.com',NULL),(77,'zafaralw45ays@gmail.com',NULL),(78,'zaif9129@gmail.com',NULL),(79,'thedarkthrister@gmail.com',NULL),(80,'zaif99999@gmail.com',NULL),(81,'zaif0999@gmail.com',NULL),(82,'zaif099@gmail.com',NULL),(83,'asd',NULL),(84,'qsa',NULL),(85,'zaif9019@gmail.com',NULL),(86,'zaif9029@gmail.com',NULL),(87,'zaif91019@gmail.com',NULL),(88,'zaif9900@gmail.com',NULL),(89,'zaif90109@gmail.com',NULL),(90,'zaif99@gmail.com',NULL);
+INSERT INTO `subscribe_by_email` VALUES (92,'khalidsaif9045@gmail.com',NULL),(93,'talal.wasif20@gmail.com',NULL),(94,'zafaralways@gmail.com',NULL),(95,'8826424940',NULL),(96,'that@tha.tha',NULL);
 /*!40000 ALTER TABLE `subscribe_by_email` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -453,7 +583,6 @@ CREATE TABLE `transaction_details` (
 
 LOCK TABLES `transaction_details` WRITE;
 /*!40000 ALTER TABLE `transaction_details` DISABLE KEYS */;
-INSERT INTO `transaction_details` VALUES (3,97,40,'1234',50,'USD','abc','UPI','13/02/2022','2022-02-12 22:07:37','PLACED'),(11,97,44,'123456',50,'USD','\\var\\aesh\\contents\\author\\97\\.png\\MicrosoftTeams-image (2).png','UPI','2022-02-13','2022-02-12 22:27:46','PLACED'),(13,97,67,'123456lks',200,'USD','\\var\\aesh\\contents\\author\\97\\transactions\\screenshot\\.png\\Screenshot (1).png','UPI','2022-08-11','2022-08-11 15:23:09','PAID');
 /*!40000 ALTER TABLE `transaction_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -479,7 +608,7 @@ CREATE TABLE `user_address_education` (
                                           UNIQUE KEY `user_address_education_id_UNIQUE` (`user_address_education_id`),
                                           KEY `user_address_education_id_idx` (`user_address_education_id`),
                                           CONSTRAINT `user_address_education_id` FOREIGN KEY (`user_address_education_id`) REFERENCES `user_registration` (`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,8 +617,36 @@ CREATE TABLE `user_address_education` (
 
 LOCK TABLES `user_address_education` WRITE;
 /*!40000 ALTER TABLE `user_address_education` DISABLE KEYS */;
-INSERT INTO `user_address_education` VALUES (2,83,NULL,NULL,NULL,NULL,'0','testCourse67','test'),(22,97,NULL,NULL,NULL,NULL,'0',NULL,NULL);
+INSERT INTO `user_address_education` VALUES (24,124,NULL,NULL,NULL,NULL,'0',NULL,NULL),(29,117,NULL,NULL,NULL,NULL,'0',NULL,NULL),(31,118,NULL,NULL,NULL,NULL,'0',NULL,NULL);
 /*!40000 ALTER TABLE `user_address_education` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_location`
+--
+
+DROP TABLE IF EXISTS `user_location`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_location` (
+                                 `id` int NOT NULL AUTO_INCREMENT,
+                                 `user_id` int NOT NULL,
+                                 `latitude` decimal(11,7) DEFAULT NULL,
+                                 `longitude` decimal(11,7) DEFAULT NULL,
+                                 PRIMARY KEY (`id`),
+                                 UNIQUE KEY `id_UNIQUE` (`id`),
+                                 UNIQUE KEY `user_id_UNIQUE` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_location`
+--
+
+LOCK TABLES `user_location` WRITE;
+/*!40000 ALTER TABLE `user_location` DISABLE KEYS */;
+INSERT INTO `user_location` VALUES (1,124,28.5567130,77.2930533),(2,125,28.5690132,77.2799539);
+/*!40000 ALTER TABLE `user_location` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -510,7 +667,7 @@ CREATE TABLE `user_mapping` (
                                 KEY `bridge_id_idx` (`bridge_id`) /*!80000 INVISIBLE */,
                                 CONSTRAINT `address_education_id` FOREIGN KEY (`address_education_id`) REFERENCES `user_address_education` (`address_education_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
                                 CONSTRAINT `bridge_id` FOREIGN KEY (`bridge_id`) REFERENCES `user_role_type_bridge` (`bridge_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -519,7 +676,7 @@ CREATE TABLE `user_mapping` (
 
 LOCK TABLES `user_mapping` WRITE;
 /*!40000 ALTER TABLE `user_mapping` DISABLE KEYS */;
-INSERT INTO `user_mapping` VALUES (1,2,193),(11,22,207);
+INSERT INTO `user_mapping` VALUES (13,24,225),(18,29,222),(20,31,223);
 /*!40000 ALTER TABLE `user_mapping` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -540,7 +697,7 @@ CREATE TABLE `user_permission_associate` (
                                              UNIQUE KEY `user_permission_id_UNIQUE` (`user_permission_id`),
                                              KEY `user_id_idx` (`user_permission_id`),
                                              KEY `permission_id_idx` (`permission_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=253 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=260 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -549,7 +706,7 @@ CREATE TABLE `user_permission_associate` (
 
 LOCK TABLES `user_permission_associate` WRITE;
 /*!40000 ALTER TABLE `user_permission_associate` DISABLE KEYS */;
-INSERT INTO `user_permission_associate` VALUES (128,42,2,0),(140,40,1,0),(161,41,1,0),(193,44,1,0),(194,45,1,0),(195,46,1,0),(196,48,1,0),(197,52,1,0),(198,53,1,0),(199,54,1,0),(200,55,1,0),(201,56,1,0),(202,57,1,0),(203,58,1,0),(204,59,1,0),(205,60,1,0),(206,62,1,0),(207,64,1,0),(208,65,1,0),(209,66,1,0),(210,67,1,0),(211,68,1,0),(212,69,1,0),(213,70,1,0),(214,71,1,0),(215,73,1,0),(216,74,1,0),(217,75,1,0),(218,76,1,0),(219,78,1,0),(220,83,1,0),(221,84,1,0),(222,85,1,0),(223,86,1,0),(224,87,1,0),(225,88,1,0),(226,89,1,0),(227,90,1,0),(228,91,1,0),(229,92,1,0),(230,93,1,0),(231,94,1,0),(232,95,1,0),(233,96,1,0),(234,97,1,0),(235,98,1,0),(236,99,1,0),(237,100,1,0),(238,101,1,0),(239,102,1,0),(240,103,1,0),(241,104,1,0),(242,105,1,0),(243,106,1,0),(244,107,1,0),(245,108,1,0),(246,109,1,0),(247,110,1,0),(248,111,1,0),(249,112,1,0),(250,113,1,0),(251,114,1,0),(252,115,1,0);
+INSERT INTO `user_permission_associate` VALUES (254,117,1,0),(255,118,1,0),(256,119,1,0),(257,124,1,0),(258,125,1,0),(259,126,1,0);
 /*!40000 ALTER TABLE `user_permission_associate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -582,7 +739,7 @@ CREATE TABLE `user_registration` (
                                      UNIQUE KEY `umapping_id_UNIQUE` (`umapping_id`),
                                      KEY `umapping_id_idx` (`umapping_id`),
                                      KEY `subs_id_idx` (`subs_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=127 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -591,7 +748,7 @@ CREATE TABLE `user_registration` (
 
 LOCK TABLES `user_registration` WRITE;
 /*!40000 ALTER TABLE `user_registration` DISABLE KEYS */;
-INSERT INTO `user_registration` VALUES (10,'test',NULL,'Login','test4Login','123321123','9877899870','1ff2b3704aede04eecb51e50ca698efd50a1379b',10,NULL,'2020-05-07 12:55:32',0,0),(15,'test',NULL,'trigger','test4trigger','123654654','987987987','a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',7,NULL,'2020-05-09 08:06:19',0,0),(16,'test2',NULL,'sha','test2sha','654789654','654456654','ef38b0d70aec301f94b739cc2244c879efc4e0db',11,NULL,'2020-05-09 19:49:56',0,0),(18,'test3',NULL,'4trigger','test34trigger','3321456665','9874566542','b15e6d4ed6b7a5f8930f4a36d1eabf4a9add918a',12,NULL,'2020-05-09 20:06:30',0,0),(19,'test2',NULL,'trigger','test2trigger','987459459','987456658','5ae973298a83ff735d43ef25465ee6a0b7fac8fe',13,NULL,'2020-05-09 20:46:09',0,0),(25,'test5',NULL,'trigger','test5trigger','9874593100','9874563200','911ddc3b8f9a13b5499b6bc4638a2b4f3f68bf23',14,NULL,'2020-05-09 20:55:17',0,0),(26,'test6',NULL,'tri','test6','','','test6',15,NULL,'2020-05-09 21:03:53',0,0),(27,'test7',NULL,'trigger','test7trigger','33332222','3213222332','ea3243132d653b39025a944e70f3ecdf70ee3994',16,NULL,'2020-05-09 21:07:13',0,0),(28,'Student',NULL,'Test1','studentTest','012326269','7827527534','204036a1ef6e7360e536300ea78c6aeb4a9333dd',17,NULL,'2020-05-10 13:00:43',0,0),(29,'Faculty',NULL,'Test1','FacultyTest1','011264264','7527852245','5cee1c23e1604e9ae4f2c0e93bbb4c6eb72b5f2c',18,NULL,'2020-05-10 13:02:31',0,0),(30,'Student',NULL,'Test2','StudentTest2','011246654','785447896','9713e72ec0d14faac9b62bc5eec20f0238e40ae8',19,NULL,'2020-05-10 16:12:18',0,0),(31,'Student',NULL,'Test3','studentTest3','011256586','785479656','c85ba7501f8d780988e48cbde52a1f37ed23c494',20,NULL,'2020-05-10 16:19:40',0,0),(32,'Student',NULL,'Test4','studentTest4','011236545','7854587556','9a330e1731e771fdb7113cb898b9a8cdbadfe58b',21,NULL,'2020-05-10 16:22:42',0,0),(33,'Faculty',NULL,'Test4','facultyTest4','011236545','1236545498','513a8d02324da7d9d750045f7c6dc7d56a664b58',22,NULL,'2020-05-10 16:27:36',0,0),(35,'Faculty',NULL,'Test5','facultyTest5','011452452','45232566520','76361c3fb32efdc2d60778d41b7549b4f15810c8',23,NULL,'2020-05-10 16:36:22',0,0),(36,'Student',NULL,'Test6','studentTest6','011452254785','1254587896','959507f77200e6e315ff6c686ee37df6805d92dd',24,NULL,'2020-05-10 16:38:35',0,0),(37,'Student',NULL,'Test7','studentTest7','0112544785','9899658669','cf5c0d43af3dca52d4ff63ffdddc1742a488cf21',25,NULL,'2020-05-10 19:42:41',0,0),(38,'Faculty',NULL,'Test7','facultyTest7','0112363233','9888965896','6a0aebfc48440c4efeda8ebc20533061e441da9c',26,NULL,'2020-05-10 19:45:33',0,0),(40,'StudentView2',NULL,'Test9','studentTest9','0112555654','999058558','f873b3c855f1b6c2afe3adb0f208240aec0fe8f1',27,16,'2020-05-11 08:30:29',0,0),(41,'Student',NULL,'Test11','studentTest11','011147258','9632587410','studenttest11',28,8,'2020-05-11 09:18:46',0,0),(42,'FacultyUpdate',NULL,'Test11','facultyTest11','011254452','9990785785','02b87516dc8a02d3955ba82b0d06bbf252353c28',29,17,'2020-05-11 09:20:54',0,0),(44,'StudentUpdate8',NULL,'Test12','studentTest12','021235535','7878898998','403bc6def24f3fcab739849cbfda13c460d4605d',31,18,'2020-05-31 08:48:47',0,0),(45,'Student',NULL,'Demo','studentDemo11','011235254','7896987565','5b43876941dabaa14ec53c4d4011ee3ea27ce480',32,NULL,'2020-06-07 10:00:14',0,0),(46,'StudentDemo',NULL,'Test2','studentDemo2','011245454','7858785874','f926df27a1949d38c71f77147364ff152b750b29',33,NULL,'2020-06-07 10:06:48',0,0),(48,'Sumit',NULL,'Kumar','studentTest111','','9876543201','5bfe552918c8ce3bac509d22874807c843e30bfb',37,NULL,'2020-11-28 11:17:36',0,0),(52,'sumit',NULL,'kumar','studentTest110','','963541239','c130768b9f3007460febf66a3dfba5a30ae65bbb',38,NULL,'2020-11-29 12:05:50',0,0),(53,'message',NULL,'test','messageTest1','','123521325','c0eeff34ba5b20edddec59702888a2135da924c3',39,NULL,'2020-11-30 11:43:17',0,0),(54,'Message',NULL,'Test2','messageTest2','','1236321123','5d518609a11dc0f3bbe0cf30f02af3195c6e0ad4',40,NULL,'2020-11-30 11:47:50',0,0),(55,'Message',NULL,'Test3','messageTest3','','7854123369','NewPassword',41,NULL,'2020-11-30 11:56:00',0,0),(56,'Message',NULL,'Test4','messageTest4','','7894569874','f558550f438275bba55486c6da53c9b7495329ad',42,NULL,'2020-11-30 11:57:20',0,0),(57,'message',NULL,'test5','messageTest5','','7894561236','d18a527434dfdeb787b43a346ab68e295036c140',43,NULL,'2020-11-30 11:58:12',0,0),(58,'Message',NULL,'Test6','messageTest6','','1245784512','aac029bdd046025211188571a662aa53c022147c',44,NULL,'2020-11-30 11:59:30',0,0),(59,'Message',NULL,'Test7','messageTest7','','9877898789','c4fe14e062f481430e1e4aa557b9ad01f387122c',45,NULL,'2020-11-30 12:01:02',0,0),(60,'Message',NULL,'Test8','messageTest8','','7684111111','137a7c633446a6d23735d1103dee47600a790753',46,NULL,'2020-11-30 12:02:06',0,0),(62,'zaid',NULL,'ahmed','gtudentTest11','999063636','963541235','b8697767e9f550287bbb1cb45bcda7122f57312b',47,NULL,'2020-12-10 10:42:40',0,0),(64,'Zafar',NULL,'Siddiqui','zafarSiddiqui95','','8439174568','ab01a8044731da9c24375ac56783f6eb610db337',48,NULL,'2020-12-14 13:56:38',0,0),(65,'zasdf',NULL,'hxfsg','test96','','1543652156','ae3500108257e43f56f3d641d0210ac7fd4977cd',50,NULL,'2021-02-06 21:25:11',0,0),(66,'Zafar',NULL,'Siddiqui','jhon11ess','','1478236698','e3e18a8fe4595febc97b025434dd2c6c32fb406b',51,19,'2021-02-12 06:12:31',0,0),(67,'Faculty',NULL,'New','facultyNew11','','1452145214','$2a$10$V1qg2Nudd45Acul8uGweY.L24OHQNxzMiqdy25mIIzk/uzUBhISwi',52,20,'2021-02-19 19:30:50',0,1),(68,'Zafar',NULL,'Siddiqui','facultyNew12','','4587458745','d0112bc7921025bcf0cbdc13fd6cabe0e2e6b000',53,21,'2021-02-19 19:42:50',0,0),(69,'abc',NULL,'xyz','abcd99',NULL,'1234564560','56303da7e27e8419eb39779750f9402578c396ae',54,NULL,'2021-10-21 11:36:24',0,0),(70,'abc',NULL,'xyz','abcd990',NULL,'1234564567','28d2ed2cd8d6ced9bf7cae1f8a32667b6fd8a463',55,NULL,'2021-10-21 12:27:08',0,0),(71,'abcd',NULL,'wxyz','abcd9901',NULL,'1234564568','25a364bd9b67cc66df7ac31f8425acc0530bb7fb',56,NULL,'2021-10-21 12:48:03',0,0),(73,'ab',NULL,'wx','abd990',NULL,'1234564511','29e215d7b507c0b5f53260dc33429d7ebfdd405a',57,NULL,'2021-10-21 12:53:05',0,0),(74,'ab',NULL,'wx','abd3990',NULL,'1234545511','sha1(student@Tet1122)',58,NULL,'2021-10-21 13:32:29',0,0),(75,'ab',NULL,'wx','abd7492',NULL,'1234545516','$2a$10$ht8ybXrGYmxfFHO4GtiY9.qPfilBZPwJEx9DgzwjcVVAhcCdqeV32',60,NULL,'2021-10-26 21:27:19',0,0),(76,'abc',NULL,'mnb','khalid',NULL,'9045210953','$2a$10$8uIvBkOOFNxHnNJHJ82v../O4tZZP/8c5dQeCj7Oc5GMsizeWoGfe',61,NULL,'2021-11-09 19:58:42',0,0),(78,'abc',NULL,'mnb','aserd','abd7492','abd7492','$2a$10$ECswsjHy9QdIgPKEsh257OnuyYp4DdxR8pHLhsw/0FRUXfDc1IUpa',62,NULL,'2021-11-13 08:18:34',0,0),(83,'abc',NULL,'mnb','test1995',NULL,'4569873210','$2a$10$HVMfgUlSryFzAPXmUEUKuulpEAcav7xGOYBlPbqobjc41EY8JFbya',64,1,'2021-11-14 13:24:54',0,1),(84,'abc',NULL,'mnb','testToken',NULL,'8826400940','$2a$10$qM4I7VGGI5m1NzN9eUJAuO3Z7/HG3kf4xw5fDv6vGQJJwxdU1/JCS',65,NULL,'2021-12-08 17:54:13',1,0),(85,'abc',NULL,'mnb','testToken2',NULL,'8826424941','$2a$10$4WyO6ZRkVOwQ1zR.7lnVjenVL/.JYUu4dHYpAd69ak7JYllYssln6',66,NULL,'2021-12-08 18:13:14',0,0),(86,'abc',NULL,'mnb','testToken4',NULL,'8826424943','$2a$10$bPvK/0NrLiNhOs2gw2FGSe6odd/TArtpxYiHiZ3NQ3d2gwLBASltK',67,NULL,'2021-12-10 12:07:29',0,0),(87,'Zafartest',NULL,'Siddiqui','testEmailZafar1',NULL,'8845698712','$2a$10$YzusJQNV/zGaX51SGsX7k.KU//BzsFnQ4zg.ECodpL8CXdweDNp7a',68,NULL,'2021-12-20 16:24:55',0,0),(88,'Zafar',NULL,'Siddiqui','zafar11ess',NULL,'8456987456','$2a$10$Y3q5R78f1MiAXprR3rcqGuOnU2e1UDIGn2lOTPkNSYes3hJR5j5lO',69,NULL,'2021-12-23 14:18:43',0,0),(89,'Zafar',NULL,'Siddiqui','zaif9009',NULL,'8826424940','$2a$10$749c13Ruf/rmrvAFwS2MRukov.KH9dKEeag8fdKyQNQZxt2cu9y46',70,NULL,'2021-12-26 20:40:06',0,1),(90,'Zafar',NULL,'Siddiqui','zaif979',NULL,'8827434841','$2a$10$VToq4f1pafdG3tp/a5B5Zu3H29OAL1xqb.1Hm995S2DlF6PJSexLC',71,NULL,'2021-12-27 20:20:44',0,1),(91,'Zafar',NULL,'Siddiqui','zaif99',NULL,'8876765454','$2a$10$5jg9Ei0Kt2kb42tcxTNwkeCp1Piyhq4Eszsgutvzuj77.DmBKhAFm',72,NULL,'2021-12-27 20:30:32',0,1),(92,'Zafar','Siddiqui','Siddiqui','zafar95',NULL,'8845652520','$2a$10$WKWMx32wM1QfvKh/5v0Gr.pyFfz.lKA8e9R7IW7r8jvH6VaNBR26W',73,NULL,'2021-12-28 19:03:41',0,0),(93,'Zafar','Siddiqui','Siddiqui','zafar96',NULL,'4456859560','$2a$10$BNHmULcS7eit34q0jB.ylugah0tOxJ7vzU1ieyHVs7AUOJ8zI5KGy',74,NULL,'2021-12-28 19:07:11',0,0),(94,'Zafar','Siddiqui','Siddiqui','zafar65',NULL,'4485757410','$2a$10$rlj2xBvZzxxWx1I4g0.qa.td.7Wb/w8fGqxxLi7tcQ3j3vVsOw8ga',75,NULL,'2021-12-28 19:11:35',0,0),(95,'Zafar','Siddiqui','Siddiqui','zafar11',NULL,'4456565650','$2a$10$Na1bnyGXfqY5Divtg9k/L.GSNYv6jX.z4LV8lU.B6PnylMfK452uO',76,NULL,'2021-12-28 19:13:29',0,0),(96,'Zafar','Siddiqui','Siddiqui','zafar14',NULL,'1145857540','$2a$10$NDVdVcATxm89swGRyp48feWeLg/ZTZ2DI.ejwVRzibPL8C95TDqsi',77,NULL,'2021-12-28 19:21:22',0,1),(97,'Zafar','Siddiqui','Siddiqui','zaif41',NULL,'4456585850','$2a$10$x9MinQ/C76IqpZast1uFYOgCT7S4JsJBcWk4KVpooxnfZHBziL/yu',78,11,'2021-12-28 19:31:24',0,1),(98,'Prof. csrf','cstff','cstff','csrfToken',NULL,'+918876765432','$2a$10$hX9j2tumD3Em8VfD.5z37u/ZqRxurbDu9QY3Q5wZS/duEiM4FoGwK',79,NULL,'2022-02-11 20:41:50',0,1),(99,'Prof. Zafar','Siddiqui','Siddiqui','zaif999',NULL,'+918825466585','$2a$10$SF601tQon2Xrz28SNA7lveQswTnvQCy78C4mY5U.AIaACoHjfrUnu',80,NULL,'2022-02-21 09:06:39',0,1),(100,'Dr. Zafar','Siddiqui','Siddiqui','zaif100',NULL,'+918876565676','$2a$10$McnyYaEGQNB8VEWGTgNku.rRZE/YhQPQLv2OLKk4Zf5p.3J7yCkvy',81,NULL,'2022-02-21 19:14:37',0,1),(104,'Dr. Zafar','Siddiqui','Siddiqui','zaif99k',NULL,'+917767878909','$2a$10$pPkbW05HOb4x4ODjwSCsNOY5AYPPfTacrrLGb52RVNNbN9F7npJUS',84,NULL,'2022-02-23 15:03:02',0,1),(105,'Dr. Zafar','Siddiqui','Siddiqui','zaif997',NULL,'+919987898098','$2a$10$36vpq37EzfaJFb8rJfLNQO4wRPiLvQ24Kog0esiMUuhc1uB7qM8kG',85,NULL,'2022-02-24 21:15:00',0,1),(106,'Dr. Zafar','','Siddiqui','zaif11',NULL,NULL,'$2a$10$B2Nl6eIKd0zRfai8673XSeCfR0nhOCOhBwYY.jNiri8JMCrlXmLz6',86,NULL,'2022-08-27 19:37:20',0,1),(107,'Dr. Zafar','','Siddiqui','zaif12',NULL,NULL,'$2a$10$ffnQFk/3WTKU07G1a.2sIecFybq9HOBUIL/kT3/NsOZde2nFxmpu2',NULL,NULL,'2022-08-27 19:38:41',0,1),(108,'Dr. Zafar','','Siddiqui','zaif13',NULL,NULL,'$2a$10$M7ruO.Xm9tZhXUJMH8rIye/So.zWTVwzSWscP8SvSu7ZgDdWxzAlS',88,NULL,'2022-08-27 19:47:52',0,1),(109,'Dr. Zafar','','Siddiqui','zaif14',NULL,NULL,'$2a$10$EisbI8bnlwVr7X8cD6VyQ.0O0Ov7TVal9sPBVrS16vYCLfwJCJRsG',89,NULL,'2022-08-27 19:55:52',0,1),(115,'Mr. Zafar','','Siddiqui','marshall',NULL,'+911122334455','$2a$10$.TDUIQ4nxLGXtYM4NKUiAOik1rx27gSHnepUzPXvpO9K4f.eiRAES',90,NULL,'2022-09-13 09:20:24',0,1);
+INSERT INTO `user_registration` VALUES (117,'User 1',NULL,'khalid','khalidsaif9045@gmail.com',NULL,'9077051653','$2a$10$dsIIkJD/BDywKOHJUpcGKuEVfeX0tumYGRT23EplOBFKzXyyPyPta',92,18,'2022-10-26 21:34:23',0,1),(118,'User 2',NULL,'Wasif','talal.wasif19@gmail.com',NULL,'7351492129','$2a$10$6QCuJzK8VwAqqO7l8I1iquzD.cmNESD0SLqdUBhPlQINTgHVp9Ovm',93,20,'2022-10-26 21:37:50',0,1),(119,'Admin',NULL,NULL,'zafaralways@gmail.com',NULL,'8888888888','$2a$10$SYHm90Ja07NGkGN5yUT7/u1kDsxtOpzzlbAp9xKya/.m6CMAbdOWa',94,NULL,'2022-10-26 21:39:04',0,1),(124,'Driver',NULL,'1','8826424940',NULL,'8826424940','$2a$10$HVK75ap068VV8EQ8n7.f0O6fq.aW3.Nq1aeNKBrI50KO1TikEN6Oa',95,13,'2022-10-26 21:54:41',0,1);
 /*!40000 ALTER TABLE `user_registration` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -604,10 +761,10 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`localhost`*/ /*!50003 TRIGGER `user_registration_AFTER_INSERT` AFTER INSERT ON `user_registration` FOR EACH ROW BEGIN
-    insert into user_permission_associate(user_permission_id,permission_id)
+    insert into marshall_service.user_permission_associate(user_permission_id,permission_id)
     select distinctrow u.user_id,p.permission_id from
-        (user_registration u inner join permissions p)
-    where p.permission_id=1 and u.user_id=(select max(user_id) from user_registration);
+        (marshall_service.user_registration u inner join marshall_service.permissions p)
+    where p.permission_id=1 and u.user_id=(select max(user_id) from marshall_service.user_registration);
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -636,7 +793,7 @@ CREATE TABLE `user_role_type_bridge` (
                                          CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user_registration` (`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
                                          CONSTRAINT `user_role_id` FOREIGN KEY (`user_role_id`) REFERENCES `role` (`role_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
                                          CONSTRAINT `user_type_id` FOREIGN KEY (`user_type_id`) REFERENCES `user_type` (`type_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=221 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=228 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -645,7 +802,7 @@ CREATE TABLE `user_role_type_bridge` (
 
 LOCK TABLES `user_role_type_bridge` WRITE;
 /*!40000 ALTER TABLE `user_role_type_bridge` DISABLE KEYS */;
-INSERT INTO `user_role_type_bridge` VALUES (136,10,2,1),(141,15,1,1),(151,26,1,1),(152,27,1,1),(153,28,1,1),(155,29,2,1),(156,30,1,1),(158,31,1,1),(160,32,1,1),(161,35,2,1),(162,36,1,1),(163,37,1,1),(164,38,2,1),(165,40,1,1),(167,42,2,1),(168,44,1,1),(169,45,1,1),(170,46,1,1),(171,48,1,1),(172,52,1,1),(173,53,1,1),(174,54,1,1),(175,55,1,1),(176,56,1,1),(177,57,1,1),(178,58,1,1),(179,59,1,1),(180,60,1,1),(181,62,1,1),(182,64,1,1),(183,65,1,1),(184,66,1,1),(185,67,2,1),(186,68,2,1),(187,69,1,1),(188,73,1,1),(189,74,1,1),(190,75,1,1),(191,76,1,1),(192,78,1,1),(194,84,1,1),(195,85,1,1),(196,86,1,1),(197,87,1,1),(198,88,1,1),(199,89,1,1),(200,90,1,1),(202,92,1,1),(203,93,1,1),(204,94,1,1),(205,95,1,1),(206,96,1,1),(207,97,1,1),(208,98,1,1),(209,99,1,1),(210,100,1,1),(214,104,1,1),(215,105,1,1),(216,106,1,1),(217,109,1,1),(220,115,1,1),(166,41,1,3),(193,83,4,7);
+INSERT INTO `user_role_type_bridge` VALUES (222,117,5,10),(223,118,5,10),(225,124,7,10),(224,119,8,16);
 /*!40000 ALTER TABLE `user_role_type_bridge` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -661,7 +818,7 @@ CREATE TABLE `user_type` (
                              `type_name` varchar(45) NOT NULL DEFAULT 'Type',
                              PRIMARY KEY (`type_id`),
                              UNIQUE KEY `type_id_UNIQUE` (`type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -670,7 +827,7 @@ CREATE TABLE `user_type` (
 
 LOCK TABLES `user_type` WRITE;
 /*!40000 ALTER TABLE `user_type` DISABLE KEYS */;
-INSERT INTO `user_type` VALUES (1,'REGISTERED'),(2,'UNREGISTERED'),(3,'PAID_SUBSCRIBER'),(4,'UNPAID_SUBSCRIBER'),(5,'PRELIMINARY_EDITOR'),(6,'EDITOR'),(7,'ADMIN'),(8,'SUPER_ADMIN'),(9,'EXPIRED_USER');
+INSERT INTO `user_type` VALUES (10,'REGISTERED'),(11,'UNREGISTERED'),(12,'PAID_SUBSCRIBER'),(13,'UNPAID_SUBSCRIBER'),(14,'PRELIMINARY_EDITOR'),(15,'EDITOR'),(16,'ADMIN'),(17,'SUPER_ADMIN'),(18,'EXPIRED_USER');
 /*!40000 ALTER TABLE `user_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1162,4 +1319,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-16  3:23:15
+-- Dump completed on 2023-04-10  2:11:24

@@ -168,6 +168,10 @@ public class RideRequestServiceImpl implements RideRequestService {
                     log.info("Already started ride cannot be cancelled");
                     throw new RuntimeException("Already started ride cannot be cancelled");
                 }
+                if (rideRequest.getBookingStatus().equalsIgnoreCase(CLOSE)) {
+                    log.info("Ride has been completed and cannot be cancelled");
+                    throw new RuntimeException("Ride has been completed and cannot be cancelled, Please refresh the app.");
+                }
                 rideRequest.setBookingStatus(status.toUpperCase());
                 rideRequestRepository.updateRideBookingRequestStatusByBookingId(rideRequest.getBookingRequestId(), status.toUpperCase());
                 if (rideRequest.getDriverId() != null) {
