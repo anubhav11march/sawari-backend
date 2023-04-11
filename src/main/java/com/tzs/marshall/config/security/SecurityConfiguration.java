@@ -144,7 +144,9 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://admin.sawaricabs.in", "http://179.61.188.172:5000"));
+        /*configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://admin.sawaricabs.in", "http://179.61.188.172:5000"));
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "TRACE"));*/
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "TRACE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
