@@ -150,11 +150,11 @@ public class SecurityConfiguration {
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setMaxAge(300L);
         //the below three lines will add the relevant CORS response headers
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("http://admin.sawaricabs.in");
-        configuration.addAllowedOrigin("http://179.61.188.172:5000");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+//        configuration.addAllowedOrigin("http://localhost:3000");
+//        configuration.addAllowedOrigin("http://admin.sawaricabs.in");
+//        configuration.addAllowedOrigin("http://179.61.188.172:5000");
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         new CorsFilter(source);
