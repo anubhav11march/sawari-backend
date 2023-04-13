@@ -6,7 +6,6 @@ import com.tzs.marshall.service.UserPreLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,13 +22,11 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfiguration {
 
@@ -55,7 +52,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @DependsOn("corsConfigurationSource")
+//    @DependsOn("corsConfigurationSource")
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Uncomment this to enable config
         http
@@ -145,11 +142,12 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 //        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://admin.sawaricabs.in", "http://179.61.188.172:5000"));
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "TRACE"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
+//        configuration.setAllowedMethods(List.of("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "TRACE"));
+        configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setMaxAge(300L);
+        configuration.setMaxAge(86400L);
         //the below three lines will add the relevant CORS response headers
 //        configuration.addAllowedOrigin("http://localhost:3000");
 //        configuration.addAllowedOrigin("http://admin.sawaricabs.in");
@@ -158,7 +156,7 @@ public class SecurityConfiguration {
 //        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        new CorsFilter(source);
+//        new CorsFilter(source);
         return source;
     }
 }
