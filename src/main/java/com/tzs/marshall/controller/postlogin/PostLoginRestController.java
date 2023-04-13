@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000/", "http://admin.sawaricabs.in/", "http://179.61.188.172:5000/"}, allowCredentials = "true")
 @RequestMapping({"/user", "/admin", "driver"})
 public class PostLoginRestController {
 

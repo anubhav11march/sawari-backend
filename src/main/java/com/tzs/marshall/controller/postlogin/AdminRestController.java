@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000/", "http://admin.sawaricabs.in/", "http://179.61.188.172:5000/"}, allowCredentials = "true")
 @RequestMapping("/admin")
 public class AdminRestController {
 

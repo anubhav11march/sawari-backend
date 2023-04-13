@@ -60,9 +60,9 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .and()
 //                .cors(AbstractHttpConfigurer::disable)
-                .cors()
-                .configurationSource(corsConfigurationSource())
-                .and()
+//                .cors()
+//                .configurationSource(corsConfigurationSource())
+//                .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)
                 .and()
@@ -138,7 +138,7 @@ public class SecurityConfiguration {
         return filter;
     }
 
-    @Bean
+/*    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 //        configuration.setAllowedOrigins(List.of("http://localhost:3000/", "http://admin.sawaricabs.in/", "http://179.61.188.172:5000/"));
@@ -158,5 +158,5 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
 //        new CorsFilter(source);
         return source;
-    }
+    }*/
 }
