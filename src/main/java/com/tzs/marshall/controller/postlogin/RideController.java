@@ -18,7 +18,6 @@ import static com.tzs.marshall.constants.Constants.ADMIN;
 import static com.tzs.marshall.constants.Constants.DRIVER;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000/", "http://admin.sawaricabs.in/", "http://179.61.188.172:5000/"}, allowCredentials = "true")
 @RequestMapping({"/user", "/admin", "/driver"})
 public class RideController {
 

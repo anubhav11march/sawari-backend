@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000/", "http://admin.sawaricabs.in/", "http://179.61.188.172:5000/"}, allowCredentials = "true")
 @RequestMapping({"/user", "/admin", "driver"})
 public class FareCalculationController {
 
