@@ -11,6 +11,8 @@ public interface UserPreLoginRepository {
     int saveOtp(String email, String otp);
 
     Map<String, String> getValidOtpAndEmail(String otp);
+
+    String getUsernameBySessionId(String sessionId, long creationTime);
 }
 
 

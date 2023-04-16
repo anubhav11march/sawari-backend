@@ -103,5 +103,10 @@ public class UserPreLoginServiceImpl implements UserPreLoginService {
         return "fail";
     }
 
+    @Override
+    public String getUsernameBySessionId(String sessionId, long creationTime) {
+        return userPreLoginRepository.getUsernameBySessionId(sessionId, creationTime);
+    }
+
 }
 

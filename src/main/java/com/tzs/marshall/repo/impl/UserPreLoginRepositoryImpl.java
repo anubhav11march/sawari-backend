@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -91,6 +92,20 @@ public class UserPreLoginRepositoryImpl implements UserPreLoginRepository {
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public String getUsernameBySessionId(String sessionId, long creationTime) {
+        try {
+            String query = "SELECT principal_name FROM marshall_service.spring_session WHERE session_id=:sessionId and creation_time=:creationTime";
+            List<String> principalName = jdbcTemplate.query(query, new MapSqlParameterSource()
+                            .addValue("sessionId", sessionId)
+                            .addValue("creationTime", creationTime),
+                    (rs, rowNum) -> rs.getString("principal_name"));
+            return principalName.stream().findFirst().orElse(null);
+        } catch (Exception e) {
+            throw new RuntimeException(MessageConstants.SOMETHING_WRONG);
         }
     }
 }

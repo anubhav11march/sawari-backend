@@ -1,6 +1,7 @@
 package com.tzs.marshall.config.security;
 
 import com.tzs.marshall.config.handler.*;
+import com.tzs.marshall.config.jwt.filter.JwtRequestFilter;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.service.UserPreLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -19,7 +21,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -40,6 +41,9 @@ public class SecurityConfiguration {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+
     public SecurityConfiguration() {
         super();
     }
@@ -53,17 +57,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-//    @DependsOn("corsConfigurationSource")
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Uncomment this to enable config
         http
                 .csrf().disable()
-//                .csrf()
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .and()
                 .authorizeRequests()
                 .and()
-//                .cors(AbstractHttpConfigurer::disable)
                 .cors()
                 .configurationSource(corsConfigurationSource())
                 .and()
@@ -89,11 +88,13 @@ public class SecurityConfiguration {
                 .usernameParameter("username")
                 .and()
                 .logout()
-                .deleteCookies("JSESSIONID")
+                .deleteCookies("JSESSIONID", "SESSION")
                 .logoutSuccessHandler(logoutSuccessHandler())
 //                .logoutSuccessUrl("/login?logout=true")
-                /*.and()
-                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true")*/;
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         //Comment this block to bypass config
        /* http
@@ -145,22 +146,13 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://localhost:3000/", "http://admin.sawaricabs.in/", "http://179.61.188.172:5000/"));
         configuration.setAllowedOriginPatterns(List.of("*"));
-//        configuration.setAllowedMethods(List.of("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "TRACE"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setMaxAge(86400L);
-        //the below three lines will add the relevant CORS response headers
-//        configuration.addAllowedOrigin("http://localhost:3000");
-//        configuration.addAllowedOrigin("http://admin.sawaricabs.in");
-//        configuration.addAllowedOrigin("http://179.61.188.172:5000");
-//        configuration.addAllowedHeader("*");
-//        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-//        new CorsFilter(source);
         return source;
     }
 }
