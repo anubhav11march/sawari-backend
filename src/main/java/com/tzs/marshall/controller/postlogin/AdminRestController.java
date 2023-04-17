@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @RestController
 @RequestMapping("/admin")
@@ -103,6 +104,11 @@ public class AdminRestController {
     }
 
     //api to update properties
+    @RequestMapping(value = "/properties", method = RequestMethod.GET)
+    public Properties getDBProperties() {
+        return DBProperties.properties;
+    }
+
     @RequestMapping(value = "/properties", method = RequestMethod.POST)
     public Map<String, String> updateDBProperties(@RequestBody Map<String, String> properties) {
         return adminService.updateDBProperties(properties);
