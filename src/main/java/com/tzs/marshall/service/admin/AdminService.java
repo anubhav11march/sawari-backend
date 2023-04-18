@@ -1,6 +1,7 @@
 package com.tzs.marshall.service.admin;
 
 import com.tzs.marshall.bean.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -35,4 +36,10 @@ public interface AdminService {
     DiscountConfig[] getDiscountConfig();
 
     DiscountConfig[] updateDiscountConfig(DiscountConfig[] discountConfig);
+
+    String qrCodeHelper(long id, String qrCodeName, MultipartFile qrCode);
+
+    void uploadQR(String qrCodeName, String path);
+
+    void updateQR(String qrCodeName, String path);
 }

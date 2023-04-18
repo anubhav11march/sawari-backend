@@ -13,4 +13,6 @@ public interface UserPreLoginService extends UserDetailsService {
     String handleOtpVerification(String otp);
 
     String resetPasswordHandler(String token, String reqType, String password);
+
+    String getUsernameBySessionId(String sessionId, long creationTime);
 }

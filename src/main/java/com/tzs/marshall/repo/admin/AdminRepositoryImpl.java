@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -219,6 +220,33 @@ public class AdminRepositoryImpl implements AdminRepository {
                 params.add(new Object[] {e.getValue(), e.getKey()});
             });
             jdbcTemplate.getJdbcOperations().batchUpdate(query, params);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public void uploadQRCodeToDB(String qrCodeName, String qrCodePath) {
+        try {
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource.addValue("name", qrCodeName).addValue("value", qrCodePath);
+            new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getJdbcTemplate().getDataSource()))
+                    .withCatalogName("marshall_service")
+                    .withTableName("properties")
+                    .usingColumns("name", "value")
+                    .execute(mapSqlParameterSource);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ApiException(MessageConstants.SOMETHING_WRONG);
+        }
+    }
+
+    @Override
+    public void updateQRCode(String qrCodeName, String path) {
+        try {
+            String query = "UPDATE marshall_service.properties SET value=:path WHERE name=:qrCodeName";
+            jdbcTemplate.update(query, new MapSqlParameterSource().addValue("path", path).addValue("qrCodeName", qrCodeName));
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ApiException(MessageConstants.SOMETHING_WRONG);

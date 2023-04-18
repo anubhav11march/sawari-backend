@@ -29,4 +29,8 @@ public interface AdminRepository {
     List<RideRequest> getAllUsersRidesById(Long userId);
 
     void updateDBProperties(Map<String, String> properties);
+
+    void uploadQRCodeToDB(String qrCodeName, String qrCodePath);
+
+    void updateQRCode(String qrCodeName, String path);
 }

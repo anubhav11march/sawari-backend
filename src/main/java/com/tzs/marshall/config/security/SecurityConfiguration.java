@@ -1,6 +1,7 @@
 package com.tzs.marshall.config.security;
 
 import com.tzs.marshall.config.handler.*;
+import com.tzs.marshall.config.jwt.filter.JwtRequestFilter;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.service.UserPreLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -24,11 +25,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfiguration {
 
@@ -40,6 +40,9 @@ public class SecurityConfiguration {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     public SecurityConfiguration() {
         super();
@@ -60,7 +63,6 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeRequests()
                 .and()
-//                .cors(AbstractHttpConfigurer::disable)
                 .cors()
                 .configurationSource(corsConfigurationSource())
                 .and()
@@ -86,11 +88,13 @@ public class SecurityConfiguration {
                 .usernameParameter("username")
                 .and()
                 .logout()
-                .deleteCookies("JSESSIONID")
+                .deleteCookies("JSESSIONID", "SESSION")
                 .logoutSuccessHandler(logoutSuccessHandler())
 //                .logoutSuccessUrl("/login?logout=true")
-                /*.and()
-                .sessionManagement().maximumSessions(1).expiredUrl("/login?error=true")*/;
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         //Comment this block to bypass config
        /* http
@@ -142,15 +146,12 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://admin.sawaricabs.in", "http://192.168.1.9:3000", "http://192.168.1.2:3000"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
-        //the below three lines will add the relevant CORS response headers
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("http://admin.sawaricabs.in");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        configuration.setMaxAge(86400L);
+        configuration.setExposedHeaders(List.of("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

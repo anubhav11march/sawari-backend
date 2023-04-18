@@ -5,9 +5,6 @@ import com.tzs.marshall.bean.*;
 import com.tzs.marshall.constants.Constants;
 import com.tzs.marshall.constants.MessageConstants;
 import com.tzs.marshall.error.ApiException;
-import com.tzs.marshall.filesystem.FileService;
-import com.tzs.marshall.service.SubscriptionService;
-import com.tzs.marshall.service.UserPostLoginService;
 import com.tzs.marshall.service.admin.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @RestController
 @RequestMapping("/admin")
@@ -26,13 +24,7 @@ public class AdminRestController {
     @Autowired
     private AdminService adminService;
     @Autowired
-    private UserPostLoginService userPostLoginService;
-    @Autowired
-    private SubscriptionService subscriptionService;
-    @Autowired
     private InitProperties initProperties;
-    @Autowired
-    private FileService fileService;
 
     private static final Logger log = LoggerFactory.getLogger(AdminRestController.class);
     String errorMessage = "";
@@ -112,6 +104,11 @@ public class AdminRestController {
     }
 
     //api to update properties
+    @RequestMapping(value = "/properties", method = RequestMethod.GET)
+    public Properties getDBProperties() {
+        return DBProperties.properties;
+    }
+
     @RequestMapping(value = "/properties", method = RequestMethod.POST)
     public Map<String, String> updateDBProperties(@RequestBody Map<String, String> properties) {
         return adminService.updateDBProperties(properties);
@@ -140,8 +137,8 @@ public class AdminRestController {
         if (!Constants.ADMIN.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         adminService.checkAuthorizedAdmin(authorDetails.getUserId());
-        String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
-        subscriptionService.uploadQR(qrCodeName, path);
+        String path = adminService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
+        adminService.uploadQR(qrCodeName, path);
         successMessage = MessageConstants.QR_UPLOADED;
         new DBProperties(initProperties.getDBProperties());
     }
@@ -152,8 +149,8 @@ public class AdminRestController {
         if (!Constants.ADMIN.equals(authorDetails.getRoleName()))
             throw new ApiException(MessageConstants.NOT_AUTHORIZED);
         adminService.checkAuthorizedAdmin(authorDetails.getUserId());
-        String path = subscriptionService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
-        subscriptionService.updateQR(qrCodeName, path);
+        String path = adminService.qrCodeHelper(authorDetails.getUserId(), qrCodeName, qrCode);
+        adminService.updateQR(qrCodeName, path);
         successMessage = MessageConstants.QR_UPDATED;
         new DBProperties(initProperties.getDBProperties());
     }

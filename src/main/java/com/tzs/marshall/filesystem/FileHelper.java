@@ -20,7 +20,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-import static com.tzs.marshall.constants.Constants.*;
+import static com.tzs.marshall.constants.Constants.FILE_FORMATS;
+import static com.tzs.marshall.constants.Constants.UPLOAD_DIR;
 
 @Component
 public class FileHelper {
