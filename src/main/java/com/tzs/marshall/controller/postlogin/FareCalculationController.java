@@ -21,7 +21,7 @@ public class FareCalculationController {
     public Fare getEstimatedFare(@RequestBody Fare fare) {
         Double distance = fare.getDistance();
         Integer passenger = fare.getPassengers();
-        return fareCalculationService.getEstimatedFareByPassengerAndDistance(passenger, distance);
+        return fareCalculationService.getEstimatedFareByPassengerAndDistance(passenger, distance, null);
 
     }
 }
