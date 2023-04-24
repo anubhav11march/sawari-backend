@@ -7,9 +7,7 @@ import java.util.Map;
 
 public interface FareCalculationService {
 
-    Fare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance);
-
-    Fare getEstimatedFareForPreview(Map<String, String> priceProperties);
+    Fare getEstimatedFareByPassengerAndDistance(Integer passenger, Double distance, Map<String, String> fareProperties);
 
     DiscountConfig[] getDiscountConfig();
 
