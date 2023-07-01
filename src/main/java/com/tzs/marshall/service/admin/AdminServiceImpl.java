@@ -73,9 +73,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit, Map filters) {
+    public List<PersistentUserDetails> getAllUsersByRole(String role, Map filters) {
         log.info("Fetching All Completed Profiles Users Details with filters {}", filters);
-        List<PersistentUserDetails> allUsers = adminRepository.getAllUsersProfile(role.toUpperCase(), after, limit, filters);
+        List<PersistentUserDetails> allUsers = adminRepository.getAllUsersProfile(role.toUpperCase(), filters);
         log.info("Records Found: {}", allUsers);
         return allUsers;
     }
@@ -83,7 +83,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<PersistentUserDetails> getAllIncompleteProfileUsersByRole(String role, int after, int limit) {
         log.info("Fetching All Incomplete Profile Users Details...");
-        List<PersistentUserDetails> allIncompleteProfileUsersDetails = adminRepository.getAllIncompleteProfileUsersDetails(role.toUpperCase(), after, limit);
+        List<PersistentUserDetails> allIncompleteProfileUsersDetails = adminRepository
+                .getAllIncompleteProfileUsersDetails(role.toUpperCase(), after, limit);
         if (allIncompleteProfileUsersDetails.size() == 0) {
             log.error("No User Found...{}", allIncompleteProfileUsersDetails);
             throw new ApiException(MessageConstants.NO_USER_REGISTER);
@@ -118,8 +119,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserRideEarnings> getAllUsersAndEarningsByRole(String role, int after, int limit, Map filters) {
-        List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, after, limit, filters);
+    public List<UserRideEarnings> getAllUsersAndEarningsByRole(String role, Map filters) {
+        List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, filters);
         List<UserRideEarnings> userRideEarningsList = new ArrayList<>();
         allUsersByRole.forEach(user -> {
             Map<String, Object> totalEarningById = rideRequestService.getTotalEarningByDriver(user.getUserId());
@@ -174,11 +175,12 @@ public class AdminServiceImpl implements AdminService {
         log.info("Uploading QR Code to server for: " + qrCodeName);
         checkContentType(qrCode.getContentType());
         try {
-            String fileName = Objects.requireNonNull(qrCode.getOriginalFilename()).trim().replaceAll(" ","_");
+            String fileName = Objects.requireNonNull(qrCode.getOriginalFilename()).trim().replaceAll(" ", "_");
             String pathString = Constants.BASE_PATH + File.separator + Constants.QRCODE_DIR + File.separator
                     + qrCodeName;
             Path qrPath = Paths.get(pathString);
-            if (new File(String.valueOf(qrPath)).exists() && Files.deleteIfExists(Objects.requireNonNull(Files.list(qrPath).findAny().orElse(null)))) {
+            if (new File(String.valueOf(qrPath)).exists()
+                    && Files.deleteIfExists(Objects.requireNonNull(Files.list(qrPath).findAny().orElse(null)))) {
                 log.warn(String.format("Old QR-Code deleted from: %s", qrPath));
             }
             Path path = Paths.get(pathString + File.separator + fileName);
@@ -187,7 +189,8 @@ public class AdminServiceImpl implements AdminService {
             if (!contentSaveDir.exists()) {
                 log.info("Creating Directories...");
                 boolean mkdirs = contentSaveDir.mkdirs();
-                if (!mkdirs) log.error("Cannot Create Directories. Please Check.");
+                if (!mkdirs)
+                    log.error("Cannot Create Directories. Please Check.");
             }
             Files.copy(qrCode.getInputStream(),
                     path,
