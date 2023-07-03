@@ -73,9 +73,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllUsersByRole(String role, int after, int limit, Map filters) {
+    public List<PersistentUserDetails> getAllUsersByRole(String role, Map filters) {
         log.info("Fetching All Completed Profiles Users Details with filters {}", filters);
-        List<PersistentUserDetails> allUsers = adminRepository.getAllUsersProfile(role.toUpperCase(), after, limit, filters);
+        List<PersistentUserDetails> allUsers = adminRepository.getAllUsersProfile(role.toUpperCase(), filters);
         log.info("Records Found: {}", allUsers);
         return allUsers;
     }
@@ -118,8 +118,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserRideEarnings> getAllUsersAndEarningsByRole(String role, int after, int limit, Map filters) {
-        List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, after, limit, filters);
+    public List<UserRideEarnings> getAllUsersAndEarningsByRole(String role,  Map filters) {
+        List<PersistentUserDetails> allUsersByRole = getAllUsersByRole(role, filters);
         List<UserRideEarnings> userRideEarningsList = new ArrayList<>();
         allUsersByRole.forEach(user -> {
             Map<String, Object> totalEarningById = rideRequestService.getTotalEarningByDriver(user.getUserId());

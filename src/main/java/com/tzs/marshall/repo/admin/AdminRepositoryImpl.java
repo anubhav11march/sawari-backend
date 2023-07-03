@@ -137,22 +137,25 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<PersistentUserDetails> getAllUsersProfile(String role, int after, int limit, Map filters) {
+    public List<PersistentUserDetails> getAllUsersProfile(String role, Map filters) {
         try {
             StringBuilder query = new StringBuilder();
             String sql;
             query.append("SELECT * FROM ")
-                    .append("(SELECT user_id, first_name, middle_name, last_name, user_name, phone, mobile, email, alternate_email, role_name, type_name, permission_name, join_date, vsd.is_deleted, is_enable, " +
-                            "profile_photo_name, profile_photo_path, profile_photo_size, aadhar_number, paytm_number, aadhar_back_photo_name, aadhar_back_photo_path, aadhar_back_photo_size, " +
-                            "aadhar_front_photo_name, aadhar_front_photo_path, aadhar_front_photo_size, rickshaw_number, rickshaw_front_photo_name, rickshaw_front_photo_path, " +
-                            "rickshaw_front_photo_size, rickshaw_back_photo_name, rickshaw_back_photo_path, rickshaw_back_photo_size, rickshaw_side_photo_name, rickshaw_side_photo_path, " +
+                    .append("(SELECT user_id, first_name, middle_name, last_name, user_name, phone, mobile, email, alternate_email, role_name, type_name, permission_name, join_date, vsd.is_deleted, is_enable, "
+                            +
+                            "profile_photo_name, profile_photo_path, profile_photo_size, aadhar_number, paytm_number, aadhar_back_photo_name, aadhar_back_photo_path, aadhar_back_photo_size, "
+                            +
+                            "aadhar_front_photo_name, aadhar_front_photo_path, aadhar_front_photo_size, rickshaw_number, rickshaw_front_photo_name, rickshaw_front_photo_path, "
+                            +
+                            "rickshaw_front_photo_size, rickshaw_back_photo_name, rickshaw_back_photo_path, rickshaw_back_photo_size, rickshaw_side_photo_name, rickshaw_side_photo_path, "
+                            +
                             "rickshaw_side_photo_size, upload_date, modify_date " +
                             "FROM marshall_service.view_incomplete_user_details vsd " +
                             "LEFT OUTER JOIN " +
-                            "marshall_service.profile_contents pc on vsd.user_id=pc.profile_user_id WHERE vsd.user_id>:after and vsd.role_name=:roleName order by vsd.user_id limit :limit) upd ");
+                            "marshall_service.profile_contents pc on vsd.user_id=pc.profile_user_id WHERE vsd.role_name=:roleName order by vsd.user_id) upd ");
             sql = applyFilters(filters, query);
-            return jdbcTemplate.query(sql, new MapSqlParameterSource().addValue("roleName", role).addValue("after", after)
-                            .addValue("limit", limit),
+            return jdbcTemplate.query(sql, new MapSqlParameterSource().addValue("roleName", role),
                     BeanPropertyRowMapper.newInstance(PersistentUserDetails.class));
         } catch (Exception e) {
             log.error(e.getMessage());

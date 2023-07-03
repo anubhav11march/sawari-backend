@@ -61,11 +61,14 @@ public class AdminRestController {
 
     //All Users' Profile
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public List<PersistentUserDetails> getAllUsers(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
+    public List<PersistentUserDetails> getAllUsers(@RequestParam Map<String, String> allRequestParams,
+            @RequestBody(required = false) Map filters) {
         String role = allRequestParams.get("role");
-        int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
-        int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
-        return adminService.getAllUsersByRole(role, after, limit, filters);
+        // int after = allRequestParams.get("after") != null ?
+        // Integer.parseInt(allRequestParams.get("after")) : 0;
+        // int limit = allRequestParams.get("limit") != null ?
+        // Integer.parseInt(allRequestParams.get("limit")) : 10;
+        return adminService.getAllUsersByRole(role, filters);
     }
 
     //Single User Profile Details
@@ -79,9 +82,7 @@ public class AdminRestController {
     @RequestMapping(value = "/users-earnings", method = RequestMethod.POST)
     public List<UserRideEarnings> getAllUsersAndEarnings(@RequestParam Map<String, String> allRequestParams, @RequestBody(required = false) Map filters) {
         String role = allRequestParams.get("role");
-        int after = allRequestParams.get("after") != null ? Integer.parseInt(allRequestParams.get("after")) : 0;
-        int limit = allRequestParams.get("limit") != null ? Integer.parseInt(allRequestParams.get("limit")) : 10;
-        return adminService.getAllUsersAndEarningsByRole(role, after, limit, filters);
+        return adminService.getAllUsersAndEarningsByRole(role,  filters);
     }
 
     @RequestMapping(value = "/user-earning", method = RequestMethod.GET)
