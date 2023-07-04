@@ -111,8 +111,11 @@ public class AdminRestController {
     }
 
     @RequestMapping(value = "/properties", method = RequestMethod.POST)
-    public Map<String, String> updateDBProperties(@RequestBody Map<String, String> properties) {
-        return adminService.updateDBProperties(properties);
+    public Properties updateDBProperties(@RequestBody Map<String, String> properties) {
+        adminService.updateDBProperties(properties);
+        Properties dbProperties = initProperties.getDBProperties();
+        new DBProperties(dbProperties);
+        return dbProperties;
     }
 
     //price modification -> preview to calculate price and submit to update db properties

@@ -155,7 +155,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Fare calculateEstimatedPrice(Map<String, String> priceProperties) {
-        return fareCalculationService.getEstimatedFareForPreview(priceProperties);
+        double distance = Double.parseDouble(priceProperties.get("distance"));
+        int passenger = Integer.parseInt(priceProperties.get("passengers"));
+        return fareCalculationService.getEstimatedFareByPassengerAndDistance(passenger, distance, priceProperties);
     }
 
     @Override
