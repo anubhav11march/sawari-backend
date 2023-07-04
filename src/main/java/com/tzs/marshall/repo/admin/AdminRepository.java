@@ -22,7 +22,7 @@ public interface AdminRepository {
 
     List<PersistentUserDetails> getUserProfileDetailsById(Long userId);
 
-    List<PersistentUserDetails> getAllUsersProfile(String role, int after, int limit, Map filters);
+    List<PersistentUserDetails> getAllUsersProfile(String role, Map filters);
 
     List<RideRequest> getAllUsersRides(int after, int limit, Map filters);
 
